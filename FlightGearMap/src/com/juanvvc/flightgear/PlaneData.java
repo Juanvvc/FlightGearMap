@@ -2,6 +2,10 @@ package com.juanvvc.flightgear;
 
 import java.util.Date;
 
+/** Models the data that FlilghtGear sent.
+ * @author juanvi
+ *
+ */
 public class PlaneData {
 
 	private float speed = 0;

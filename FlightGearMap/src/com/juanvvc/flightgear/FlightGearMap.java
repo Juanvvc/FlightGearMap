@@ -6,16 +6,16 @@ import java.net.SocketException;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -23,16 +23,24 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+/** Main activity of the application.
+ * @author juanvi
+ */
 public class FlightGearMap extends MapActivity {
-	private LinearLayout linearLayout;
+	/** Reference to the map view. */
 	private MapView mapView;
-	List<Overlay> mapOverlays;
-	Drawable planeIco;
-	PlaneMovementOverlay itemizedOverlay;
+	/** Reference to the available overlays. */
+	private List<Overlay> mapOverlays;
+	/** For some reason, if you want to create a marker you need to add it to a ItemizedOverlay. */
+	private PlaneMovementOverlay itemizedOverlay;
+	/** The port for UDP communications. */
 	private static final int PORT = 5501;
+	/** A string used for debugging. */
 	private static final String TAG = "FlightGear";
-	UDPReceiver udpReceiver = null;
-	
+	/** Reference to the UDP Thread. */
+	private UDPReceiver udpReceiver = null;
+	/** The wakelock to lock the screen and prevent sleeping. */
+	private PowerManager.WakeLock wakeLock;
 	
     /** Called when the activity is first created. */
     @Override
@@ -43,6 +51,21 @@ public class FlightGearMap extends MapActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main);
         
+        mapView = (MapView) findViewById(R.id.mapview);
+        mapView.setBuiltInZoomControls(true);
+        mapView.getController().setZoom(15);
+        
+        mapOverlays = mapView.getOverlays();
+        itemizedOverlay = new PlaneMovementOverlay(this.getResources().getDrawable(R.drawable.plane3), this);
+        mapOverlays.add(itemizedOverlay);
+    }
+    
+    @Override
+    protected void onStart() {
+    	super.onStart();
+        udpReceiver = (UDPReceiver) new UDPReceiver().execute(PORT);
+        
+        // Tries to read and show the IP address. Not always working!
         try{
 	        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 	        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -58,25 +81,12 @@ public class FlightGearMap extends MapActivity {
 				.setTitle(txt)
 				.setPositiveButton(android.R.string.ok, null).show();
         } catch (Exception e) {
-        	new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher)
-				.setTitle("Cannot determine IP Address: " + e.toString())
-				.setPositiveButton(android.R.string.ok, null).show();
+        	Toast.makeText(this, "Cannot get IP Address: " + e.toString(), Toast.LENGTH_LONG);
         }
         
-        mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setBuiltInZoomControls(true);
-        mapView.getController().setZoom(15);
-        
-        mapOverlays = mapView.getOverlays();
-        planeIco = this.getResources().getDrawable(R.drawable.plane);
-        itemizedOverlay = new PlaneMovementOverlay(planeIco, this);
-        mapOverlays.add(itemizedOverlay);
-    }
-    
-    @Override
-    protected void onStart() {
-    	super.onStart();
-        udpReceiver = (UDPReceiver) new UDPReceiver().execute(PORT);
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+        wakeLock.acquire();
     }
     
     @Override
@@ -86,12 +96,11 @@ public class FlightGearMap extends MapActivity {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
     	}
-    	finish();
+    	wakeLock.release();
     }
 
 	@Override
 	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -116,6 +125,7 @@ public class FlightGearMap extends MapActivity {
 					
 					PlaneData pd = new PlaneData();
 					pd.parse(new String(p.getData()));
+					// new data is managed as a "progressUpdate" event of the AsyncTask
 					this.publishProgress(pd);
 					
 				} catch (Exception e) {
@@ -126,15 +136,20 @@ public class FlightGearMap extends MapActivity {
 
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
+			// A new data arrived to the UDP listener
 			if (itemizedOverlay != null) {
+				// remove all markers (i.e, the last position of the plane)
 				itemizedOverlay.clear();
+				// and create a new marker in the new position
 				GeoPoint p = new GeoPoint((int)(values[0].getLatitude() * 1E6), (int)(values[0].getLongitude() * 1E6));
 				mapView.getController().setCenter(p);
 				OverlayItem i = new OverlayItem(p, "", "");
 				itemizedOverlay.addOverlay(i, values[0].getHeading());
 				
+				// update the panel
 				((SmallPanelView) findViewById(R.id.panel)).setPlaneData(values[0]);
 				
+				// redraw the views
 				mapView.invalidate();
 				findViewById(R.id.panel).invalidate();
 				

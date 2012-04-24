@@ -13,6 +13,11 @@ import android.graphics.drawable.Drawable;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.OverlayItem;
 
+/** For some reason, you need one of this if you put markers on a map.
+ * TODO: try to understand really what this class does
+ * @author juanvi
+ *
+ */
 public class PlaneMovementOverlay extends ItemizedOverlay<OverlayItem> {
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private Context context;
@@ -34,7 +39,7 @@ public class PlaneMovementOverlay extends ItemizedOverlay<OverlayItem> {
 	}
 	
 	public void addOverlay(OverlayItem overlay, float bearing) {
-		// remember: if yo do not call to boundCenter, the drawable is not shown.
+		// remember: if you do not call to boundCenter, the drawable is not shown.
 		// afaik, this is not documented!
 		overlay.setMarker(boundCenter(this.rotateDrawable(bearing)));
 	    mOverlays.add(overlay);
@@ -46,6 +51,9 @@ public class PlaneMovementOverlay extends ItemizedOverlay<OverlayItem> {
 		populate();
 	}
 	
+	/** param angle The angle of rotation
+	 * @return A rotated version of R.drawable.plane3
+	 */
 	public Drawable rotateDrawable(final float angle)	{
 		Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.plane3);
 		Matrix mat = new Matrix();

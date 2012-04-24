@@ -20,10 +20,11 @@ public class SmallPanelView extends View {
 	private static final String TAG = "SmallPanelView";
 	/** Plane data. */
 	private PlaneData lastPlaneData = new PlaneData();
-	
+	/** The available instruments. */
 	private ArrayList<Instrument> instruments;
-	
+	/** Number of columns in the panel. */
 	private int cols;
+	/** Number of rows in the panel. */
 	private int rows;
 	
 	/* Constructors */
@@ -36,6 +37,8 @@ public class SmallPanelView extends View {
 		instruments = new ArrayList<Instrument>();
 		
 		// check if the widget description included the "vertical" attribute
+		// Vertical is a panel 2x3, and it is used in large screens.
+		// if not vertical, a panel 6x1 is used. Useful for small screens.
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SmallPanelView);
 		boolean vertical = true;
 		for(int i = 0; i < a.getIndexCount(); i++) {
@@ -78,10 +81,11 @@ public class SmallPanelView extends View {
 
 
 	/** Rescale bitmaps.
-	 * Call after a new size is detected, and at the begining of the execution.
+	 * Call after a new size is detected and at the beginning of the execution.
 	 */
 	private void rescaleInstruments() {
 		if (getWidth() > 0) {
+			// scale to match the available size. All instrumewnts should be visible.
 			scale = Math.min(1.0f * getWidth() / (cols * 2 * Instrument.SEMICLOCKSIZE), 1.0f * getHeight() / (rows * 2 * Instrument.SEMICLOCKSIZE));
 			for(Instrument i: instruments) {
 				i.setScale(scale);
@@ -108,6 +112,5 @@ public class SmallPanelView extends View {
 		for(Instrument i: instruments) {
 			i.onDraw(canvas, lastPlaneData);
 		}
-
 	}
 }

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+ <generic>
+
+  <output>
+   <line_separator>newline</line_separator>
+   <var_separator>:</var_separator>
+
+   <chunk>
+    <name>speed</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/airspeed-indicator/indicated-speed-kt</node>
+   </chunk>
+
+   <chunk>
+    <name>Engine 0 rpm</name>
+    <format>%d</format>
+    <node>/engines/engine[0]/rpm</node>
+   </chunk>
+
+   <chunk>
+    <name>heading</name>
+    <format>%03d</format>
+    <node>/orientation/heading-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>altitude</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/altimeter/indicated-altitude-ft</node>
+   </chunk>
+
+   <chunk>
+    <name>rate of climb</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/vertical-speed-indicator/indicated-speed-fpm</node>
+   </chunk>
+
+   <chunk>
+    <name>pitch angle</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/attitude-indicator/indicated-pitch-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>Roll angle</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/attitude-indicator/indicated-roll-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>latitude</name>
+    <type>float</type>
+    <format>%.10f</format>
+    <node>/position/latitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>longitude</name>
+    <type>float</type>
+    <format>%.10f</format>
+    <node>/position/longitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>time (seconds from midnight, GMT)</name>
+    <format>%d</format>
+    <node>/instrumentation/clock/indicated-sec</node>
+   </chunk>
+
+   <chunk>
+    <name>Turn rate</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/turn-indicator/indicated-turn-rate</node>
+   </chunk>
+
+   <chunk>
+    <name>Slip skid</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/slip-skid-ball/indicated-slip-skid</node>
+   </chunk>
+ 
+ </output>
+
+ </generic>
+
+</PropertyList>

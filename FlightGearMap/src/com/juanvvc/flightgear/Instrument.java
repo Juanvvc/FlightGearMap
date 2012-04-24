@@ -9,36 +9,72 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
+/** A generic instrument.
+ * This class manages the list of resources that instruments need, and
+ * specifically two generic hands, and takes care of scaling images.
+ * @author juanvi
+ */
 public abstract class Instrument {
+	/** Position of the instrument in the canvas. Unscaled. */
 	float x;
+	/** Position of the instrument in the canvas. Unscaled. */
 	float y;
+	/** Scale all positions with this value! */
 	float scale;
+	/** The context of the application. */
 	Context context;
+	/** Name of the images to load. Use names in the AssetManager.
+	 * Two names are automatically added in the constructor: hand1 and hand2,
+	 * and they are at positions 0 and 1.
+	 * Then, your fist image will be at position 2,  your second
+	 * image at position 3 and so on.
+	 */
 	ArrayList<String> imgFiles;
+	/** The unscaled Bitmaps of your instruments. */
 	ArrayList<Bitmap> imgs;
+	/** The scaled bitmaps of your instruments. */
 	ArrayList<Bitmap> imgsScaled;
 	
+	/** We know that instruments are squares 512x512.
+	 * This is a convenience constant: for me, it is more
+	 * confortable to think in "half size" instruments.
+	 */
 	public static final int SEMICLOCKSIZE = 256;
-	public static final int ARROW_CENTERX = 20;
-	public static final int ARROW_CENTERY = 200;
-	static final int ARROW1 = 0;
-	static final int ARROW2 = 1;
-	
+	/** Hands are vertical bitmaps and the axis is at HAND_CENTERX, HAND_CENTERY. */
+	public static final int HAND_CENTERX = 20;
+	/** Hands are vertical bitmaps and the axis is at HAND_CENTERX, HAND_CENTERY. */
+	public static final int HAND_CENTERY = 200;
+	/** Position of the large hand in the internal ArrayLists. */
+	static final int HAND1 = 0;
+	/** Position of the small hand in the internal ArrayLists. */
+	static final int HAND2 = 1;
+	/** If true, the instrument is ready to be drawn.
+	 * An instrument is ready when its bitmaps are loaded.
+	 */
 	boolean ready = false;
 	
+	/** Constructor. Call this constructor always from your extended classes!
+	 * @param x The x position of the instrument
+	 * @param y The y position of the instrument
+	 * @param c A reference to the context of the application
+	 */
 	public Instrument(float x, float y, Context c) {
 		this.x = x;
 		this.y = y;
 		context = c;
-		scale = 1;
+		scale = 1; // we begin unscaled
 		imgFiles = new ArrayList<String>();
 		imgs = new ArrayList<Bitmap>();
 		imgsScaled = new ArrayList<Bitmap>();
-		imgFiles.add("arrow1.png");
-		imgFiles.add("arrow2.png");
+		// automatically added
+		imgFiles.add("hand1.png");
+		imgFiles.add("hand2.png");
 		ready = false;
 	}
 	
+	/** Loads the images in imgFiles.
+	 * @throws Exception If the images cannot be loaded.
+	 */
 	public void loadImages() throws Exception {
 		AssetManager mng = context.getAssets();
 		for(String f: this.imgFiles) {
@@ -49,6 +85,9 @@ public abstract class Instrument {
 		ready = true;
 	}
 	
+	/** Sets the scale of the instrument to fill the screen.
+	 * @param s The scale of the instrument. 1=original size (sides of 2xSEMICLOCKSIZE)
+	 */
 	public void setScale(float s) {
 		scale = s;
 		Matrix matrix = new Matrix();
@@ -62,12 +101,19 @@ public abstract class Instrument {
 		}
 	}
 	
+	/** Draw the instrument on the canvas.
+	 * 
+	 * @param c The current Canvas
+	 * @param pd The current value of the plane information
+	 */
 	public abstract void onDraw(Canvas c, PlaneData pd);
 }
 
 class Altimeter extends Instrument {
 	public Altimeter(float x, float y, Context c) {
 		super(x, y, c);
+		// load the background of the altimeter, in addition to the hands
+		// remember: the background is gong to be at position 2
 		this.imgFiles.add("alt1.png");
 	}
 
@@ -78,18 +124,19 @@ class Altimeter extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(x * scale, y * scale);
+		// remember: the background is gong to be at position 2, since hands are at 0 and 1
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 
 		double alt2Angle = ((pd.getAltitude() / 1000) * 360 / 10);
 		matrix.reset();
-		matrix.postTranslate((x + SEMICLOCKSIZE - ARROW_CENTERX) * scale, (y + SEMICLOCKSIZE - ARROW_CENTERY) * scale);
+		matrix.postTranslate((x + SEMICLOCKSIZE - HAND_CENTERX) * scale, (y + SEMICLOCKSIZE - HAND_CENTERY) * scale);
 		matrix.postRotate((float) alt2Angle, (x + SEMICLOCKSIZE ) * scale, (y + SEMICLOCKSIZE) * scale);
-		c.drawBitmap(imgsScaled.get(ARROW2), matrix, null);
+		c.drawBitmap(imgsScaled.get(HAND2), matrix, null);
 		double alt1Angle = ((pd.getAltitude() % 1000) * 360 / 1000);
 		matrix.reset();
-		matrix.postTranslate((x + SEMICLOCKSIZE - ARROW_CENTERX) * scale, (y + SEMICLOCKSIZE - ARROW_CENTERY) * scale);
+		matrix.postTranslate((x + SEMICLOCKSIZE - HAND_CENTERX) * scale, (y + SEMICLOCKSIZE - HAND_CENTERY) * scale);
 		matrix.postRotate((float) alt1Angle, (x + SEMICLOCKSIZE ) * scale, (y + SEMICLOCKSIZE) * scale);
-		c.drawBitmap(imgsScaled.get(ARROW1), matrix, null);			
+		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);			
 	}
 }
 
@@ -157,9 +204,9 @@ class Speed extends Instrument {
 			speedAngle = 330;
 		}
 		matrix.reset();
-		matrix.postTranslate((x + SEMICLOCKSIZE - ARROW_CENTERX) * scale, (y + SEMICLOCKSIZE - ARROW_CENTERY) * scale);
+		matrix.postTranslate((x + SEMICLOCKSIZE - HAND_CENTERX) * scale, (y + SEMICLOCKSIZE - HAND_CENTERY) * scale);
 		matrix.postRotate((float) speedAngle, (x + SEMICLOCKSIZE) * scale, (y + SEMICLOCKSIZE) * scale);
-		c.drawBitmap(imgsScaled.get(ARROW1), matrix, null);
+		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
 
@@ -178,11 +225,11 @@ class RPM extends Instrument {
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		// rpm
-		double rpmAngle = ((pd.getRPM() / 100) * ARROW_CENTERY / 25) - (35 * 90) / 25;
+		double rpmAngle = ((pd.getRPM() / 100) * HAND_CENTERY / 25) - (35 * 90) / 25;
 		matrix.reset();
-		matrix.postTranslate((x + SEMICLOCKSIZE - ARROW_CENTERX) * scale, (y + SEMICLOCKSIZE - ARROW_CENTERY) * scale);
+		matrix.postTranslate((x + SEMICLOCKSIZE - HAND_CENTERX) * scale, (y + SEMICLOCKSIZE - HAND_CENTERY) * scale);
 		matrix.postRotate((float) rpmAngle, (x + SEMICLOCKSIZE) * scale, (y + SEMICLOCKSIZE) * scale);
-		c.drawBitmap(imgsScaled.get(ARROW1), matrix, null);
+		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
 
@@ -203,9 +250,9 @@ class ClimbRate extends Instrument {
 		// climb speed
 		double climbAngle = (pd.getRate() * 180 / 2000) - 90;
 		matrix.reset();
-		matrix.postTranslate((x + SEMICLOCKSIZE - ARROW_CENTERX) * scale, (y + SEMICLOCKSIZE - ARROW_CENTERY) * scale);
+		matrix.postTranslate((x + SEMICLOCKSIZE - HAND_CENTERX) * scale, (y + SEMICLOCKSIZE - HAND_CENTERY) * scale);
 		matrix.postRotate((float) climbAngle, (x + SEMICLOCKSIZE) * scale, (y + SEMICLOCKSIZE) * scale);
-		c.drawBitmap(imgsScaled.get(ARROW1), matrix, null);
+		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
 
