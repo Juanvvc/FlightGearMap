@@ -46,7 +46,7 @@ public class FlightGearMap extends MapActivity {
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
-	private PowerManager.WakeLock wakeLock = null;
+//	private PowerManager.WakeLock wakeLock = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -100,12 +100,12 @@ public class FlightGearMap extends MapActivity {
         	Toast.makeText(this, "Cannot get IP Address: " + e.toString(), Toast.LENGTH_LONG);
         }
 
-        if (wakeLock != null) {
-        	wakeLock.release();
-        }
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
-        wakeLock.acquire();
+//        if (wakeLock != null && wakeLock.isHeld()) {
+//        	wakeLock.release();
+//        }
+//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+//        wakeLock.acquire();
     }
     
     @Override
@@ -115,9 +115,9 @@ public class FlightGearMap extends MapActivity {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
     	}
-    	if (wakeLock != null) {
-    		wakeLock.release();
-    	}
+//    	if (wakeLock != null && wakeLock.isHeld()) {
+//    		wakeLock.release();
+//    	}
     }
     
     @Override
@@ -128,9 +128,9 @@ public class FlightGearMap extends MapActivity {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
     	}
-    	if (wakeLock != null) {
-    		wakeLock.release();
-    	}
+//    	if (wakeLock != null && wakeLock.isHeld()) {
+//    		wakeLock.release();
+//    	}
     }
 
 	@Override
