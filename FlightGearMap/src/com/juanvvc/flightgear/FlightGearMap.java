@@ -7,7 +7,6 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -46,11 +45,12 @@ public class FlightGearMap extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.main);
         
+        setContentView(R.layout.map_simplepanel);
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         mapView.getController().setZoom(15);
@@ -70,16 +70,23 @@ public class FlightGearMap extends MapActivity {
 	        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 	        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 	        int ipAddress = wifiInfo.getIpAddress();
-	        String readableIP = String.format("%d.%d.%d.%d",
-	        		(ipAddress & 0xff),
-	        		(ipAddress >> 8 & 0xff),
-	        		(ipAddress >> 16 & 0xff),
-	        		(ipAddress >> 24 & 0xff));
 	        
-	        String txt = "--generic=socket,out,5," + readableIP + "," + PORT + ",udp,andatlas";
-			new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher)
-				.setTitle(txt)
-				.setPositiveButton(android.R.string.ok, null).show();
+	        if (ipAddress == 0) {
+	        	new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher)
+					.setTitle(R.string.network_not_detected)
+					.setPositiveButton(android.R.string.ok, null).show();
+	        } else {
+		        String readableIP = String.format("%d.%d.%d.%d",
+		        		(ipAddress & 0xff),
+		        		(ipAddress >> 8 & 0xff),
+		        		(ipAddress >> 16 & 0xff),
+		        		(ipAddress >> 24 & 0xff));
+		        
+		        String txt = "--generic=socket,out,5," + readableIP + "," + PORT + ",udp,andatlas";
+				new AlertDialog.Builder(this).setIcon(R.drawable.ic_launcher)
+					.setTitle(txt)
+					.setPositiveButton(android.R.string.ok, null).show();
+	        }
         } catch (Exception e) {
         	Toast.makeText(this, "Cannot get IP Address: " + e.toString(), Toast.LENGTH_LONG);
         }
@@ -103,6 +110,32 @@ public class FlightGearMap extends MapActivity {
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
+//	
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//	    MenuInflater inflater = getMenuInflater();
+//	    inflater.inflate(R.menu.available_distributions, menu);
+//	    return true;
+//	}
+//	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//	    // Handle item selection
+//		((ViewGroup) findViewById(R.id.root)).removeAllViews();
+//	    switch (item.getItemId()) {
+//	        case R.id.map_simplepanel:
+//	            this.setContentView(R.layout.map_simplepanel);
+//	            return true;
+//	        case R.id.only_map:
+//	        	this.setContentView(R.layout.only_map);
+//	            return true;
+//	        case R.id.only_simplepanel:
+//	        	this.setContentView(R.layout.only_simplepanel);
+//	        	return true;
+//	        default:
+//	            return super.onOptionsItemSelected(item);
+//	    }
+//	}
 
 	/** An AsyncTask to receive data from a remote UDP server. */
 	private class UDPReceiver extends AsyncTask<Integer, PlaneData, String> {
@@ -147,7 +180,7 @@ public class FlightGearMap extends MapActivity {
 				itemizedOverlay.addOverlay(i, values[0].getHeading());
 				
 				// update the panel
-				((SmallPanelView) findViewById(R.id.panel)).setPlaneData(values[0]);
+				((PanelView) findViewById(R.id.panel)).setPlaneData(values[0]);
 				
 				// redraw the views
 				mapView.invalidate();

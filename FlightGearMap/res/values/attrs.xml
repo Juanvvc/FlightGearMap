@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SmallPanelView">
-        <attr name="vertical" format="boolean"/>
+    <declare-styleable name="PanelView">
+        <attr name="imgset" format="string"/>
+        <attr name="distribution" format="integer"/>
     </declare-styleable>
 </resources>

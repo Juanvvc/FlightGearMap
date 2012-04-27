@@ -4,22 +4,23 @@
     xmlns:custom="http://schemas.android.com/apk/res/com.juanvvc.flightgear"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:keepScreenOn="true"
-    >
+    android:id="@+id/root" >
     <com.google.android.maps.MapView
         android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
         android:apiKey="06uaFtXeb3CKS16TlHyWwsJRgWiOFWD7JFUh0Kg"
         android:clickable="true"
-        android:layout_weight="70" />
-    <com.juanvvc.flightgear.SmallPanelView
+        android:layout_weight="60" />
+    <com.juanvvc.flightgear.PanelView
         android:id="@+id/panel"
-        android:layout_weight="30"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
+        android:layout_weight="40"
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
         android:background="@drawable/panel_back"
-        custom:vertical="false"
+        custom:imgset="medium"
+        custom:distribution="0"
         />
 </LinearLayout>
