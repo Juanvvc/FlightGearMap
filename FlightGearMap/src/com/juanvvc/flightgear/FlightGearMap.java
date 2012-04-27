@@ -7,11 +7,16 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -28,6 +33,8 @@ import com.google.android.maps.OverlayItem;
 public class FlightGearMap extends MapActivity {
 	/** Reference to the map view. */
 	private MapView mapView;
+	/** Reference to the panel view. */
+	private PanelView panelView;
 	/** Reference to the available overlays. */
 	private List<Overlay> mapOverlays;
 	/** For some reason, if you want to create a marker you need to add it to a ItemizedOverlay. */
@@ -39,14 +46,14 @@ public class FlightGearMap extends MapActivity {
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
-	private PowerManager.WakeLock wakeLock;
+	private PowerManager.WakeLock wakeLock = null;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
@@ -58,10 +65,12 @@ public class FlightGearMap extends MapActivity {
         mapOverlays = mapView.getOverlays();
         itemizedOverlay = new PlaneMovementOverlay(this.getResources().getDrawable(R.drawable.plane3), this);
         mapOverlays.add(itemizedOverlay);
+        
+        panelView = (PanelView) findViewById(R.id.panel);
     }
     
     @Override
-    protected void onStart() {
+    protected void onResume() {
     	super.onStart();
         udpReceiver = (UDPReceiver) new UDPReceiver().execute(PORT);
         
@@ -90,52 +99,73 @@ public class FlightGearMap extends MapActivity {
         } catch (Exception e) {
         	Toast.makeText(this, "Cannot get IP Address: " + e.toString(), Toast.LENGTH_LONG);
         }
-        
+
+        if (wakeLock != null) {
+        	wakeLock.release();
+        }
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
         wakeLock.acquire();
     }
     
     @Override
-    protected void onStop() {
-    	super.onStop();
+    protected void onPause() {
+    	super.onPause();
     	if (udpReceiver != null) {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
     	}
-    	wakeLock.release();
+    	if (wakeLock != null) {
+    		wakeLock.release();
+    	}
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	// one last paranoic test.
+    	if (udpReceiver != null) {
+    		udpReceiver.cancel(true);
+    		udpReceiver = null;
+    	}
+    	if (wakeLock != null) {
+    		wakeLock.release();
+    	}
     }
 
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
-//	
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//	    MenuInflater inflater = getMenuInflater();
-//	    inflater.inflate(R.menu.available_distributions, menu);
-//	    return true;
-//	}
-//	
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//	    // Handle item selection
-//		((ViewGroup) findViewById(R.id.root)).removeAllViews();
-//	    switch (item.getItemId()) {
-//	        case R.id.map_simplepanel:
-//	            this.setContentView(R.layout.map_simplepanel);
-//	            return true;
-//	        case R.id.only_map:
-//	        	this.setContentView(R.layout.only_map);
-//	            return true;
-//	        case R.id.only_simplepanel:
-//	        	this.setContentView(R.layout.only_simplepanel);
-//	        	return true;
-//	        default:
-//	            return super.onOptionsItemSelected(item);
-//	    }
-//	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.available_distributions, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.map_simplepanel:
+	        	panelView.setVisibility(View.VISIBLE);
+	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_VERTICAL_PANEL);
+	        	mapView.setVisibility(View.VISIBLE);
+	            return true;
+	        case R.id.only_map:
+	        	panelView.setVisibility(View.GONE);
+	        	mapView.setVisibility(View.VISIBLE);
+	            return true;
+	        case R.id.only_simplepanel:
+	        	panelView.setVisibility(View.GONE);
+	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_HORIZONTAL_PANEL);
+	        	mapView.setVisibility(View.VISIBLE);
+	        	return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
 	/** An AsyncTask to receive data from a remote UDP server. */
 	private class UDPReceiver extends AsyncTask<Integer, PlaneData, String> {
@@ -146,6 +176,7 @@ public class FlightGearMap extends MapActivity {
 			try {
 				socket = new DatagramSocket(params[0]);
 			} catch (SocketException e) {
+				myLog.e(TAG, e.toString());
 				return e.toString();
 			}
 			
@@ -180,7 +211,7 @@ public class FlightGearMap extends MapActivity {
 				itemizedOverlay.addOverlay(i, values[0].getHeading());
 				
 				// update the panel
-				((PanelView) findViewById(R.id.panel)).setPlaneData(values[0]);
+				panelView.setPlaneData(values[0]);
 				
 				// redraw the views
 				mapView.invalidate();

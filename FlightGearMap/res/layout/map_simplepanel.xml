@@ -6,15 +6,23 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:keepScreenOn="true"
-    android:id="@+id/root"
-    >
-    <com.google.android.maps.MapView
+    android:id="@+id/root" >
+    <!--  Debug -->
+    <!--  com.google.android.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:apiKey="06uaFtXeb3CKS16TlHyWwsJRgWiOFWD7JFUh0Kg"
         android:clickable="true"
-        android:layout_weight="70" />
+        android:layout_weight="70" / -->
+     <!--  Release -->
+     <com.google.android.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:apiKey="06uaFtXeb3CKo5nwCCQXxrL6hQbB-PyucBmNLJw"
+        android:clickable="true"
+        android:layout_weight="70" />   
     <com.juanvvc.flightgear.PanelView
         android:id="@+id/panel"
         android:layout_weight="30"
@@ -22,6 +30,6 @@
         android:layout_height="0dip"
         android:background="@drawable/panel_back"
         custom:imgset="low"
-        custom:distribution="2"
+        custom:distribution="1"
         />
 </LinearLayout>

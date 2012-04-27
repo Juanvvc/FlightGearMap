@@ -103,31 +103,31 @@ public class PanelView extends View {
 			cols = 2;
 			rows = 3;
 			instruments.add(new Attitude(0, 0, context));
-			instruments.add(new TurnSlip(2, 0, context));
-			instruments.add(new Speed(0, 2, context));
-			instruments.add(new RPM(2, 2, context));
-			instruments.add(new Altimeter(0, 4, context));
-			instruments.add(new ClimbRate(2, 4, context));
+			instruments.add(new TurnSlip(1, 0, context));
+			instruments.add(new Speed(0, 1, context));
+			instruments.add(new RPM(1, 1, context));
+			instruments.add(new Altimeter(0, 2, context));
+			instruments.add(new ClimbRate(1, 2, context));
 			break;
 		case Distribution.SIMPLE_HORIZONTAL_PANEL:
 			cols = 4;
 			rows = 2;
-			instruments.add(new RPM(1, 0, context));
-			instruments.add(new Attitude(3, 0, context));
-			instruments.add(new TurnSlip(5, 0, context));
-			instruments.add(new Speed(1, 2, context));
-			instruments.add(new Altimeter(3, 2, context));
-			instruments.add(new ClimbRate(5, 2, context));
+			instruments.add(new RPM(0.5f, 0, context));
+			instruments.add(new Attitude(1.5f, 0, context));
+			instruments.add(new TurnSlip(2.5f, 0, context));
+			instruments.add(new Speed(0.5f, 1, context));
+			instruments.add(new Altimeter(1.5f, 1, context));
+			instruments.add(new ClimbRate(2.5f, 1, context));
 			break;
 		case Distribution.HORIZONTAL_PANEL:
 			cols = 6;
 			rows = 1;
 			instruments.add(new Attitude(0, 0, context));
-			instruments.add(new TurnSlip(2, 0, context));
-			instruments.add(new Speed(4, 0, context));
-			instruments.add(new RPM(6, 0, context));
-			instruments.add(new Altimeter(8, 0, context));
-			instruments.add(new ClimbRate(10, 0, context));
+			instruments.add(new TurnSlip(1, 0, context));
+			instruments.add(new Speed(2, 0, context));
+			instruments.add(new RPM(3, 0, context));
+			instruments.add(new Altimeter(4, 0, context));
+			instruments.add(new ClimbRate(5, 0, context));
 		default: // this includes Distribution.NO_MAP
 		}
 	}
@@ -141,10 +141,8 @@ public class PanelView extends View {
 			// scale to match the available size. All instrumewnts should be
 			// visible.
 			scale = Math.min(
-					1.0f * getWidth()
-							/ (cols * 2 * Instrument.getSemiClockSize()),
-					1.0f * getHeight()
-							/ (rows * 2 * Instrument.getSemiClockSize()));
+					1.0f * getWidth() / (cols * Instrument.getGridSize()),
+					1.0f * getHeight()/ (rows * Instrument.getGridSize()));
 
 			// prevent spurious scales
 			// if (Math.abs(scale - 1) < 0.1) {

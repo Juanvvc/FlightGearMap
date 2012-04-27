@@ -36,11 +36,11 @@ public abstract class Instrument {
 	/** The scaled bitmaps of your instruments. */
 	ArrayList<Bitmap> imgsScaled;
 	
-	/** We know that instruments are squares of semiClockSizexsemiClockSize
+	/** The grid are squares of gridSize x gridSize
 	 * This is a convenience constant: for me, it is more
 	 * comfortable to think in "half size" instruments.
 	 */
-	static int semiClockSize = 256;
+	static int gridSize = 256;
 	/** Position of the large hand in the internal ArrayLists. */
 	static final int HAND1 = 0;
 	/** Position of the small hand in the internal ArrayLists. */
@@ -77,13 +77,13 @@ public abstract class Instrument {
 		
 		// we know that size of the images checking the dir name. This is magic
 		if (dir.equals("medium")) {
-			setSemiClockSize(128); // medium are clocks of 256x256
+			setGridSize(256); // medium are images of 256x256
 		} else if (dir.equals("high")) {
 			// TODO: these bitmaps are not included in the current version to save space
 			// you can find them in assets.high.zip
-			setSemiClockSize(256); //high are clocks of 512x512 
+			setGridSize(512); //high are images of 512x512 
 		} else {
-			setSemiClockSize(64); // low are clocks of 128x128
+			setGridSize(128); // low are images of 128x128
 		}
 		
 		for(String f: this.imgFiles) {
@@ -95,7 +95,7 @@ public abstract class Instrument {
 	}
 	
 	/** Sets the scale of the instrument to fill the screen.
-	 * @param s The scale of the instrument. 1=original size (sides of 2xsemiClockSize)
+	 * @param s The scale of the instrument. 1=original size
 	 */
 	public void setScale(float s) {
 		scale = s;
@@ -133,30 +133,30 @@ public abstract class Instrument {
 		}
 	}
 
-	/** @return The size of a semiclock, according to the available bitmaps.
-	 * The size of a semiclock is the final size of a full column/row in pixels.
+	/** @return The size of a unit in the grid, according to the available bitmaps.
+	 * The size of a clock is the final size of a full column/row in pixels.
 	 */
-	public static int getSemiClockSize() {
-		return semiClockSize;
+	public static int getGridSize() {
+		return gridSize;
 	}
 	
 	/** @param s
-	 * 		The size of a semiclock, according to the available bitmaps.
+	 * 		The size of a grid unit, according to the available bitmaps.
 	 */
-	private static void setSemiClockSize(int s) {
-		semiClockSize = s;
+	private static void setGridSize(int s) {
+		gridSize = s;
 	}
 	
 	/** @return The horizontal center of the default hand. */
 	public int getHandCenterX() {
 		// the center of the handle is 20x200 in the bitmaps of size 512
-		return 20 * semiClockSize / 256;
+		return 20 * gridSize / 512;
 	}
 	
 	/** @return The vertical center of the default hand. */
 	public int getHandCenterY() {
 		// the center of the handle is 20x200 in the bitmaps of size 512
-		return 200 * semiClockSize / 256;
+		return 200 * gridSize / 512;
 	}
 }
 
@@ -174,19 +174,19 @@ class Altimeter extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		// remember: the background is gong to be at position 2, since hands are at 0 and 1
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 
 		double alt2Angle = ((pd.getAltitude() / 1000) * 360 / 10);
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - getHandCenterX()) * scale, ((1 + row) * semiClockSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) alt2Angle, ( (1 + col) * semiClockSize ) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
+		matrix.postRotate((float) alt2Angle, ( (0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(HAND2), matrix, null);
 		double alt1Angle = ((pd.getAltitude() % 1000) * 360 / 1000);
 		matrix.reset();
-		matrix.postTranslate(( (1 + col) * semiClockSize - getHandCenterX()) * scale, ((1 + row) * semiClockSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) alt1Angle, ((1 + col) * semiClockSize ) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(( (0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
+		matrix.postRotate((float) alt1Angle, ((0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);			
 	}
 }
@@ -205,7 +205,7 @@ class Attitude extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		Bitmap ati1 = imgs.get(3);
@@ -216,18 +216,18 @@ class Attitude extends Instrument {
 		
 		// draw pitch
 		matrix.reset();
-		// translate 23 pixels each 5 degrees
-		matrix.postTranslate(((1 + col) * semiClockSize - ati1.getWidth() / 2) * scale, ( (1 + row) * semiClockSize - ati1.getHeight() / 2 + pd.getPitch() / 5 * 23) * scale);
-		matrix.postRotate(-pd.getRoll(), ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		// translate 23 /  pixels each 5 degrees
+		matrix.postTranslate(((0.5f + col) * gridSize - ati1.getWidth() / 2) * scale, ( (0.5f + row) * gridSize - ati1.getHeight() / 2 + pd.getPitch() * (23 * gridSize/ 512) / 5) * scale);
+		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati1Scaled, matrix, null);
 		// draw roll
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - ati2.getWidth() / 2) * scale, ((1 + row) * semiClockSize - ati2.getHeight() / 2) * scale);
-		matrix.postRotate(-pd.getRoll(), ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - ati2.getWidth() / 2) * scale, ((0.5f + row) * gridSize - ati2.getHeight() / 2) * scale);
+		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati2Scaled, matrix, null);
 		
 		matrix.reset();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(5), matrix, null);
 	}
 }
@@ -243,7 +243,7 @@ class Speed extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		// climb speed
@@ -255,8 +255,8 @@ class Speed extends Instrument {
 			speedAngle = 330;
 		}
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - getHandCenterX()) * scale, ((1 + row) * semiClockSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) speedAngle, ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
+		matrix.postRotate((float) speedAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
@@ -272,14 +272,15 @@ class RPM extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		// rpm
-		double rpmAngle = ((pd.getRPM() / 100) * getHandCenterY() / 25) - (35 * 90) / 25;
+		// 500 = -90º, 3000 = 90º
+		double rpmAngle = (pd.getRPM() - 500d) * 180 / 2500 - 90;
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - getHandCenterX()) * scale, ((1 + row) * semiClockSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) rpmAngle, ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
+		matrix.postRotate((float) rpmAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
@@ -295,14 +296,14 @@ class ClimbRate extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		// climb speed
 		double climbAngle = (pd.getRate() * 180 / 2000) - 90;
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - getHandCenterX()) * scale, ((1 + row) * semiClockSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) climbAngle, ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
+		matrix.postRotate((float) climbAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
 	}
 }
@@ -321,7 +322,7 @@ class TurnSlip extends Instrument {
 			return;
 		}
 		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 		
 		Bitmap slip = imgs.get(4);
@@ -330,11 +331,11 @@ class TurnSlip extends Instrument {
 		// draw slip skid
 		matrix.reset();
 		// (0.7*SEMICLOSEWIDTH is calibrated with on screen instruments with FG sim)
-		matrix.setTranslate(((1 + col - 0.7f * pd.getSlipSkid()) * semiClockSize - slip.getWidth() / 2 ) * scale, ((row + 1.3f) * semiClockSize - slip.getHeight() / 2) * scale);
+		matrix.setTranslate(((0.5f + col - 0.7f * pd.getSlipSkid()) * gridSize - slip.getWidth() / 2 ) * scale, ((row + 0.65f) * gridSize - slip.getHeight() / 2) * scale);
 		c.drawBitmap(slipScaled, matrix, null);
 		
 		matrix.reset();
-		matrix.setTranslate(col * semiClockSize * scale, row * semiClockSize * scale);
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(3), matrix, null);
 		
 		Bitmap turn = imgs.get(5);
@@ -344,8 +345,8 @@ class TurnSlip extends Instrument {
 		// 20º means a turn rate = 1 turn each 2 minuts
 		double turnAngle = (pd.getTurnRate() * 20);
 		matrix.reset();
-		matrix.postTranslate(((1 + col) * semiClockSize - turn.getWidth() / 2) * scale, ((1 + row) * semiClockSize - turn.getHeight() / 2) * scale);
-		matrix.postRotate((float) turnAngle, ((1 + col) * semiClockSize) * scale, ((1 + row) * semiClockSize) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize - turn.getWidth() / 2) * scale, ((0.5f + row) * gridSize - turn.getHeight() / 2) * scale);
+		matrix.postRotate((float) turnAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(turnScaled, matrix, null);
 	}
 }
