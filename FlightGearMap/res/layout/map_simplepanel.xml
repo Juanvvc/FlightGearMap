@@ -7,20 +7,10 @@
     android:orientation="vertical"
     android:keepScreenOn="true"
     android:id="@+id/root" >
-    <!--  Debug -->
-    <!--  com.google.android.maps.MapView
+    <org.osmdroid.views.MapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:apiKey="06uaFtXeb3CKS16TlHyWwsJRgWiOFWD7JFUh0Kg"
-        android:clickable="true"
-        android:layout_weight="70" / -->
-     <!--  Release -->
-     <com.google.android.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:apiKey="06uaFtXeb3CKo5nwCCQXxrL6hQbB-PyucBmNLJw"
         android:clickable="true"
         android:layout_weight="70" />   
     <com.juanvvc.flightgear.PanelView

@@ -5,14 +5,18 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.List;
 
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
+
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,24 +25,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
+// TODO: make tile source configurable
+// TODO: make port configurable
+// TODO: remember zoom level
 
 /** Main activity of the application.
  * @author juanvi
  */
-public class FlightGearMap extends MapActivity {
+public class FlightGearMap extends Activity {
 	/** Reference to the map view. */
 	private MapView mapView;
 	/** Reference to the panel view. */
 	private PanelView panelView;
 	/** Reference to the available overlays. */
-	private List<Overlay> mapOverlays;
-	/** For some reason, if you want to create a marker you need to add it to a ItemizedOverlay. */
-	private PlaneMovementOverlay itemizedOverlay;
+	private PlaneOverlay planeOverlay;
 	/** The port for UDP communications. */
 	private static final int PORT = 5501;
 	/** A string used for debugging. */
@@ -61,10 +61,10 @@ public class FlightGearMap extends MapActivity {
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         mapView.getController().setZoom(15);
+        mapView.setTileSource(TileSourceFactory.CYCLEMAP);
         
-        mapOverlays = mapView.getOverlays();
-        itemizedOverlay = new PlaneMovementOverlay(this.getResources().getDrawable(R.drawable.plane3), this);
-        mapOverlays.add(itemizedOverlay);
+        planeOverlay = new PlaneOverlay(this);
+        mapView.getOverlays().add(planeOverlay);
         
         panelView = (PanelView) findViewById(R.id.panel);
     }
@@ -123,7 +123,7 @@ public class FlightGearMap extends MapActivity {
     @Override
     protected void onDestroy() {
     	super.onDestroy();
-    	// one last paranoic test.
+    	// one last paranoid test.
     	if (udpReceiver != null) {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
@@ -133,11 +133,6 @@ public class FlightGearMap extends MapActivity {
 //    	}
     }
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
@@ -182,7 +177,7 @@ public class FlightGearMap extends MapActivity {
 			
 			byte[] buf = new byte[255];
 			
-			while(true) {
+			while(!isCancelled()) {
 				DatagramPacket p = new DatagramPacket(buf, buf.length);
 				try {
 					socket.receive(p);
@@ -196,22 +191,21 @@ public class FlightGearMap extends MapActivity {
 					myLog.w(TAG, e.toString());
 				}
 			}
+			
+			return null;
 		}
 
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			// A new data arrived to the UDP listener
-			if (itemizedOverlay != null) {
-				// remove all markers (i.e, the last position of the plane)
-				itemizedOverlay.clear();
-				// and create a new marker in the new position
+			if (planeOverlay != null) {
+				// move the overlay to the new position
 				GeoPoint p = new GeoPoint((int)(values[0].getLatitude() * 1E6), (int)(values[0].getLongitude() * 1E6));
 				mapView.getController().setCenter(p);
-				OverlayItem i = new OverlayItem(p, "", "");
-				itemizedOverlay.addOverlay(i, values[0].getHeading());
 				
-				// update the panel
+				// update the panel and overlay
 				panelView.setPlaneData(values[0]);
+				planeOverlay.setPlaneData(values[0], p);
 				
 				// redraw the views
 				mapView.invalidate();
