@@ -3,9 +3,13 @@
 
     <string name="hello">Hello World, FlightGearMap!</string>
     <string name="app_name">FlightGearMap</string>
-    <string name="network_not_detected">No network connection detected.</string>
+    <string name="network_not_detected">No wifi connection detected.</string>
+    <string name="critical_error">The application can\'t continue. Please, restart.</string>
     <string name="map_simplepanel">Map &amp; simple panel</string>
     <string name="only_simplepanel">Only simple panel</string>
     <string name="only_map">Only map</string>
-
+    <string name="run_fgfs_using">Run fgfs using</string>
+    <string name="warning">Warning</string>
+	<string name="conn_established">Connection established.</string>
+	<string name="conn_timeout">Connection timeout.</string>
 </resources>

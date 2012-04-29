@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -18,6 +19,7 @@ import android.view.View;
 public class PanelView extends View {
 
 	/** Specifies the distribution type. */
+	// TODO: change this to a enum
 	public class Distribution {
 		/** A 2x3 panel with simple instruments. */
 		public static final int SIMPLE_VERTICAL_PANEL = 0;
@@ -41,6 +43,10 @@ public class PanelView extends View {
 	private int cols;
 	/** Number of rows in the panel. */
 	private int rows;
+	/** identifier of the current distribution. */
+	private int distribution;
+	/** The image set to load. Only configurable in the XML layout. */
+	private String imageSet = null;
 
 	/* Constructors */
 	public PanelView(Context context) {
@@ -54,9 +60,8 @@ public class PanelView extends View {
 
 		// Check the instrument distribution and bitmap quality
 		// that was declared in the XML
-		TypedArray a = context.obtainStyledAttributes(attrs,
-				R.styleable.PanelView);
-		String imgset = "low";
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PanelView);
+		imageSet = "low";
 		int distribution = 0;
 		for (int i = 0; i < a.getIndexCount(); i++) {
 			switch (a.getIndex(i)) {
@@ -64,23 +69,12 @@ public class PanelView extends View {
 				distribution = a.getInt(i, 0);
 				break;
 			case R.styleable.PanelView_imgset:
-				imgset = a.getString(i);
+				imageSet = a.getString(i);
 			default:
 			}
 		}
 
 		setDistribution(distribution);
-
-		// load the instruments. This could be in a different thread, but IN MY
-		// DEVICES, loading does not take long
-		for (Instrument i : instruments) {
-			try {
-				i.loadImages(imgset);
-			} catch (Exception e) {
-				myLog.w(TAG,
-						"Cannot load instrument: " + myLog.stackToString(e));
-			}
-		}
 	}
 
 	/**
@@ -110,14 +104,14 @@ public class PanelView extends View {
 			instruments.add(new ClimbRate(1, 2, context));
 			break;
 		case Distribution.SIMPLE_HORIZONTAL_PANEL:
-			cols = 4;
+			cols = 3;
 			rows = 2;
-			instruments.add(new RPM(0.5f, 0, context));
-			instruments.add(new Attitude(1.5f, 0, context));
-			instruments.add(new TurnSlip(2.5f, 0, context));
-			instruments.add(new Speed(0.5f, 1, context));
-			instruments.add(new Altimeter(1.5f, 1, context));
-			instruments.add(new ClimbRate(2.5f, 1, context));
+			instruments.add(new RPM(0, 0, context));
+			instruments.add(new Attitude(1, 0, context));
+			instruments.add(new TurnSlip(2, 0, context));
+			instruments.add(new Speed(0, 1, context));
+			instruments.add(new Altimeter(1, 1, context));
+			instruments.add(new ClimbRate(2, 1, context));
 			break;
 		case Distribution.HORIZONTAL_PANEL:
 			cols = 6;
@@ -130,6 +124,27 @@ public class PanelView extends View {
 			instruments.add(new ClimbRate(5, 0, context));
 		default: // this includes Distribution.NO_MAP
 		}
+		
+		
+		// load the instruments. This could be in a different thread, but IN MY
+		// DEVICES, loading does not take long
+		for (Instrument i : instruments) {
+			try {
+				i.loadImages(imageSet);
+			} catch (Exception e) {
+				myLog.w(TAG,
+						"Cannot load instrument: " + myLog.stackToString(e));
+			}
+		}
+		
+		this.rescaleInstruments();
+		
+		this.distribution = distribution;
+	}
+	
+	/** @return The currently displayed distribution. */
+	public int getDistribution() {
+		return this.distribution;
 	}
 
 	/**
@@ -172,6 +187,10 @@ public class PanelView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		if(distribution == Distribution.ONLY_MAP) {
+			return;
+		}
+		
 		super.onDraw(canvas);
 
 		for (Instrument i : instruments) {
