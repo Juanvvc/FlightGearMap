@@ -21,6 +21,11 @@ public class PlaneData {
 	private int rpm = 0;
 	private float slip = 0;
 	private float turn = 0;
+	private float insHeading = 0;
+	private float fuel1 = 0;
+	private float fuel2 = 0;
+	private float oilPress = 0;
+	private float oilTemp = 0;
 	
 	public void parse(final String input) {
 		// strip string with new line
@@ -29,8 +34,8 @@ public class PlaneData {
 		
 		speed = new Float(data[0]).floatValue(); // speed, in knots
 		rpm = new Integer(data[1]).intValue(); // RPM
-		heading = new Integer(data[2]).intValue(); // heading, in degrees
-		altitude = new Float(data[3]).floatValue(); // altitude, in feet
+		heading = new Integer(data[2]).intValue(); // REAL heading, in degrees
+		altitude = new Float(data[3]).floatValue(); // altitude, in feet, according to the instruments
 		rate = new Float(data[4]).floatValue(); // rate of climb, in feet per second
 		pitch = new Float(data[5]).floatValue(); // pitch, in degrees
 		roll = new Float(data[6]).floatValue(); // roll, in degrees
@@ -39,6 +44,11 @@ public class PlaneData {
 		seconds = new Integer(data[9]).intValue(); // seconds from GMT midnight
 		turn = new Float(data[10]).floatValue(); // turn rate, in turns per 2min
 		slip = new Float(data[11]).floatValue(); // slip skid, in ??
+		insHeading = new Float(data[12]).floatValue(); // Heading in degrees, according to the instruments
+		fuel1 = new Float(data[13]).floatValue(); // fuel in first tank, in us gals
+		fuel2 = new Float(data[14]).floatValue(); // fuel in second tank, in us gals
+		oilPress = new Float(data[15]).floatValue(); // oil pressure in psi
+		oilTemp = new Float(data[16]).floatValue(); // oil temperature in degf
 		
 		date = new Date();
 	}
@@ -46,6 +56,7 @@ public class PlaneData {
 	public float getSpeed() {
 		return speed;
 	}
+	/** @return Real plane heading */
 	public int getHeading() {
 		return heading;
 	}
@@ -81,6 +92,22 @@ public class PlaneData {
 	}
 	public float getTurnRate() {
 		return turn;
+	}
+	/** @return heading, according to the instruments. */
+	public float getInsHeading() {
+		return insHeading;
+	}
+	public float getFuel1() {
+		return fuel1;
+	}
+	public float getFuel2() {
+		return fuel2;
+	}
+	public float getOilPress() {
+		return oilPress;
+	}
+	public float getOilTemp() {
+		return oilTemp;
 	}
 }
 

@@ -143,10 +143,10 @@ public class FlightGearMap extends Activity {
     	
     	this.loadPreferences();
     	
-    	if (udpReceiver != null) {
-    		udpReceiver.cancel(true);
+    	if (udpReceiver == null) {
+    		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
+    	
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {
@@ -216,6 +216,13 @@ public class FlightGearMap extends Activity {
 	        case R.id.only_simplepanel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_HORIZONTAL_PANEL);
+	        	mapView.setVisibility(View.GONE);
+	        	mapView.invalidate();
+	        	panelView.invalidate();
+	        	return true;
+	        case R.id.c172_panel:
+	        	panelView.setVisibility(View.VISIBLE);
+	        	panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
 	        	mapView.setVisibility(View.GONE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();

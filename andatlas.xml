@@ -88,6 +88,41 @@
     <format>%f</format>
     <node>/instrumentation/slip-skid-ball/indicated-slip-skid</node>
    </chunk>
+
+   <chunk>
+	   <name>Heading indicator</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/heading-indicator/indicated-heading-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Fuel 1</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/consumables/fuel/tank/level-gal_us</node>
+   </chunk>
+
+   <chunk>
+	   <name>Fuel 2</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/consumables/fuel/tank[1]/level-gal_us</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Press</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine/oil-pressure-psi</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Temp F</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine/oil-temperature-degf</node>
+   </chunk>
  
  </output>
 

@@ -80,7 +80,6 @@ public class PanelView extends View {
 	 */
 	private String selectImageSet() {
 		float minSize = Math.min(getWidth() * 1.0f / cols , getHeight() * 1.0f / rows);
-		myLog.d(TAG, "Min Size: " + minSize);
 		if (minSize > 400) {
 			//return "high"; // not available to save space
 			return "medium";
@@ -146,9 +145,13 @@ public class PanelView extends View {
 			instruments.add(new Attitude(2, 0, context));
 			instruments.add(new Altimeter(3, 0, context));
 			instruments.add(new TurnSlip(1, 1, context));
+			instruments.add(new Heading(2, 1, context));
 			instruments.add(new ClimbRate(3, 1, context));
 			
 			instruments.add(new RPM(1, 2, context));
+			
+			instruments.add(new Fuel(0.2f, 2, context));
+			instruments.add(new Oil(0.2f, 1, context));
 		default: // this includes Distribution.NO_MAP
 		}
 		
@@ -197,7 +200,6 @@ public class PanelView extends View {
 			// scale = 1;
 			// }
 
-			myLog.d(TAG, "Scale: " + scale);
 			for (Instrument i : instruments) {
 				i.setScale(scale);
 			}
@@ -228,7 +230,11 @@ public class PanelView extends View {
 		super.onDraw(canvas);
 
 		for (Instrument i : instruments) {
-			i.onDraw(canvas, lastPlaneData);
+			try {
+				i.onDraw(canvas, lastPlaneData);
+			} catch(Exception e) {
+				myLog.e(TAG, myLog.stackToString(e));
+			}
 		}
 	}
 }

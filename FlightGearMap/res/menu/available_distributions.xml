@@ -3,5 +3,6 @@
 <item android:id="@+id/map_simplepanel" android:title="@string/map_simplepanel"></item>
 <item android:id="@+id/only_simplepanel" android:title="@string/only_simplepanel"></item>
 <item android:id="@+id/only_map" android:title="@string/only_map"></item>
-<item android:id="@+id/settings" android:title="@string/settings"></item>
+<item android:id="@+id/c172_panel" android:title="@string/c172_panel"></item><item android:id="@+id/settings" android:title="@string/settings"></item>
+
 </menu>

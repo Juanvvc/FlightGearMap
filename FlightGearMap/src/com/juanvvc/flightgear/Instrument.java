@@ -350,3 +350,105 @@ class TurnSlip extends Instrument {
 		c.drawBitmap(turnScaled, matrix, null);
 	}
 }
+
+class Heading extends Instrument {
+	public Heading(float x, float y, Context c) {
+		super(x, y, c);
+		this.imgFiles.add("hdg1.png");
+		this.imgFiles.add("hdg2.png");
+	}
+
+	@Override
+	public void onDraw(Canvas c, PlaneData pd) {
+		float angle = -pd.getInsHeading();
+		// (0.7*SEMICLOSEWIDTH is calibrated with on screen instruments with FG sim)
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
+		matrix.postRotate((float) angle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
+		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		matrix.reset();
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+	}
+}
+
+class Fuel extends Instrument {
+	public Fuel(float x, float y, Context c) {
+		super(x, y, c);
+		this.imgFiles.add("fuel1.png");
+		this.imgFiles.add("hand3.png");
+	}
+	
+	public void onDraw(Canvas c, PlaneData pd) {
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		
+		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
+		
+		// left fuel
+		// 0 gals = 160º, 26gals = 20º
+		float ang = 160 - pd.getFuel1() * 140 / 26;
+		if (ang < 10 ) {
+			ang = 10;
+		}
+		matrix.reset();
+		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
+		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		
+		// right fuel
+		// 0 gals = -160º, 26gals = -20º
+		ang = -160 + pd.getFuel2() * 140 / 26;
+		if (ang > -10 ) {
+			ang = -10;
+		}
+		matrix.reset();
+		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
+		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+
+	}
+}
+
+class Oil extends Instrument {
+	public Oil(float x, float y, Context c) {
+		super(x, y, c);
+		this.imgFiles.add("oil1.png");
+		this.imgFiles.add("hand3.png");
+	}
+	
+	public void onDraw(Canvas c, PlaneData pd) {
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		
+		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
+		
+		// oil temperature
+		// 75 = 165º, 245 = 15º
+		float ang = 165 - (pd.getOilTemp() - 75) * 150 / 170;
+		if (ang < 10 ) {
+			ang = 10;
+		}
+		if (ang > 170) {
+			ang =170;
+		}
+		matrix.reset();
+		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
+		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		
+		// oil press
+		// 0 gals = -160º, 26gals = -20º
+		ang = -165 + pd.getOilPress() * 150 / 115;
+		if (ang > -10 ) {
+			ang = -10;
+		}
+		matrix.reset();
+		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
+		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
+		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+
+	}
+}
