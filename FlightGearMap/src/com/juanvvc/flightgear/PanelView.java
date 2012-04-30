@@ -28,12 +28,16 @@ public class PanelView extends View {
 		public static final int SIMPLE_HORIZONTAL_PANEL = 2;
 		/** Show only the map. PanelView is not used. */
 		public static final int ONLY_MAP = 3;
+		/** Show a complete Cessna-172 instrument panel. */
+		public static final int C172_INSTRUMENTS = 4;
+		/** Show a complete Cessna-172 comm panel. */
+		public static final int C172_COMM = 5;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
 	private float scale = 0;
 	/** Constant TAG to be used during development. */
-	private static final String TAG = "SmallPanelView";
+	private static final String TAG = "PanelView";
 	/** Plane data. */
 	private PlaneData lastPlaneData = new PlaneData();
 	/** The available instruments. */
@@ -44,8 +48,6 @@ public class PanelView extends View {
 	private int rows;
 	/** identifier of the current distribution. */
 	private int distribution;
-	/** The image set to load. Only configurable in the XML layout. */
-	private String imageSet = null;
 
 	/* Constructors */
 	public PanelView(Context context) {
@@ -60,20 +62,33 @@ public class PanelView extends View {
 		// Check the instrument distribution and bitmap quality
 		// that was declared in the XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PanelView);
-		imageSet = "low";
 		int distribution = 0;
 		for (int i = 0; i < a.getIndexCount(); i++) {
 			switch (a.getIndex(i)) {
 			case R.styleable.PanelView_distribution:
 				distribution = a.getInt(i, 0);
 				break;
-			case R.styleable.PanelView_imgset:
-				imageSet = a.getString(i);
 			default:
 			}
 		}
 
 		setDistribution(distribution);
+	}
+	
+	/**
+	 * @return The name of the most suitable image set.
+	 */
+	private String selectImageSet() {
+		float minSize = Math.min(getWidth() * 1.0f / cols , getHeight() * 1.0f / rows);
+		myLog.d(TAG, "Min Size: " + minSize);
+		if (minSize > 400) {
+			//return "high"; // not available to save space
+			return "medium";
+		} else if (minSize > 200) {
+			return "medium";
+		} else {
+			return "low";
+		}
 	}
 
 	/**
@@ -83,6 +98,8 @@ public class PanelView extends View {
 	 *            distribution to use
 	 */
 	public void setDistribution(int distribution) {
+		
+		myLog.v(TAG, "Loading distribution: " + distribution);
 
 		for (Instrument i : instruments) {
 			i.recycle();
@@ -105,11 +122,11 @@ public class PanelView extends View {
 		case Distribution.SIMPLE_HORIZONTAL_PANEL:
 			cols = 3;
 			rows = 2;
-			instruments.add(new RPM(0, 0, context));
+			instruments.add(new Speed(0, 0, context));
 			instruments.add(new Attitude(1, 0, context));
-			instruments.add(new TurnSlip(2, 0, context));
-			instruments.add(new Speed(0, 1, context));
-			instruments.add(new Altimeter(1, 1, context));
+			instruments.add(new Altimeter(2, 0, context));
+			instruments.add(new TurnSlip(0, 1, context));
+			instruments.add(new RPM(1, 1, context));
 			instruments.add(new ClimbRate(2, 1, context));
 			break;
 		case Distribution.HORIZONTAL_PANEL:
@@ -121,6 +138,17 @@ public class PanelView extends View {
 			instruments.add(new RPM(3, 0, context));
 			instruments.add(new Altimeter(4, 0, context));
 			instruments.add(new ClimbRate(5, 0, context));
+			break;
+		case Distribution.C172_INSTRUMENTS:
+			cols = 5;
+			rows = 3;
+			instruments.add(new Speed(1, 0, context));
+			instruments.add(new Attitude(2, 0, context));
+			instruments.add(new Altimeter(3, 0, context));
+			instruments.add(new TurnSlip(1, 1, context));
+			instruments.add(new ClimbRate(3, 1, context));
+			
+			instruments.add(new RPM(1, 2, context));
 		default: // this includes Distribution.NO_MAP
 		}
 		
@@ -129,7 +157,7 @@ public class PanelView extends View {
 		// DEVICES, loading does not take long
 		for (Instrument i : instruments) {
 			try {
-				i.loadImages(imageSet);
+				i.loadImages(this.selectImageSet());
 				this.rescaleInstruments();
 			} catch (OutOfMemoryError e) {
 				// if out of memory, try forcing the low quality version
@@ -179,7 +207,8 @@ public class PanelView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		rescaleInstruments();
+		// reload and rescale images
+		setDistribution(distribution);
 	}
 
 	/**

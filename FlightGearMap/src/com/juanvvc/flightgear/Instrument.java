@@ -77,13 +77,13 @@ public abstract class Instrument {
 		
 		// we know that size of the images checking the dir name. This is magic
 		if (dir.equals("medium")) {
-			setGridSize(256); // medium are images of 256x256
+			setGridSize(256); // medium are 256x256 images
 		} else if (dir.equals("high")) {
 			// TODO: these bitmaps are not included in the current version to save space
 			// you can find them in assets.high.zip
-			setGridSize(512); //high are images of 512x512 
+			setGridSize(512); //high are 512x512 images 
 		} else {
-			setGridSize(128); // low are images of 128x128
+			setGridSize(128); // low are 128x128 images
 		}
 		
 		for(String f: this.imgFiles) {

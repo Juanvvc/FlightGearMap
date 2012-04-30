@@ -19,7 +19,6 @@
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:background="@drawable/panel_back"
-        custom:imgset="medium"
         custom:distribution="1"
         />
 </LinearLayout>
