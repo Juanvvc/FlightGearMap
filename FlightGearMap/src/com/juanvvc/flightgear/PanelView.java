@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -131,14 +130,20 @@ public class PanelView extends View {
 		for (Instrument i : instruments) {
 			try {
 				i.loadImages(imageSet);
+				this.rescaleInstruments();
+			} catch (OutOfMemoryError e) {
+				// if out of memory, try forcing the low quality version
+				try {
+					i.loadImages("low");
+				} catch (Exception e2) {
+					myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
+				}
+				this.rescaleInstruments();
 			} catch (Exception e) {
-				myLog.w(TAG,
-						"Cannot load instrument: " + myLog.stackToString(e));
+				myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 			}
 		}
-		
-		this.rescaleInstruments();
-		
+	
 		this.distribution = distribution;
 	}
 	

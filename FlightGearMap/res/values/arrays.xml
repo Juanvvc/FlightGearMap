@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string-array name="osmTypes">
+        <item name="mapnik">Mapnik</item>
+        <item name="cycle">Cycle</item>
+        <item name="public_transport">Public transport</item>
+        <item name="mapquest">Mapquest Aerial</item>
+    </string-array>
+    
+    <string-array name="osmValues">
+        <item name="mapnik">mapnik</item>
+        <item name="cycle">cycle</item>
+        <item name="public_transport">public_transport</item>
+        <item name="mapquest">mapquest</item>
+    </string-array>
+    
+    <string-array name="planeTypes">
+        <item name="plane1">Default</item>
+        <item name="plane2">Tiny</item>
+        <item name="plane3">Large</item>
+        <item name="plane4">Combat</item>
+        <item name="plane5">Bomber</item>
+    </string-array>
+    
+    <string-array name="planeValues">
+        <item name="plane1">plane1</item>
+        <item name="plane2">plane2</item>
+        <item name="plane3">plane3</item>
+        <item name="plane4">plane4</item>
+        <item name="plane5">plane5</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="Graphics"
+        android:key="graphics">
+        
+        <ListPreference 
+            android:key="map_type"
+            android:title="OSM map type"
+            android:summary="Define the map tile provider"
+            android:defaultValue="1" 
+            android:entries="@array/osmTypes"
+            android:entryValues="@array/osmValues"
+        />
+        
+        <ListPreference 
+            android:key="plane_type"
+            android:title="Plane type"
+            android:summary="Define the plane bitmap"
+            android:defaultValue="plane1" 
+            android:entries="@array/planeTypes"
+            android:entryValues="@array/planeValues"
+        />
+        
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="Communications"
+        android:key="comm">
+
+        <EditTextPreference
+            android:key="udp_port"
+            android:title="UDP Port" 
+            android:summary="Define the incoming UDP port"
+            android:dialogTitle="UDP incoming port"
+            android:dialogMessage="UDP incoming port"    
+            android:defaultValue="5501" />
+
+    </PreferenceCategory>
+    
+</PreferenceScreen>

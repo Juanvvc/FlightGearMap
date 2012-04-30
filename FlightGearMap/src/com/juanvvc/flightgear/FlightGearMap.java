@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Map;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -13,12 +14,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,7 +46,7 @@ public class FlightGearMap extends Activity {
 	/** Reference to the available overlays. */
 	private PlaneOverlay planeOverlay;
 	/** The port for UDP communications. */
-	private static final int PORT = 5501;
+	private int udpPort = 5501;
 	/** A string used for debugging. */
 	private static final String TAG = "FlightGear";
 	/** Reference to the UDP Thread. */
@@ -50,7 +54,7 @@ public class FlightGearMap extends Activity {
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
 	/** If set, use the wakeLock.
-	 * TODO: the wakeLock was not always working. Use this option for debuggin
+	 * TODO: the wakeLock was not always working. Use this option for debugging
 	 */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
@@ -73,7 +77,6 @@ public class FlightGearMap extends Activity {
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         mapView.getController().setZoom(15);
-        mapView.setTileSource(TileSourceFactory.CYCLEMAP);
         
         planeOverlay = new PlaneOverlay(this);
         mapView.getOverlays().add(planeOverlay);
@@ -83,14 +86,67 @@ public class FlightGearMap extends Activity {
         this.defaultDistribution = panelView.getDistribution();        
     }
     
+    /** Load preferences. */
+    public void loadPreferences() {
+    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    	String mapType = sp.getString("map_type", null);
+    	String planeType = sp.getString("plane_type", null);
+  		String port = sp.getString("udp_port", "5501");
+  		
+  		// select the plane
+  		try {
+  			if (planeType.equals("plane2")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane2);
+  			} else if (planeType.equals("plane3")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane3);
+  			} else if (planeType.equals("plane4")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane4);
+  			} else if (planeType.equals("plane5")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane5);
+  			} else {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  			}
+  		} catch (Exception e) {
+  			this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  		}
+  		
+  		// select the map type
+  		try {
+  			if (mapType.equals("cycle")) {
+  				mapView.setTileSource(TileSourceFactory.CYCLEMAP);
+//  			} else if (mapType.equals("hills")) {
+//  				mapView.setTileSource(TileSourceFactory.HILLS);
+//  			} else if (mapType.equals("topo")) {
+//  				mapView.setTileSource(TileSourceFactory.TOPO);
+  			} else if (mapType.equals("public_transport")) {
+  				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
+  			} else if (mapType.equals("mapquest")) {
+  				mapView.setTileSource(TileSourceFactory.MAPQUESTAERIAL);
+  			} else {
+  				mapView.setTileSource(TileSourceFactory.MAPNIK);
+  			}
+  		} catch (Exception e) {
+  			mapView.setTileSource(TileSourceFactory.MAPNIK);
+  		}
+  		
+  		// select the UDP port
+  		try {
+  			udpPort = new Integer(port).intValue();
+  		} catch (Exception e) {
+  			udpPort = 5501;
+  		}
+    }
+    
     @Override
     protected void onResume() {
-    	super.onStart();
+    	super.onResume();
+    	
+    	this.loadPreferences();
     	
     	if (udpReceiver != null) {
     		udpReceiver.cancel(true);
     	}
-    	udpReceiver = (UDPReceiver) new UDPReceiver().execute(PORT);
+    	udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {
@@ -164,6 +220,9 @@ public class FlightGearMap extends Activity {
 	        	mapView.invalidate();
 	        	panelView.invalidate();
 	        	return true;
+	        case R.id.settings:
+	        	startActivity(new Intent(this, Preferences.class));
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -181,7 +240,7 @@ public class FlightGearMap extends Activity {
 				socket.setSoTimeout(SOCKET_TIMEOUT);
 			} catch (SocketException e) {
 				myLog.e(TAG, e.toString());
-				return e.toString();
+				return e.toString() + " " + getString(R.string.wait);
 			}
 			
 			byte[] buf = new byte[255];
@@ -275,7 +334,13 @@ public class FlightGearMap extends Activity {
 		        	currentDialog = new AlertDialog.Builder(FlightGearMap.this).setIcon(R.drawable.ic_launcher)
 		        		.setTitle(getString(R.string.warning))
 						.setMessage(getString(R.string.network_not_detected) + " " + getString(R.string.critical_error))
-						.setPositiveButton(android.R.string.ok, null).show();
+						.setPositiveButton(android.R.string.ok, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								finish();
+							}
+						})
+						.show();
 		        } else {
 		        	// convert Ip to a readable IP
 			        String readableIP = String.format("%d.%d.%d.%d",
@@ -284,8 +349,8 @@ public class FlightGearMap extends Activity {
 			        		(ipAddress >> 16 & 0xff),
 			        		(ipAddress >> 24 & 0xff));
 			        
-			        // add information about fgfs
-			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,5," + readableIP + "," + PORT + ",udp,andatlas";
+			        // add information about fgfs+++
+			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas";
 			        
 			        // show the dialog on screen
 					currentDialog = new AlertDialog.Builder(FlightGearMap.this).setIcon(R.drawable.ic_launcher)
@@ -295,9 +360,16 @@ public class FlightGearMap extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								// when the user click ok, the UDPReceiver will restart
-						        udpReceiver = (UDPReceiver) new UDPReceiver().execute(PORT);
+						        udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
 							}
-						}).show();
+						})
+						.setNegativeButton(R.string.quit, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								finish();
+							}
+						})
+						.show();
 		        }
 	        } catch (Exception e) {
 	        	Toast.makeText(FlightGearMap.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();

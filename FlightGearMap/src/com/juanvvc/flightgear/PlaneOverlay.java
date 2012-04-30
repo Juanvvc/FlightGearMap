@@ -19,7 +19,11 @@ public class PlaneOverlay extends org.osmdroid.views.overlay.Overlay {
 
     public PlaneOverlay(Context ctx) {
     	super(ctx);
-    	bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.plane3);
+    	loadPlane(ctx, R.drawable.plane1);
+    }
+    
+    public void loadPlane(Context ctx, int id) {
+    	bitmap = BitmapFactory.decodeResource(ctx.getResources(),id);
     }
     
     /**
