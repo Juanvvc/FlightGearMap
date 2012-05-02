@@ -82,6 +82,8 @@ public class FlightGearMap extends Activity {
         mapView.getOverlays().add(planeOverlay);
         
         panelView = (PanelView) findViewById(R.id.panel);
+mapView.setVisibility(View.GONE);
+panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
         // get the default distribution
         this.defaultDistribution = panelView.getDistribution();        
     }

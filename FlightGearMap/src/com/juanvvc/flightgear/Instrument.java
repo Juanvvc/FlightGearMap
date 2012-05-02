@@ -1,12 +1,9 @@
 package com.juanvvc.flightgear;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
@@ -24,31 +21,18 @@ public abstract class Instrument {
 	float scale;
 	/** The context of the application. */
 	Context context;
-	/** Name of the images to load. Use names in the AssetManager.
-	 * Two names are automatically added in the constructor: hand1 and hand2,
-	 * and they are at positions 0 and 1.
-	 * Then, your fist image will be at position 2,  your second
-	 * image at position 3 and so on.
-	 */
+	/** Name of the images to load, inside the assets directory (different subdirectories according to quality) */
 	ArrayList<String> imgFiles;
-	/** The unscaled Bitmaps of your instruments. */
-	ArrayList<Bitmap> imgs;
 	/** The scaled bitmaps of your instruments. */
 	ArrayList<Bitmap> imgsScaled;
 	
-	/** The grid are squares of gridSize x gridSize
-	 * This is a convenience constant: for me, it is more
-	 * comfortable to think in "half size" instruments.
-	 */
+	/** The grid are squares of gridSize x gridSize */
 	static int gridSize = 256;
-	/** Position of the large hand in the internal ArrayLists. */
-	static final int HAND1 = 0;
-	/** Position of the small hand in the internal ArrayLists. */
-	static final int HAND2 = 1;
 	/** If true, the instrument is ready to be drawn.
 	 * An instrument is ready when its bitmaps are loaded.
 	 */
 	boolean ready = false;
+	private static BitmapProvider bProvider = null;
 	
 	/** Constructor. Call this constructor always from your extended classes!
 	 * @param c The column of the instrument
@@ -61,24 +45,25 @@ public abstract class Instrument {
 		context = ctx;
 		scale = 1; // we begin unscaled
 		imgFiles = new ArrayList<String>();
-		imgs = new ArrayList<Bitmap>();
 		imgsScaled = new ArrayList<Bitmap>();
-		// automatically added
-		imgFiles.add("hand1.png");
-		imgFiles.add("hand2.png");
 		ready = false;
+	}
+	
+	public static BitmapProvider getBitmapProvider(Context ctx) {
+		if (bProvider == null) {
+			bProvider = new BitmapProvider(ctx);
+		}
+		return bProvider;
 	}
 	
 	/** Loads the images in imgFiles.
 	 * @throws Exception If the images cannot be loaded.
 	 */
 	public void loadImages(String dir) throws Exception {
-		AssetManager mng = context.getAssets();
-		
 		// we know that size of the images checking the dir name. This is magic
-		if (dir.equals("medium")) {
+		if (dir.equals(BitmapProvider.MEDIUM_QUALITY)) {
 			setGridSize(256); // medium are 256x256 images
-		} else if (dir.equals("high")) {
+		} else if (dir.equals(BitmapProvider.HIGH_QUALITY)) {
 			// TODO: these bitmaps are not included in the current version to save space
 			// you can find them in assets.high.zip
 			setGridSize(512); //high are 512x512 images 
@@ -87,26 +72,19 @@ public abstract class Instrument {
 		}
 		
 		for(String f: this.imgFiles) {
-			imgs.add(BitmapFactory.decodeStream(mng.open(dir + File.separator + f)));
+			// ensures that the manager has loaded the image
+			bProvider.getBitmap(dir,  f);
 		}
-		setScale(scale);
 		
 		ready = true;
 	}
 	
-	/** Sets the scale of the instrument to fill the screen.
-	 * @param s The scale of the instrument. 1=original size
-	 */
-	public void setScale(float s) {
-		scale = s;
-		Matrix matrix = new Matrix();
-		matrix.setScale(scale,  scale);
-		for(Bitmap b: this.imgsScaled) {
-			b.recycle();
-		}
-		imgsScaled.clear();
-		for(Bitmap b: this.imgs) {
-			imgsScaled.add(Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true));
+	/** Sets the scale and loads the scaled images into the inner array. */
+	public void setScale(float scale) {
+		this.scale = scale;
+		for(String f: imgFiles) {
+			 Bitmap b = bProvider.getScaledBitmap(f);
+			 imgsScaled.add(b);
 		}
 	}
 	
@@ -117,22 +95,6 @@ public abstract class Instrument {
 	 */
 	public abstract void onDraw(Canvas c, PlaneData pd);
 	
-	/** Recycle the bitmaps of the instrument.
-	 * You'll have to load the bitmaps again to draw the instrument. */
-	public void recycle() {
-		if (ready) {
-			for(Bitmap b: imgs) {
-				b.recycle();
-			}
-			for(Bitmap b: imgsScaled) {
-				b.recycle();
-			}
-			imgs.clear();
-			imgsScaled.clear();
-			ready = false;
-		}
-	}
-
 	/** @return The size of a unit in the grid, according to the available bitmaps.
 	 * The size of a clock is the final size of a full column/row in pixels.
 	 */
@@ -165,6 +127,8 @@ class Altimeter extends Instrument {
 		super(x, y, c);
 		// load the background of the altimeter, in addition to the hands
 		// remember: the background is gong to be at position 2
+		this.imgFiles.add("hand1.png");
+		this.imgFiles.add("hand2.png");
 		this.imgFiles.add("alt1.png");
 	}
 
@@ -182,12 +146,12 @@ class Altimeter extends Instrument {
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) alt2Angle, ( (0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(HAND2), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
 		double alt1Angle = ((pd.getAltitude() % 1000) * 360 / 1000);
 		matrix.reset();
 		matrix.postTranslate(( (0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) alt1Angle, ((0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);			
+		c.drawBitmap(imgsScaled.get(0), matrix, null);			
 	}
 }
 
@@ -206,35 +170,34 @@ class Attitude extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
 		
-		Bitmap ati1 = imgs.get(3);
-		Bitmap ati1Scaled = imgsScaled.get(3);
-		Bitmap ati2 = imgs.get(4);
-		Bitmap ati2Scaled = imgsScaled.get(4);
+		Bitmap ati1Scaled = imgsScaled.get(1);
+		Bitmap ati2Scaled = imgsScaled.get(2);
 		
 		
 		// draw pitch
 		matrix.reset();
 		// translate 23 /  pixels each 5 degrees
-		matrix.postTranslate(((0.5f + col) * gridSize - ati1.getWidth() / 2) * scale, ( (0.5f + row) * gridSize - ati1.getHeight() / 2 + pd.getPitch() * (23 * gridSize/ 512) / 5) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale - ati1Scaled.getWidth() / 2, ((0.5f + row) * gridSize + pd.getPitch() * (23 * gridSize/ 512) / 5) * scale - ati1Scaled.getHeight() / 2);
 		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati1Scaled, matrix, null);
 		// draw roll
 		matrix.reset();
-		matrix.postTranslate(((0.5f + col) * gridSize - ati2.getWidth() / 2) * scale, ((0.5f + row) * gridSize - ati2.getHeight() / 2) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale - ati2Scaled.getWidth() / 2, ((0.5f + row) * gridSize) * scale  - ati2Scaled.getHeight() / 2);
 		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati2Scaled, matrix, null);
 		
 		matrix.reset();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(5), matrix, null);
+		c.drawBitmap(imgsScaled.get(3), matrix, null);
 	}
 }
 
 class Speed extends Instrument {
 	public Speed(float x, float y, Context c) {
 		super(x, y, c);
+		this.imgFiles.add("hand1.png");
 		this.imgFiles.add("speed.png");
 	}
 	@Override
@@ -244,7 +207,7 @@ class Speed extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
 		
 		// climb speed
 		// 40kts = 30º, 200kts = 320º
@@ -257,13 +220,14 @@ class Speed extends Instrument {
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) speedAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
 	}
 }
 
 class RPM extends Instrument {
 	public RPM(float x, float y, Context c) {
 		super(x, y, c);
+		this.imgFiles.add("hand1.png");
 		this.imgFiles.add("rpm.png");
 	}
 	@Override
@@ -273,7 +237,7 @@ class RPM extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
 		
 		// rpm
 		// 500 = -90º, 3000 = 90º
@@ -281,13 +245,14 @@ class RPM extends Instrument {
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) rpmAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
 	}
 }
 
 class ClimbRate extends Instrument {
 	public ClimbRate(float x, float y, Context c) {
 		super(x, y, c);
+		this.imgFiles.add("hand1.png");
 		this.imgFiles.add("climb.png");
 	}
 	@Override
@@ -297,14 +262,14 @@ class ClimbRate extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
 		
 		// climb speed
 		double climbAngle = (pd.getRate() * 180 / 2000) - 90;
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) climbAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(HAND1), matrix, null);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
 	}
 }
 
@@ -323,29 +288,27 @@ class TurnSlip extends Instrument {
 		}
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
 		
-		Bitmap slip = imgs.get(4);
-		Bitmap slipScaled = imgsScaled.get(4);
+		Bitmap slipScaled = imgsScaled.get(2);
 		
 		// draw slip skid
 		matrix.reset();
 		// (0.7*SEMICLOSEWIDTH is calibrated with on screen instruments with FG sim)
-		matrix.setTranslate(((0.5f + col - 0.7f * pd.getSlipSkid()) * gridSize - slip.getWidth() / 2 ) * scale, ((row + 0.65f) * gridSize - slip.getHeight() / 2) * scale);
+		matrix.setTranslate(((0.5f + col - 0.7f * pd.getSlipSkid()) * gridSize) * scale - slipScaled.getWidth() / 2 , ((row + 0.65f) * gridSize) * scale  - slipScaled.getHeight() / 2);
 		c.drawBitmap(slipScaled, matrix, null);
 		
 		matrix.reset();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(3), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
 		
-		Bitmap turn = imgs.get(5);
-		Bitmap turnScaled = imgsScaled.get(5);
+		Bitmap turnScaled = imgsScaled.get(3);
 		
 		// turn rate
 		// 20º means a turn rate = 1 turn each 2 minuts
 		double turnAngle = (pd.getTurnRate() * 20);
 		matrix.reset();
-		matrix.postTranslate(((0.5f + col) * gridSize - turn.getWidth() / 2) * scale, ((0.5f + row) * gridSize - turn.getHeight() / 2) * scale);
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale  - turnScaled.getWidth() / 2, ((0.5f + row) * gridSize) * scale  - turnScaled.getHeight() / 2);
 		matrix.postRotate((float) turnAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(turnScaled, matrix, null);
 	}
@@ -365,24 +328,24 @@ class Heading extends Instrument {
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		matrix.postRotate((float) angle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
 		matrix.reset();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
 	}
 }
 
 class Fuel extends Instrument {
 	public Fuel(float x, float y, Context c) {
 		super(x, y, c);
-		this.imgFiles.add("fuel1.png");
 		this.imgFiles.add("hand3.png");
+		this.imgFiles.add("fuel1.png");
 	}
 	
 	public void onDraw(Canvas c, PlaneData pd) {
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
 		
 		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
 		
@@ -395,7 +358,7 @@ class Fuel extends Instrument {
 		matrix.reset();
 		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
 		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
 		
 		// right fuel
 		// 0 gals = -160º, 26gals = -20º
@@ -406,7 +369,7 @@ class Fuel extends Instrument {
 		matrix.reset();
 		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
 		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
 
 	}
 }
@@ -414,14 +377,14 @@ class Fuel extends Instrument {
 class Oil extends Instrument {
 	public Oil(float x, float y, Context c) {
 		super(x, y, c);
-		this.imgFiles.add("oil1.png");
 		this.imgFiles.add("hand3.png");
+		this.imgFiles.add("oil1.png");
 	}
 	
 	public void onDraw(Canvas c, PlaneData pd) {
 		Matrix matrix = new Matrix();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(2), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
 		
 		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
 		
@@ -437,7 +400,7 @@ class Oil extends Instrument {
 		matrix.reset();
 		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
 		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
 		
 		// oil press
 		// 0 gals = -160º, 26gals = -20º
@@ -448,7 +411,24 @@ class Oil extends Instrument {
 		matrix.reset();
 		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
 		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(3), matrix, null);
+		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
 
+	}
+}
+
+class Nav extends Instrument {
+	public Nav(float x, float y, Context c) {
+		super(x, y, c);
+		this.imgFiles.add("nav1.png");
+		this.imgFiles.add("nav2.png");
+		this.imgFiles.add("nav3.png");
+	}
+	
+	public void onDraw(Canvas c, PlaneData pd) {
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(col * gridSize, row * gridSize * scale);
+		c.drawBitmap(imgsScaled.get(0), matrix, null);
+		c.drawBitmap(imgsScaled.get(1), matrix, null);
+		c.drawBitmap(imgsScaled.get(2), matrix, null);
 	}
 }

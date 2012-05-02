@@ -59,8 +59,7 @@ public class PanelView extends View {
 
 		instruments = new ArrayList<Instrument>();
 
-		// Check the instrument distribution and bitmap quality
-		// that was declared in the XML
+		// Check the instrument distribution that was declared in the XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PanelView);
 		int distribution = 0;
 		for (int i = 0; i < a.getIndexCount(); i++) {
@@ -100,10 +99,7 @@ public class PanelView extends View {
 		
 		myLog.v(TAG, "Loading distribution: " + distribution);
 
-		for (Instrument i : instruments) {
-			i.recycle();
-		}
-
+		Instrument.getBitmapProvider(this.getContext()).recycle();
 		instruments.clear();
 
 		Context context = getContext();
@@ -144,10 +140,12 @@ public class PanelView extends View {
 			instruments.add(new Speed(1, 0, context));
 			instruments.add(new Attitude(2, 0, context));
 			instruments.add(new Altimeter(3, 0, context));
+			instruments.add(new Nav(4, 0, context));
 			instruments.add(new TurnSlip(1, 1, context));
 			instruments.add(new Heading(2, 1, context));
 			instruments.add(new ClimbRate(3, 1, context));
-			
+			instruments.add(new Nav(4, 1, context));
+						
 			instruments.add(new RPM(1, 2, context));
 			
 			instruments.add(new Fuel(0.2f, 2, context));
@@ -161,19 +159,18 @@ public class PanelView extends View {
 		for (Instrument i : instruments) {
 			try {
 				i.loadImages(this.selectImageSet());
-				this.rescaleInstruments();
 			} catch (OutOfMemoryError e) {
 				// if out of memory, try forcing the low quality version
 				try {
-					i.loadImages("low");
+					i.loadImages(BitmapProvider.LOW_QUALITY);
 				} catch (Exception e2) {
 					myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
 				}
-				this.rescaleInstruments();
 			} catch (Exception e) {
 				myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 			}
 		}
+		this.rescaleInstruments();
 	
 		this.distribution = distribution;
 	}
@@ -194,13 +191,15 @@ public class PanelView extends View {
 			scale = Math.min(
 					1.0f * getWidth() / (cols * Instrument.getGridSize()),
 					1.0f * getHeight()/ (rows * Instrument.getGridSize()));
+			myLog.d(TAG, "Scale: " + scale);
 
 			// prevent spurious scales
 			// if (Math.abs(scale - 1) < 0.1) {
 			// scale = 1;
 			// }
 
-			for (Instrument i : instruments) {
+			Instrument.getBitmapProvider(this.getContext()).setScale(scale);
+			for (Instrument i: instruments) {
 				i.setScale(scale);
 			}
 		}
