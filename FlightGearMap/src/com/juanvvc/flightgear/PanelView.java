@@ -109,44 +109,46 @@ public class PanelView extends View {
 			rows = 3;
 			instruments.add(new Attitude(0, 0, context));
 			instruments.add(new TurnSlip(1, 0, context));
-			instruments.add(new Speed(0, 1, context));
-			instruments.add(new RPM(1, 1, context));
+			instruments.add(new OneHandInstrument(0, 1, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
+			instruments.add(new OneHandInstrument(1, 1, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
 			instruments.add(new Altimeter(0, 2, context));
-			instruments.add(new ClimbRate(1, 2, context));
+			instruments.add(new OneHandInstrument(1, 2, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
+
 			break;
 		case Distribution.SIMPLE_HORIZONTAL_PANEL:
 			cols = 3;
 			rows = 2;
-			instruments.add(new Speed(0, 0, context));
+			instruments.add(new OneHandInstrument(0, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
 			instruments.add(new Attitude(1, 0, context));
 			instruments.add(new Altimeter(2, 0, context));
 			instruments.add(new TurnSlip(0, 1, context));
-			instruments.add(new RPM(1, 1, context));
-			instruments.add(new ClimbRate(2, 1, context));
+			instruments.add(new OneHandInstrument(1, 1, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
+			instruments.add(new OneHandInstrument(2, 1, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
+
 			break;
 		case Distribution.HORIZONTAL_PANEL:
 			cols = 6;
 			rows = 1;
 			instruments.add(new Attitude(0, 0, context));
 			instruments.add(new TurnSlip(1, 0, context));
-			instruments.add(new Speed(2, 0, context));
-			instruments.add(new RPM(3, 0, context));
+			instruments.add(new OneHandInstrument(2, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
+			instruments.add(new OneHandInstrument(3, 0, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
 			instruments.add(new Altimeter(4, 0, context));
-			instruments.add(new ClimbRate(5, 0, context));
+			instruments.add(new OneHandInstrument(5, 0, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
 			break;
 		case Distribution.C172_INSTRUMENTS:
 			cols = 5;
 			rows = 3;
-			instruments.add(new Speed(1, 0, context));
+			instruments.add(new OneHandInstrument(1, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
 			instruments.add(new Attitude(2, 0, context));
 			instruments.add(new Altimeter(3, 0, context));
 			instruments.add(new Nav(4, 0, context));
 			instruments.add(new TurnSlip(1, 1, context));
-			instruments.add(new Heading(2, 1, context));
-			instruments.add(new ClimbRate(3, 1, context));
+			instruments.add(new OneHandInstrument(2, 1, context,new String[] {"hdg1.png", "hdg2.png"}, -1, -1, 20, 200, 256, 256, 0, 0, 0, 0, 0, PlaneData.HEADING));
+			instruments.add(new OneHandInstrument(3, 1, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
 			instruments.add(new Nav(4, 1, context));
-						
-			instruments.add(new RPM(1, 2, context));
+
+			instruments.add(new OneHandInstrument(1, 2, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
 			
 			instruments.add(new Fuel(0.2f, 2, context));
 			instruments.add(new Oil(0.2f, 1, context));

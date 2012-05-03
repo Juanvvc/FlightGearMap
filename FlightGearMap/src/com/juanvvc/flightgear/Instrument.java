@@ -142,12 +142,13 @@ class Altimeter extends Instrument {
 		// remember: the background is gong to be at position 2, since hands are at 0 and 1
 		c.drawBitmap(imgsScaled.get(2), matrix, null);
 
-		double alt2Angle = ((pd.getAltitude() / 1000) * 360 / 10);
+		float altitude = pd.getFloat(PlaneData.ALTITUDE);
+		double alt2Angle = ((altitude / 1000) * 360 / 10);
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) alt2Angle, ( (0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(imgsScaled.get(1), matrix, null);
-		double alt1Angle = ((pd.getAltitude() % 1000) * 360 / 1000);
+		double alt1Angle = ((altitude % 1000) * 360 / 1000);
 		matrix.reset();
 		matrix.postTranslate(( (0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
 		matrix.postRotate((float) alt1Angle, ((0.5f + col) * gridSize ) * scale, ((0.5f + row) * gridSize) * scale);
@@ -179,97 +180,19 @@ class Attitude extends Instrument {
 		// draw pitch
 		matrix.reset();
 		// translate 23 /  pixels each 5 degrees
-		matrix.postTranslate(((0.5f + col) * gridSize) * scale - ati1Scaled.getWidth() / 2, ((0.5f + row) * gridSize + pd.getPitch() * (23 * gridSize/ 512) / 5) * scale - ati1Scaled.getHeight() / 2);
-		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
+		float roll = pd.getFloat(PlaneData.ROLL);
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale - ati1Scaled.getWidth() / 2, ((0.5f + row) * gridSize + pd.getFloat(PlaneData.PITCH) * (23 * gridSize/ 512) / 5) * scale - ati1Scaled.getHeight() / 2);
+		matrix.postRotate(-roll, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati1Scaled, matrix, null);
 		// draw roll
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize) * scale - ati2Scaled.getWidth() / 2, ((0.5f + row) * gridSize) * scale  - ati2Scaled.getHeight() / 2);
-		matrix.postRotate(-pd.getRoll(), ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
+		matrix.postRotate(-roll, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(ati2Scaled, matrix, null);
 		
 		matrix.reset();
 		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
 		c.drawBitmap(imgsScaled.get(3), matrix, null);
-	}
-}
-
-class Speed extends Instrument {
-	public Speed(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hand1.png");
-		this.imgFiles.add("speed.png");
-	}
-	@Override
-	public void onDraw(Canvas c, PlaneData pd) {
-		if (! ready) {
-			return;
-		}
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(1), matrix, null);
-		
-		// climb speed
-		// 40kts = 30º, 200kts = 320º
-		double speedAngle = (pd.getSpeed() - 40) * 290 / 160  + 30;
-		if (speedAngle < 0) {
-			speedAngle = 0;
-		} else if (speedAngle > 330) {
-			speedAngle = 330;
-		}
-		matrix.reset();
-		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) speedAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(0), matrix, null);
-	}
-}
-
-class RPM extends Instrument {
-	public RPM(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hand1.png");
-		this.imgFiles.add("rpm.png");
-	}
-	@Override
-	public void onDraw(Canvas c, PlaneData pd) {
-		if (! ready) {
-			return;
-		}
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(1), matrix, null);
-		
-		// rpm
-		// 500 = -90º, 3000 = 90º
-		double rpmAngle = (pd.getRPM() - 500d) * 180 / 2500 - 90;
-		matrix.reset();
-		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) rpmAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(0), matrix, null);
-	}
-}
-
-class ClimbRate extends Instrument {
-	public ClimbRate(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hand1.png");
-		this.imgFiles.add("climb.png");
-	}
-	@Override
-	public void onDraw(Canvas c, PlaneData pd) {
-		if (! ready) {
-			return;
-		}
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(1), matrix, null);
-		
-		// climb speed
-		double climbAngle = (pd.getRate() * 180 / 2000) - 90;
-		matrix.reset();
-		matrix.postTranslate(((0.5f + col) * gridSize - getHandCenterX()) * scale, ((0.5f + row) * gridSize - getHandCenterY()) * scale);
-		matrix.postRotate((float) climbAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(imgsScaled.get(0), matrix, null);
 	}
 }
 
@@ -295,7 +218,7 @@ class TurnSlip extends Instrument {
 		// draw slip skid
 		matrix.reset();
 		// (0.7*SEMICLOSEWIDTH is calibrated with on screen instruments with FG sim)
-		matrix.setTranslate(((0.5f + col - 0.7f * pd.getSlipSkid()) * gridSize) * scale - slipScaled.getWidth() / 2 , ((row + 0.65f) * gridSize) * scale  - slipScaled.getHeight() / 2);
+		matrix.setTranslate(((0.5f + col - 0.7f * pd.getFloat(PlaneData.SLIP)) * gridSize) * scale - slipScaled.getWidth() / 2 , ((row + 0.65f) * gridSize) * scale  - slipScaled.getHeight() / 2);
 		c.drawBitmap(slipScaled, matrix, null);
 		
 		matrix.reset();
@@ -306,32 +229,11 @@ class TurnSlip extends Instrument {
 		
 		// turn rate
 		// 20º means a turn rate = 1 turn each 2 minuts
-		double turnAngle = (pd.getTurnRate() * 20);
+		double turnAngle = (pd.getFloat(PlaneData.TURN_RATE) * 20);
 		matrix.reset();
 		matrix.postTranslate(((0.5f + col) * gridSize) * scale  - turnScaled.getWidth() / 2, ((0.5f + row) * gridSize) * scale  - turnScaled.getHeight() / 2);
 		matrix.postRotate((float) turnAngle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(turnScaled, matrix, null);
-	}
-}
-
-class Heading extends Instrument {
-	public Heading(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hdg1.png");
-		this.imgFiles.add("hdg2.png");
-	}
-
-	@Override
-	public void onDraw(Canvas c, PlaneData pd) {
-		float angle = -pd.getInsHeading();
-		// (0.7*SEMICLOSEWIDTH is calibrated with on screen instruments with FG sim)
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		matrix.postRotate((float) angle, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
-		matrix.reset();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
 	}
 }
 
@@ -351,7 +253,7 @@ class Fuel extends Instrument {
 		
 		// left fuel
 		// 0 gals = 160º, 26gals = 20º
-		float ang = 160 - pd.getFuel1() * 140 / 26;
+		float ang = 160 - pd.getFloat(PlaneData.FUEL1) * 140 / 26;
 		if (ang < 10 ) {
 			ang = 10;
 		}
@@ -362,7 +264,7 @@ class Fuel extends Instrument {
 		
 		// right fuel
 		// 0 gals = -160º, 26gals = -20º
-		ang = -160 + pd.getFuel2() * 140 / 26;
+		ang = -160 + pd.getFloat(PlaneData.FUEL2) * 140 / 26;
 		if (ang > -10 ) {
 			ang = -10;
 		}
@@ -390,7 +292,7 @@ class Oil extends Instrument {
 		
 		// oil temperature
 		// 75 = 165º, 245 = 15º
-		float ang = 165 - (pd.getOilTemp() - 75) * 150 / 170;
+		float ang = 165 - (pd.getFloat(PlaneData.OIL_TEMP) - 75) * 150 / 170;
 		if (ang < 10 ) {
 			ang = 10;
 		}
@@ -404,7 +306,7 @@ class Oil extends Instrument {
 		
 		// oil press
 		// 0 gals = -160º, 26gals = -20º
-		ang = -165 + pd.getOilPress() * 150 / 115;
+		ang = -165 + pd.getFloat(PlaneData.OIL_PRESS) * 150 / 115;
 		if (ang > -10 ) {
 			ang = -10;
 		}
@@ -425,10 +327,79 @@ class Nav extends Instrument {
 	}
 	
 	public void onDraw(Canvas c, PlaneData pd) {
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(0), matrix, null);
-		c.drawBitmap(imgsScaled.get(1), matrix, null);
-		c.drawBitmap(imgsScaled.get(2), matrix, null);
+		Matrix m = new Matrix();
+		m.setTranslate(col * gridSize * scale, row * gridSize * scale);
+		c.drawBitmap(imgsScaled.get(0), m, null);
+		c.drawBitmap(imgsScaled.get(1), m, null);
+		c.drawBitmap(imgsScaled.get(2), m, null);
+		
+	}
+}
+
+class OneHandInstrument extends Instrument {
+	private int handle;
+	private int handleID;
+	private int handleX;
+	private int handleY;
+	private int handleCX;
+	private int handleCY;
+	private float min;
+	private float minAngle;
+	private float max;
+	private float maxAngle;
+	private int rotate;
+	private int rotateID;
+	public OneHandInstrument(
+			float x, float y, Context c,
+			String[] files,
+			int handle, int handleID,
+			int handleX, int handleY,
+			int handleCX, int handleCY,
+			float min, float minAngle, float max, float maxAngle,
+			int rotate, int rotateID) {
+		super(x, y, c);
+		this.handle = handle;
+		this.handleID = handleID;
+		this.handleCX = handleCX;
+		this.handleCY = handleCY;
+		this.handleX = handleX;
+		this.handleY = handleY;
+		this.min = min;
+		this.minAngle = minAngle;
+		this.max = max;
+		this.maxAngle = maxAngle;
+		this.rotate = rotate;
+		this.rotateID = rotateID;
+		for (int i=0; i<files.length; i++) {
+			this.imgFiles.add(files[i]);
+		}
+	}
+	
+	@Override
+	public void onDraw(Canvas c, PlaneData pd) {
+		Matrix m = new Matrix();
+		for(int i = 0; i < this.imgsScaled.size(); i++) {
+			Bitmap b = this.imgsScaled.get(i);
+			m.reset();
+			if (i == handle) {
+				float v = pd.getFloat(handleID);
+				if (v < min) {
+					v = min;
+				} else if (v > max) {
+					v = max;
+				}
+				float angle = (v - min) * (maxAngle - minAngle) / (max - min) + minAngle;
+				m.setTranslate((col * gridSize + (handleCX - handleX) * gridSize / 512) * scale, (row * gridSize + (handleCY- handleY) * gridSize / 512) * scale);
+				m.postRotate(angle, (col * gridSize + handleCX * gridSize / 512) * scale, (row * gridSize + handleCY * gridSize / 512) * scale);
+				c.drawBitmap(b, m, null);
+			} else if (i == rotate) {
+				m.setTranslate((col + 0.5f) * gridSize * scale - b.getWidth() / 2, (row + 0.5f) * gridSize * scale - b.getHeight() / 2);
+				m.postRotate(pd.getFloat(rotateID), (col + 0.5f) * gridSize * scale, (row + 0.5f) * gridSize * scale);
+				c.drawBitmap(b, m, null);
+			} else {
+				m.setTranslate(col * gridSize * scale, row * gridSize * scale);
+				c.drawBitmap(b, m, null);
+			}
+		}
 	}
 }

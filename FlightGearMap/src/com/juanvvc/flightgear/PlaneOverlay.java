@@ -33,7 +33,9 @@ public class PlaneOverlay extends org.osmdroid.views.overlay.Overlay {
     public void setPlaneData(PlaneData pd, GeoPoint l) {
     	this.planeData = pd;
     	if ( l == null ) {
-    		location = new GeoPoint((int)(planeData.getLatitude() * 1E6), (int)(planeData.getLongitude() * 1E6));
+    		location = new GeoPoint(
+    				(int)(planeData.getFloat(PlaneData.LATITUDE) * 1E6),
+    				(int)(planeData.getFloat(PlaneData.LONGITUDE) * 1E6));
     	} else {
     		location = l;
     	}
@@ -50,7 +52,7 @@ public class PlaneOverlay extends org.osmdroid.views.overlay.Overlay {
         
         Matrix m = new Matrix();
         m.setTranslate(locPoint.x - bitmap.getWidth() / 2, locPoint.y - bitmap.getHeight() / 2);
-        m.postRotate(planeData.getHeading(), locPoint.x, locPoint.y);
+        m.postRotate(planeData.getFloat(PlaneData.HEADING_MOV), locPoint.x, locPoint.y);
         
         pC.drawBitmap(bitmap, m, null);
         pC.save();

@@ -293,7 +293,9 @@ panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
 			// A new data arrived to the UDP listener
 			if (planeOverlay != null) {
 				// move the overlay to the new position
-				GeoPoint p = new GeoPoint((int)(values[0].getLatitude() * 1E6), (int)(values[0].getLongitude() * 1E6));
+				GeoPoint p = new GeoPoint(
+						(int)(values[0].getFloat(PlaneData.LATITUDE) * 1E6),
+						(int)(values[0].getFloat(PlaneData.LONGITUDE) * 1E6));
 				mapView.getController().setCenter(p);
 				
 				// update the panel and overlay
