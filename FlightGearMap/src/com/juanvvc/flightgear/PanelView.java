@@ -2,6 +2,9 @@ package com.juanvvc.flightgear;
 
 import java.util.ArrayList;
 
+import com.juanvvc.flightgear.instruments.Instrument;
+import com.juanvvc.flightgear.instruments.InstrumentType;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -107,51 +110,40 @@ public class PanelView extends View {
 		case Distribution.SIMPLE_VERTICAL_PANEL:
 			cols = 2;
 			rows = 3;
-			instruments.add(new Attitude(0, 0, context));
-			instruments.add(new TurnSlip(1, 0, context));
-			instruments.add(new OneHandInstrument(0, 1, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
-			instruments.add(new OneHandInstrument(1, 1, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
-			instruments.add(new Altimeter(0, 2, context));
-			instruments.add(new OneHandInstrument(1, 2, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 0, 2));
+			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
 
 			break;
 		case Distribution.SIMPLE_HORIZONTAL_PANEL:
 			cols = 3;
 			rows = 2;
-			instruments.add(new OneHandInstrument(0, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
-			instruments.add(new Attitude(1, 0, context));
-			instruments.add(new Altimeter(2, 0, context));
-			instruments.add(new TurnSlip(0, 1, context));
-			instruments.add(new OneHandInstrument(1, 1, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
-			instruments.add(new OneHandInstrument(2, 1, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 2, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 1));
 
 			break;
 		case Distribution.HORIZONTAL_PANEL:
 			cols = 6;
 			rows = 1;
-			instruments.add(new Attitude(0, 0, context));
-			instruments.add(new TurnSlip(1, 0, context));
-			instruments.add(new OneHandInstrument(2, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
-			instruments.add(new OneHandInstrument(3, 0, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
-			instruments.add(new Altimeter(4, 0, context));
-			instruments.add(new OneHandInstrument(5, 0, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 2, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 3, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 4, 0));
+			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 5, 0));
 			break;
 		case Distribution.C172_INSTRUMENTS:
 			cols = 5;
 			rows = 3;
-			instruments.add(new OneHandInstrument(1, 0, context,new String[] {"speed.png", "hand1.png"}, 1, PlaneData.SPEED, 20, 200, 256, 256, 0, 0, 200, 320, -1, -1));
-			instruments.add(new Attitude(2, 0, context));
-			instruments.add(new Altimeter(3, 0, context));
-			instruments.add(new Nav(4, 0, context));
-			instruments.add(new TurnSlip(1, 1, context));
-			instruments.add(new OneHandInstrument(2, 1, context,new String[] {"hdg1.png", "hdg2.png"}, -1, -1, 20, 200, 256, 256, 0, 0, 0, 0, 0, PlaneData.HEADING));
-			instruments.add(new OneHandInstrument(3, 1, context,new String[] {"climb.png", "hand1.png"}, 1, PlaneData.CLIMB_RATE, 20, 200, 256, 256, -2000, -270, 2000, 90, -1, -1));
-			instruments.add(new Nav(4, 1, context));
+			instruments = Cessna172.getInstrumentPanel(context);
 
-			instruments.add(new OneHandInstrument(1, 2, context,new String[] {"rpm.png", "hand1.png"}, 1, PlaneData.RPM, 20, 200, 256, 256, 0, -120, 3500, 120, -1, -1));
-			
-			instruments.add(new Fuel(0.2f, 2, context));
-			instruments.add(new Oil(0.2f, 1, context));
 		default: // this includes Distribution.NO_MAP
 		}
 		
@@ -159,17 +151,19 @@ public class PanelView extends View {
 		// load the instruments. This could be in a different thread, but IN MY
 		// DEVICES, loading does not take long
 		for (Instrument i : instruments) {
-			try {
-				i.loadImages(this.selectImageSet());
-			} catch (OutOfMemoryError e) {
-				// if out of memory, try forcing the low quality version
+			if ( i != null) {
 				try {
-					i.loadImages(BitmapProvider.LOW_QUALITY);
-				} catch (Exception e2) {
-					myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
+					i.loadImages(this.selectImageSet());
+				} catch (OutOfMemoryError e) {
+					// if out of memory, try forcing the low quality version
+					try {
+						i.loadImages(BitmapProvider.LOW_QUALITY);
+					} catch (Exception e2) {
+						myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
+					}
+				} catch (Exception e) {
+					myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 				}
-			} catch (Exception e) {
-				myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 			}
 		}
 		this.rescaleInstruments();
@@ -187,12 +181,12 @@ public class PanelView extends View {
 	 * of the execution.
 	 */
 	private void rescaleInstruments() {
-		if (getWidth() > 0) {
+		if (getWidth() > 0 && instruments != null && instruments.size() > 0) {
 			// scale to match the available size. All instrumewnts should be
 			// visible.
 			scale = Math.min(
-					1.0f * getWidth() / (cols * Instrument.getGridSize()),
-					1.0f * getHeight()/ (rows * Instrument.getGridSize()));
+					1.0f * getWidth() / (cols * instruments.get(0).getGridSize()),
+					1.0f * getHeight()/ (rows * instruments.get(0).getGridSize()));
 			myLog.d(TAG, "Scale: " + scale);
 
 			// prevent spurious scales
@@ -202,7 +196,9 @@ public class PanelView extends View {
 
 			Instrument.getBitmapProvider(this.getContext()).setScale(scale);
 			for (Instrument i: instruments) {
-				i.setScale(scale);
+				if (i != null) {
+					i.setScale(scale);
+				}
 			}
 		}
 	}
@@ -232,7 +228,9 @@ public class PanelView extends View {
 
 		for (Instrument i : instruments) {
 			try {
-				i.onDraw(canvas, lastPlaneData);
+				if (i != null) {
+					i.onDraw(canvas, lastPlaneData);
+				}
 			} catch(Exception e) {
 				myLog.e(TAG, myLog.stackToString(e));
 			}

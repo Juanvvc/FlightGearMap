@@ -21,7 +21,7 @@ public class PlaneData {
 		// check that we hace the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
-		getFloat(OIL_TEMP);
+		getFloat(NAV2_DEFLECTION);
 	}
 	
 	public static final int SPEED = 0; // speed, in knots
@@ -41,6 +41,17 @@ public class PlaneData {
 	public static final int FUEL2 = 14; // fuel in second tank, in us gals
 	public static final int OIL_PRESS = 15; // oil pressure in psi
 	public static final int OIL_TEMP = 16; // oil temperature in degf
+	public static final int AMP = 17; // amperes
+	public static final int VOLT = 18; // voltage
+	public static final int NAV1_RAD_SELECTED = 19; // selected radial in NAV1
+	public static final int NAV1_TO = 20; // true if the to flag is set in NAV1
+	public static final int NAV1_FROM = 21; // true if the from flag is set in NAV1
+	public static final int NAV1_DEFLECTION = 22; // needle deflection in NAV1
+	public static final int NAV2_RAD_SELECTED = 23; // selected radial in NAV2
+	public static final int NAV2_TO = 24; // true if the to flag is set in NAV2
+	public static final int NAV2_FROM = 25; // true if the from flag is set in NAV2
+	public static final int NAV2_DEFLECTION = 26; // needle deflection in NAV2
+
 	
 	public int getInt(int i) {
 		if (data == null) {
@@ -54,6 +65,20 @@ public class PlaneData {
 			return 0;
 		}
 		return new Float(data[i]).floatValue();
+	}
+	
+	public String getString(int i) {
+		if (data == null) {
+			return "";
+		}
+		return data[i];
+	}
+	
+	public boolean getBool(int i) {
+		if (data == null) {
+			return false;
+		}
+		return data[i].equals("1");
 	}
 	
 	public Date getDate() {

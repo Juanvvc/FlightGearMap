@@ -1,0 +1,236 @@
+package com.juanvvc.flightgear;
+
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+
+import com.juanvvc.flightgear.instruments.Instrument;
+import com.juanvvc.flightgear.instruments.InstrumentType;
+import com.juanvvc.flightgear.instruments.RotateSurface;
+import com.juanvvc.flightgear.instruments.StaticSurface;
+import com.juanvvc.flightgear.instruments.Surface;
+
+public class Cessna172 {
+	
+	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
+		switch (type) {
+
+		case SPEED:
+			return new Instrument(col, row, context, new Surface[] {
+				new StaticSurface("speed.png", 0, 0),
+				new C172AirSpeedSurface("hand1.png", 236, 56, PlaneData.SPEED, 1, 256, 256, 0, 0, 200, 320)
+			});
+		case ATTITUDE:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("ati0.png", 0, 0),
+					new C172AtiSurface("ati1.png", 70, 138),
+					new RotateSurface("ati2.png", 23, 23, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
+					new StaticSurface("ati3.png", 0, 0)
+				});
+		case ALTIMETER:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("alt1.png", 0, 0),
+					new RotateSurface("hand2.png", 236, 56, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
+					new C172AltimeterLongHandSurface("hand1.png", 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
+				});
+		case NAV1:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("nav1.png", 0, 0),
+					new RotateSurface("nav2.png", 0, 0, PlaneData.NAV1_RAD_SELECTED, 1, 256, 256, 0, 0, 360, -360),
+					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
+					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
+					new StaticSurface("nav3.png", 0, 0)
+				});	
+		case NAV2:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("nav1.png", 0, 0),
+					new RotateSurface("nav2.png", 0, 0, PlaneData.NAV2_RAD_SELECTED, 1, 256, 256, 0, 0, 360, -360),
+					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
+					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
+					new StaticSurface("nav3.png", 0, 0)
+				});	
+		case HEADING:
+			return new Instrument(col, row, context, new Surface[] {
+					new RotateSurface("hdg1.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+					new StaticSurface("hdg2.png", 0, 0)
+				});
+		case TURN_RATE:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("trn0.png", 0, 0),
+					new RotateSurface("slip.png", 230, 300, PlaneData.SLIP, 1, 256, 0, -1, -25, 1, 25),
+					new StaticSurface("trn1.png", 0, 0),
+					new RotateSurface("turn.png", 94, 219, PlaneData.TURN_RATE, 1, 256, 256, -4, -80, 4, 80),
+				});
+		case CLIMB_RATE:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("climb.png", 0, 0),
+					new RotateSurface("hand1.png", 236, 56, PlaneData.CLIMB_RATE, 1, 256, 256, -2000, -265, 2000, 85)
+				});
+		case RPM:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("rpm.png", 0, 0),
+					new RotateSurface("hand1.png", 236, 56, PlaneData.RPM, 1, 256, 256, 0, -125, 3500, 125)
+				});
+		case FUEL:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("fuel1.png", 0, 0),
+					new RotateSurface("hand3.png", -20, 7, PlaneData.FUEL1, 1, 0, 230, 0, 160, 26, 20),
+					new RotateSurface("hand3.png", 268, 7, PlaneData.FUEL2, 1, 288, 230, 0, -160, 26, -20)
+				});
+		case OIL:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("oil1.png", 0, 0),
+					new RotateSurface("hand3.png", -20, 12, PlaneData.OIL_TEMP, 1, 0, 230, 75, 160, 245, 20),
+					new RotateSurface("hand3.png", 268, 12, PlaneData.OIL_PRESS, 1, 288, 230, 0, -160, 115, -20)
+				});
+		case BATT:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("battery-c172p.png", 0, 0),
+					new RotateSurface("hand3.png", -20, 12, PlaneData.AMP, 1, 0, 230, -40, 145, 40, 35),
+					new RotateSurface("hand3.png", 268, 12, PlaneData.VOLT, 1, 288, 230, 0, -145, 40, -35)
+				});
+		default:
+			return null;
+		}
+	}
+	
+	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
+		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
+		instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 1, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 2, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 3, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 4, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 1));
+		instruments.add(Cessna172.createInstrument(InstrumentType.HEADING, context, 2, 1));
+		instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 3, 1));
+		instruments.add(Cessna172.createInstrument(InstrumentType.NAV2, context, 4, 1));
+
+		instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 2));
+		
+		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.OIL, context, 0.2f, 1));
+		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));		
+		return instruments;
+	}
+}
+
+/** The airspeed instrument that I chose for C172 is not linear.
+ * This surface rotates the handle in a not linear scale using a polynomial to adjust the curve
+ * that was calculated using octave.
+ */
+class C172AirSpeedSurface extends RotateSurface {
+
+	public C172AirSpeedSurface(String file,
+			float x, float y,
+			int pdIdx, float rscale,
+			int rcx, int rcy,
+			float min, float amin, float max, float amax) {
+		super(file, x, y, pdIdx, rscale, rcx, rcy, min, amin, max, amax);
+	}
+
+	@Override
+	protected float getRotationAngle(PlaneData pd) {
+		float v = pd.getFloat(pdIdx);
+		if (v < 40) {
+			// from 0 to 40: approximate to a linear behavior: 0=0º, 40=20º
+			// this simplifies the polynomial and in any case, speeds under 40knots are not common
+			return v/2;
+		} else {
+			// curve adjustment using octave:
+			// x=[40:20:200]; 
+			// y=[20,70,120,160,205,240,270,290,310]; (angles calculated with gimp on speed1.png)
+			// p=polyfit(x,y,2);
+			// ans = -6.1147e-03   3.3009e+00  -1.0452e+02
+			return -0.0061147f * v * v+3.3f * v - 104.5f;
+		}
+	}
+}
+
+/** The long hand of the altimeter shows the modulus of the altitude.
+ * Modules is not directly sent by FlightGear, and this class
+ * manages the calculus.
+ */
+class C172AltimeterLongHandSurface extends RotateSurface {
+
+	public C172AltimeterLongHandSurface(String file,
+			float x, float y,
+			int pdIdx, float rscale,
+			int rcx, int rcy,
+			float min, float amin, float max, float amax) {
+		super(file, x, y, pdIdx, rscale, rcx, rcy, min, amin, max, amax);
+	}
+	
+	protected float getRotationAngle(PlaneData pd) {
+		float v = pd.getFloat(pdIdx);
+		return (v % 1000) * 360 /1000;
+	}
+}
+
+class C172AtiSurface extends Surface {
+	private Matrix matrix;
+
+	public C172AtiSurface(String file, float x, float y) {
+		super(file, x, y);
+		matrix = new Matrix();
+	}
+	@Override
+	public void onDraw(Canvas c, Bitmap b, PlaneData pd) {
+		// draw pitch
+		matrix.reset();
+		float col = parent.getCol();
+		float row = parent.getRow();
+		float gridSize = parent.getGridSize();
+		float scale = parent.getScale();
+		// translate 23 /  pixels each 5 degrees
+		float roll = pd.getFloat(PlaneData.ROLL);
+		if (roll > 60) {
+			roll = 60;
+		}
+		float pitch = pd.getFloat(PlaneData.PITCH);
+		if (pitch > 45) {
+			pitch = 45;
+		}
+		
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale - b.getWidth() / 2, ((0.5f + row) * gridSize + pitch * (23 * gridSize/ 512) / 5) * scale - b.getHeight() / 2);
+		matrix.postRotate(-roll, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
+		c.drawBitmap(b, matrix, null);
+	}
+}
+
+/** Draw the flag from/to in the OVR */
+class C172FromToSurface extends Surface {
+	private int nav_to, nav_from; // position of this flags in PlaneData
+
+	public C172FromToSurface(String file, float x, float y, int nav_to, int nav_from) {
+		super(file, x, y);
+		this.nav_from = nav_from;
+		this.nav_to = nav_to;
+	}
+	@Override
+	public void onDraw(Canvas c, Bitmap b, PlaneData pd) {
+		float col = parent.getCol();
+		float row = parent.getRow();
+		float gridSize = parent.getGridSize();
+		float scale = parent.getScale();
+		
+		int left = (int) ((col + x / 512f) * gridSize * scale);
+		int top = (int) ((row + y / 512f) * gridSize * scale);
+		
+		
+		if (pd.getBool(nav_to)) {
+			c.drawBitmap(b,
+					new Rect(0, 0, b.getWidth() / 2, b.getHeight()),
+					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),
+					null);
+		} else if (pd.getBool(nav_from)) {
+			c.drawBitmap(b,
+					new Rect(b.getWidth() / 2, 0, b.getWidth(), b.getHeight()),
+					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),
+					null);
+		}
+	}
+}

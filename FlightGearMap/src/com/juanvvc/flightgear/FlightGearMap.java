@@ -70,7 +70,7 @@ public class FlightGearMap extends Activity {
         super.onCreate(savedInstanceState);
         
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.map_simplepanel);
@@ -82,8 +82,8 @@ public class FlightGearMap extends Activity {
         mapView.getOverlays().add(planeOverlay);
         
         panelView = (PanelView) findViewById(R.id.panel);
-mapView.setVisibility(View.GONE);
-panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
+//mapView.setVisibility(View.GONE);
+//panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
         // get the default distribution
         this.defaultDistribution = panelView.getDistribution();        
     }
@@ -252,7 +252,7 @@ panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
 				return e.toString() + " " + getString(R.string.wait);
 			}
 			
-			byte[] buf = new byte[255];
+			byte[] buf = new byte[512];
 			boolean canceled = false;
 			String msg = null;
 			firstMessage = true;
