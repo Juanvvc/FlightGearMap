@@ -123,6 +123,72 @@
 	   <format>%f</format>
 	   <node>/engines/engine/oil-temperature-degf</node>
    </chunk>
+
+   <chunk>
+	   <name>Amp</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/systems/electrical/amps</node>
+   </chunk>
+
+   <chunk>
+	   <name>Volts</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/systems/electrical/volts</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 selected radial</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/radials/selected-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 to flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/to-flag</node>
+   </chunk>
+ 
+   <chunk>
+	   <name>Nav1 from flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/from-flag</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 heading deflection </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/heading-needle-deflection</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 selected radial</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav[1]/radials/selected-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 to flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav[1]/to-flag</node>
+   </chunk>
+ 
+   <chunk>
+	   <name>Nav2 from flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav[1]/from-flag</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 heading deflection </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav[1]/heading-needle-deflection</node>
+   </chunk>
  
  </output>
 
