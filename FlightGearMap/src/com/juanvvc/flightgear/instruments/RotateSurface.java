@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 
 import com.juanvvc.flightgear.PlaneData;
 
+/** A surface that is rotated according to some data in PlaneData. */
 public class RotateSurface extends Surface {
 	private Matrix m;
 	protected int pdIdx;
@@ -14,6 +15,20 @@ public class RotateSurface extends Surface {
 	private float rscale;
 	private float min, amin;
 	private float max, amax;
+	
+	/**
+	 * @param file The file of the image (does not include directory)
+	 * @param x Horizontal position of the surface inside the instrument
+	 * @param y Horizontal position of the surface inside the instrument
+	 * @param pdIdx Index of PlaneData that holds the data
+	 * @param rscale Scale of the data (usually 1: do not modify the data)
+	 * @param rcx Rotation center (inside the instrument)
+	 * @param rcy Rotation center (inside the instrument)
+	 * @param min Minimum value of the data
+	 * @param amin Angle that corresponds to the minimum value
+	 * @param max Max value of the data
+	 * @param amax Angle that corresponds to the max value.
+	 */
 	public RotateSurface(
 			String file, float x, float y,
 			int pdIdx, float rscale,
@@ -42,7 +57,11 @@ public class RotateSurface extends Surface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b, PlaneData pd) {
+	public void onDraw(Canvas c, Bitmap b) {
+		if (planeData == null || !planeData.hasData()) {
+			return;
+		}
+		
 		m.reset();
 		final float gridSize = parent.getGridSize();
 		final float scale = parent.getScale();
@@ -52,7 +71,7 @@ public class RotateSurface extends Surface {
 				(col + x / 512f ) * gridSize * scale,
 				(row + y / 512f ) * gridSize * scale);
 		m.postRotate(
-				getRotationAngle(pd),
+				getRotationAngle(this.planeData),
 				(col + rcx / 512f ) * gridSize * scale,
 				(row + rcy / 512f ) * gridSize * scale);
 		c.drawBitmap(b, m, null);

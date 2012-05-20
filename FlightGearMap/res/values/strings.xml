@@ -16,4 +16,5 @@
 	<string name="quit">Quit</string>
 	<string name="wait">Please, wait 10 seconds and try again.</string>
 	<string name="c172_panel">Cessna 172 Panel</string>
+	<string name="update_andatlas">Did you update andatlas.xml in your PC?</string>
 </resources>

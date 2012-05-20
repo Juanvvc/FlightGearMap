@@ -125,12 +125,22 @@ public class Instrument {
 		return scale;
 	}
 	
+	/** Get a new PlaneData object.
+	 * Some surfaces may call pd.getConnection().get(), that uses the
+	 * network and then it shouldn't be on the main thread.
+	 * @param pd The last PlaneData object */
+	public void postPlaneData(PlaneData pd) {
+		for (Surface s: surfaces) {
+			s.postPlaneData(pd);
+		}
+	}
+	
 	/** Draw the instrument on the canvas.
 	 * 
 	 * @param c The current Canvas
 	 * @param pd The current value of the plane information
 	 */
-	public void onDraw(Canvas c, PlaneData pd) {
+	public void onDraw(Canvas c) {
 		if (!ready) {
 			return;
 		}
@@ -139,7 +149,7 @@ public class Instrument {
 			if (s != null) {
 				Bitmap b = imgsScaled.get(i);
 				try {
-					s.onDraw(c, b, pd);
+					s.onDraw(c, b);
 				} catch (NullPointerException e) {
 					myLog.w(TAG, myLog.stackToString(e));
 				}
@@ -147,104 +157,3 @@ public class Instrument {
 		}
 	}
 }
-
-/*
-class Fuel extends Instrument {
-	public Fuel(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hand3.png");
-		this.imgFiles.add("fuel1.png");
-	}
-	
-	public void onDraw(Canvas c, PlaneData pd) {
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
-		
-		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
-		
-		// left fuel
-		// 0 gals = 160º, 26gals = 20º
-		float ang = 160 - pd.getFloat(PlaneData.FUEL1) * 140 / 26;
-		if (ang < 10 ) {
-			ang = 10;
-		}
-		matrix.reset();
-		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
-		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
-		
-		// right fuel
-		// 0 gals = -160º, 26gals = -20º
-		ang = -160 + pd.getFloat(PlaneData.FUEL2) * 140 / 26;
-		if (ang > -10 ) {
-			ang = -10;
-		}
-		matrix.reset();
-		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
-		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
-
-	}
-}
-
-class Oil extends Instrument {
-	public Oil(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("hand3.png");
-		this.imgFiles.add("oil1.png");
-	}
-	
-	public void onDraw(Canvas c, PlaneData pd) {
-		Matrix matrix = new Matrix();
-		matrix.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(1), matrix, null);
-		
-		// note: in the 256x256 bitmaps, centers are at (18, 115) and (137, 115)
-		
-		// oil temperature
-		// 75 = 165º, 245 = 15º
-		float ang = 165 - (pd.getFloat(PlaneData.OIL_TEMP) - 75) * 150 / 170;
-		if (ang < 10 ) {
-			ang = 10;
-		}
-		if (ang > 170) {
-			ang =170;
-		}
-		matrix.reset();
-		matrix.setTranslate(((col + 18.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
-		matrix.postRotate(ang, (col + 18.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
-		
-		// oil press
-		// 0 gals = -160º, 26gals = -20º
-		ang = -165 + pd.getFloat(PlaneData.OIL_PRESS) * 150 / 115;
-		if (ang > -10 ) {
-			ang = -10;
-		}
-		matrix.reset();
-		matrix.setTranslate(((col + 137.0f/256) * gridSize - this.getHandCenterX()) * scale, ((row + 115.0f/256) * gridSize - this.getHandCenterY()) * scale);
-		matrix.postRotate(ang, (col + 137.0f/256) * gridSize * scale, (row + 115.0f/256) * gridSize * scale);
-		c.drawBitmap(this.imgsScaled.get(0), matrix, null);
-
-	}
-}
-
-class Nav extends Instrument {
-	public Nav(float x, float y, Context c) {
-		super(x, y, c);
-		this.imgFiles.add("nav1.png");
-		this.imgFiles.add("nav2.png");
-		this.imgFiles.add("nav3.png");
-	}
-	
-	public void onDraw(Canvas c, PlaneData pd) {
-		Matrix m = new Matrix();
-		m.setTranslate(col * gridSize * scale, row * gridSize * scale);
-		c.drawBitmap(imgsScaled.get(0), m, null);
-		c.drawBitmap(imgsScaled.get(1), m, null);
-		c.drawBitmap(imgsScaled.get(2), m, null);
-		
-	}
-}
-*/

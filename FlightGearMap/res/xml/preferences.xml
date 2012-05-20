@@ -32,10 +32,38 @@
         <EditTextPreference
             android:key="udp_port"
             android:title="UDP Port" 
-            android:summary="Define the incoming UDP port"
+            android:summary="Select the incoming UDP port"
             android:dialogTitle="UDP incoming port"
-            android:dialogMessage="UDP incoming port"    
+            android:dialogMessage="UDP incoming port"
+            android:inputType="number"
             android:defaultValue="5501" />
+
+		<EditTextPreference
+            android:key="fgfs_ip"
+            android:title="FGFS IP" 
+            android:summary="Select the remote FGFS IP"
+            android:dialogTitle="FGFS IP"
+            android:dialogMessage="FGFS IP"    
+            android:defaultValue="192.168.1.2" />
+                
+        <EditTextPreference
+            android:key="telnet_port"
+            android:title="Remote Telnet Port" 
+            android:summary="Select the remote FGFS telnet port"
+            android:dialogTitle="Remote Telnet port"
+            android:dialogMessage="Remote Telnet port"
+            android:inputType="number"
+            android:defaultValue="9000" />
+        
+		<EditTextPreference
+            android:key="update_period"
+            android:title="Remote update period" 
+            android:summary="Select the update period for switches (in ms)"
+            android:dialogTitle="Remote update"
+            android:dialogMessage="Remote update period"
+            android:inputType="number"
+            android:defaultValue="5000" />
+
 
     </PreferenceCategory>
     

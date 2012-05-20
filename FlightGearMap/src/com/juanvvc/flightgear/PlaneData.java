@@ -10,6 +10,12 @@ public class PlaneData {
 	
 	String[] data;
 	private Date date = new Date();
+	private FGFSConnection conn;
+	
+	public PlaneData(FGFSConnection c) {
+		conn = c;
+		data = null;
+	}
 	
 	public void parse(final String input) {
 		// strip string with new line
@@ -18,7 +24,7 @@ public class PlaneData {
 		
 		date = new Date();
 		
-		// check that we hace the desired number of parameters
+		// check that we have the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
 		getFloat(NAV2_DEFLECTION);
@@ -83,5 +89,13 @@ public class PlaneData {
 	
 	public Date getDate() {
 		return date;
+	}
+	
+	public FGFSConnection getConnection() {
+		return conn;
+	}
+	
+	public boolean hasData() {
+		return data != null;
 	}
 }

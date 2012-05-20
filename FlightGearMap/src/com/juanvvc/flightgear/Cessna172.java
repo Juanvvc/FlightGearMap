@@ -13,8 +13,10 @@ import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
+import com.juanvvc.flightgear.instruments.SwitchSurface;
 
 public class Cessna172 {
+	private static final String TAG = "Cessna172";
 	
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch (type) {
@@ -93,6 +95,16 @@ public class Cessna172 {
 					new RotateSurface("hand3.png", -20, 12, PlaneData.AMP, 1, 0, 230, -40, 145, 40, 35),
 					new RotateSurface("hand3.png", 268, 12, PlaneData.VOLT, 1, 288, 230, 0, -145, 40, -35)
 				});
+		case SWITCHES:
+			Instrument switches = new Instrument(col, row, context, new Surface[] {
+					new SwitchSurface("switches.png", 0, 152, "/controls/anti-ice/pitot-heat", "PTO"),
+					new SwitchSurface("switches.png", 128, 152, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface("switches.png", 256, 0, "/controls/lighting/taxi-light", "TAX"),
+					new SwitchSurface("switches.png", 256, 152, "/controls/lighting/beacon", "BCN"),
+					new SwitchSurface("switches.png", 384, 0, "/controls/lighting/landing-lights", "LNG"),
+					new SwitchSurface("switches.png", 384, 152, "/controls/lighting/strobe", "DTR"),
+				});
+			return switches;
 		default:
 			return null;
 		}
@@ -113,7 +125,9 @@ public class Cessna172 {
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
 		instruments.add(Cessna172.createInstrument(InstrumentType.OIL, context, 0.2f, 1));
-		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));		
+		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));
+		
+		instruments.add(Cessna172.createInstrument(InstrumentType.SWITCHES, context, 2, 2));
 		return instruments;
 	}
 }
@@ -178,7 +192,11 @@ class C172AtiSurface extends Surface {
 		matrix = new Matrix();
 	}
 	@Override
-	public void onDraw(Canvas c, Bitmap b, PlaneData pd) {
+	public void onDraw(Canvas c, Bitmap b) {
+		if (planeData == null) {
+			return;
+		}
+		
 		// draw pitch
 		matrix.reset();
 		float col = parent.getCol();
@@ -186,11 +204,11 @@ class C172AtiSurface extends Surface {
 		float gridSize = parent.getGridSize();
 		float scale = parent.getScale();
 		// translate 23 /  pixels each 5 degrees
-		float roll = pd.getFloat(PlaneData.ROLL);
+		float roll = planeData.getFloat(PlaneData.ROLL);
 		if (roll > 60) {
 			roll = 60;
 		}
-		float pitch = pd.getFloat(PlaneData.PITCH);
+		float pitch = planeData.getFloat(PlaneData.PITCH);
 		if (pitch > 45) {
 			pitch = 45;
 		}
@@ -211,7 +229,11 @@ class C172FromToSurface extends Surface {
 		this.nav_to = nav_to;
 	}
 	@Override
-	public void onDraw(Canvas c, Bitmap b, PlaneData pd) {
+	public void onDraw(Canvas c, Bitmap b) {
+		if (planeData == null) {
+			return;
+		}
+		
 		float col = parent.getCol();
 		float row = parent.getRow();
 		float gridSize = parent.getGridSize();
@@ -221,12 +243,12 @@ class C172FromToSurface extends Surface {
 		int top = (int) ((row + y / 512f) * gridSize * scale);
 		
 		
-		if (pd.getBool(nav_to)) {
+		if (planeData.getBool(nav_to)) {
 			c.drawBitmap(b,
 					new Rect(0, 0, b.getWidth() / 2, b.getHeight()),
 					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),
 					null);
-		} else if (pd.getBool(nav_from)) {
+		} else if (planeData.getBool(nav_from)) {
 			c.drawBitmap(b,
 					new Rect(b.getWidth() / 2, 0, b.getWidth(), b.getHeight()),
 					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),

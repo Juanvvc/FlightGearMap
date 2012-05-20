@@ -41,8 +41,6 @@ public class PanelView extends View {
 	private float scale = 0;
 	/** Constant TAG to be used during development. */
 	private static final String TAG = "PanelView";
-	/** Plane data. */
-	private PlaneData lastPlaneData = new PlaneData();
 	/** The available instruments. */
 	private ArrayList<Instrument> instruments;
 	/** Number of columns in the panel. */
@@ -214,8 +212,10 @@ public class PanelView extends View {
 	 * @param pd
 	 *            The last received PlaneData
 	 */
-	public void setPlaneData(PlaneData pd) {
-		this.lastPlaneData = pd;
+	public void postPlaneData(PlaneData pd) {
+		for(Instrument i: instruments) {
+			i.postPlaneData(pd);
+		}
 	}
 
 	@Override
@@ -229,7 +229,7 @@ public class PanelView extends View {
 		for (Instrument i : instruments) {
 			try {
 				if (i != null) {
-					i.onDraw(canvas, lastPlaneData);
+					i.onDraw(canvas);
 				}
 			} catch(Exception e) {
 				myLog.e(TAG, myLog.stackToString(e));
