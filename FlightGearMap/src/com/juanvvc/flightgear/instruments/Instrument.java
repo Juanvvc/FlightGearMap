@@ -101,6 +101,43 @@ public class Instrument {
 		return this.gridSize;
 	}
 	
+	/**
+	 * Get the surface of this instrument that controls a screen position.
+	 * In no surface controls this position, returns null.
+	 * 
+	 * @param x The screen pixel position of the event
+	 * @param y The screen pixel position of the event
+	 * @return The surfaces that controls that position, or null.
+	 */
+	public Surface getControlingSurface(float x, float y) {
+		// transform screen pixels into inner instrument position, in 512 scale
+		float inX = getXtoInnerX(x);
+		float inY = getYtoInnerY(y);
+		
+		for(Surface s: this.surfaces) {
+			if (s.youControl(inX, inY)) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @param x The x position of a pixel on the screen
+	 * @return The X position of this x, as an inner, 512 scale point
+	 */
+	public float getXtoInnerX(float x) {
+		return 512f * (x / (this.gridSize * this.scale) - this.col);
+	}
+
+	/**
+	 * @param x The y position of a pixel on the screen
+	 * @return The y position of this x, as an inner, 512 scale point
+	 */
+	public float getYtoInnerY(float y) {
+		return 512f * (y / (this.gridSize * this.scale) - this.row);
+	}
+	
 	/** Sets the scale and loads the scaled images into the inner array. */
 	public void setScale(float scale) {
 		for (Bitmap b: imgsScaled) {
@@ -141,18 +178,11 @@ public class Instrument {
 	 * @param pd The current value of the plane information
 	 */
 	public void onDraw(Canvas c) {
-		if (!ready) {
-			return;
-		}
 		for (int i = 0; i < surfaces.length; i++) {
 			Surface s = surfaces[i];
 			if (s != null) {
 				Bitmap b = imgsScaled.get(i);
-				try {
-					s.onDraw(c, b);
-				} catch (NullPointerException e) {
-					myLog.w(TAG, myLog.stackToString(e));
-				}
+				s.onDraw(c, b);
 			}
 		}
 	}

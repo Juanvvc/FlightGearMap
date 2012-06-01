@@ -17,4 +17,5 @@
 	<string name="wait">Please, wait 10 seconds and try again.</string>
 	<string name="c172_panel">Cessna 172 Panel</string>
 	<string name="update_andatlas">Did you update andatlas.xml in your PC?</string>
+	<string name="waiting_connection">Trying to connect to FlightGear</string>
 </resources>

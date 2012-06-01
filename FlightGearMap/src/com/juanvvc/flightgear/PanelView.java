@@ -2,14 +2,21 @@ package com.juanvvc.flightgear;
 
 import java.util.ArrayList;
 
-import com.juanvvc.flightgear.instruments.Instrument;
-import com.juanvvc.flightgear.instruments.InstrumentType;
-
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnTouchListener;
+
+import com.juanvvc.flightgear.instruments.Instrument;
+import com.juanvvc.flightgear.instruments.InstrumentType;
+import com.juanvvc.flightgear.instruments.Surface;
 
 /**
  * Shows a small panel on the screen. This panel resize controls to the
@@ -18,7 +25,7 @@ import android.view.View;
  * @author juanvi
  * 
  */
-public class PanelView extends View {
+public class PanelView extends SurfaceView implements OnTouchListener {
 
 	/** Specifies the distribution type. */
 	// TODO: change this to a enum
@@ -49,10 +56,17 @@ public class PanelView extends View {
 	private int rows;
 	/** identifier of the current distribution. */
 	private int distribution;
+	
+	private SurfaceHolder surfaceHolder;
+	
+	/** The surface that the user is currently moving, if any */
+	private Surface movingSurface = null;
 
 	/* Constructors */
 	public PanelView(Context context) {
 		super(context);
+		this.setOnTouchListener(this);
+		this.surfaceHolder = this.getHolder();
 	}
 
 	public PanelView(Context context, AttributeSet attrs) {
@@ -73,6 +87,8 @@ public class PanelView extends View {
 		}
 
 		setDistribution(distribution);
+		this.setOnTouchListener(this);
+		this.surfaceHolder = this.getHolder();
 	}
 	
 	/**
@@ -98,75 +114,78 @@ public class PanelView extends View {
 	 */
 	public void setDistribution(int distribution) {
 		
-		myLog.v(TAG, "Loading distribution: " + distribution);
-
-		Instrument.getBitmapProvider(this.getContext()).recycle();
-		instruments.clear();
-
-		Context context = getContext();
-		switch (distribution) {
-		case Distribution.SIMPLE_VERTICAL_PANEL:
-			cols = 2;
-			rows = 3;
-			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 1));
-			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
-			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 0, 2));
-			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
-
-			break;
-		case Distribution.SIMPLE_HORIZONTAL_PANEL:
-			cols = 3;
-			rows = 2;
-			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 2, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 1));
-			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
-			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 1));
-
-			break;
-		case Distribution.HORIZONTAL_PANEL:
-			cols = 6;
-			rows = 1;
-			instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 2, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 3, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 4, 0));
-			instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 5, 0));
-			break;
-		case Distribution.C172_INSTRUMENTS:
-			cols = 5;
-			rows = 3;
-			instruments = Cessna172.getInstrumentPanel(context);
-
-		default: // this includes Distribution.NO_MAP
-		}
-		
-		
-		// load the instruments. This could be in a different thread, but IN MY
-		// DEVICES, loading does not take long
-		for (Instrument i : instruments) {
-			if ( i != null) {
-				try {
-					i.loadImages(this.selectImageSet());
-				} catch (OutOfMemoryError e) {
-					// if out of memory, try forcing the low quality version
+		synchronized(instruments) {
+			
+			myLog.v(TAG, "Loading distribution: " + distribution);
+	
+			Instrument.getBitmapProvider(this.getContext()).recycle();
+			instruments.clear();
+	
+			Context context = getContext();
+			switch (distribution) {
+			case Distribution.SIMPLE_VERTICAL_PANEL:
+				cols = 2;
+				rows = 3;
+				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 0, 2));
+				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
+	
+				break;
+			case Distribution.SIMPLE_HORIZONTAL_PANEL:
+				cols = 3;
+				rows = 2;
+				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 2, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 1));
+	
+				break;
+			case Distribution.HORIZONTAL_PANEL:
+				cols = 6;
+				rows = 1;
+				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 2, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 3, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 4, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 5, 0));
+				break;
+			case Distribution.C172_INSTRUMENTS:
+				cols = 5;
+				rows = 3;
+				instruments = Cessna172.getInstrumentPanel(context);
+	
+			default: // this includes Distribution.NO_MAP
+			}
+			
+			
+			// load the instruments. This could be in a different thread, but IN MY
+			// DEVICES, loading does not take long
+			for (Instrument i : instruments) {
+				if ( i != null) {
 					try {
-						i.loadImages(BitmapProvider.LOW_QUALITY);
-					} catch (Exception e2) {
-						myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
+						i.loadImages(this.selectImageSet());
+					} catch (OutOfMemoryError e) {
+						// if out of memory, try forcing the low quality version
+						try {
+							i.loadImages(BitmapProvider.LOW_QUALITY);
+						} catch (Exception e2) {
+							myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
+						}
+					} catch (Exception e) {
+						myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 					}
-				} catch (Exception e) {
-					myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
 				}
 			}
+			this.rescaleInstruments();
+		
+			this.distribution = distribution;
 		}
-		this.rescaleInstruments();
-	
-		this.distribution = distribution;
 	}
 	
 	/** @return The currently displayed distribution. */
@@ -213,27 +232,81 @@ public class PanelView extends View {
 	 *            The last received PlaneData
 	 */
 	public void postPlaneData(PlaneData pd) {
-		for(Instrument i: instruments) {
-			i.postPlaneData(pd);
+		synchronized(instruments) {
+			for(Instrument i: instruments) {
+				i.postPlaneData(pd);
+			}
+		}
+	}
+
+	protected void redraw() {
+		synchronized(instruments) {
+			if (!surfaceHolder.getSurface().isValid()) {
+				return;
+			}
+			
+			Canvas c = surfaceHolder.lockCanvas();
+			c.drawColor(Color.DKGRAY);
+	
+			try {
+				for(Instrument i: instruments) {
+					i.onDraw(c);
+				}
+			} catch(IndexOutOfBoundsException e) {
+				// TODO: this exception is thrown if redrawing() while the
+				// instruments are not ready. Prevent this.
+			}
+			
+			surfaceHolder.unlockCanvasAndPost(c);
 		}
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
-		if(distribution == Distribution.ONLY_MAP) {
-			return;
-		}
-		
-		super.onDraw(canvas);
-
-		for (Instrument i : instruments) {
-			try {
-				if (i != null) {
-					i.onDraw(canvas);
+	public boolean onTouch(View v, MotionEvent event) {
+		switch(event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			if (this.movingSurface != null) {
+				this.movingSurface.onMove(-1, -1, true);
+			}
+			for(Instrument i: this.instruments) {
+				movingSurface = i.getControlingSurface(event.getX(), event.getY());
+				if (movingSurface != null) {
+					break;
 				}
-			} catch(Exception e) {
-				myLog.e(TAG, myLog.stackToString(e));
+			}
+			if (movingSurface != null) {
+				movingSurface.onMove(
+						movingSurface.getParent().getXtoInnerX(event.getX()),
+						movingSurface.getParent().getYtoInnerY(event.getY()),
+						false);
+			} else {
+				myLog.d(TAG, "Event down and no surface controls the movement");
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			myLog.d(TAG, "Event down");
+			if (this.movingSurface != null) {
+				movingSurface.onMove(
+						movingSurface.getParent().getXtoInnerX(event.getX()),
+						movingSurface.getParent().getYtoInnerY(event.getY()),
+						true);
+				movingSurface = null;
+			} else {
+				myLog.d(TAG, "Event up and no surface controls the movement");
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+		default:
+			if (this.movingSurface != null) {
+				movingSurface.onMove(
+						movingSurface.getParent().getXtoInnerX(event.getX()),
+						movingSurface.getParent().getYtoInnerY(event.getY()),
+						false);
+			} else {
+				myLog.d(TAG, "Event move and no surface controls the movement");
 			}
 		}
+		
+		return true;
 	}
 }

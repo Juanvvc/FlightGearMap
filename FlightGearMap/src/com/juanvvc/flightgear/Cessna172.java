@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
+import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
@@ -42,7 +43,7 @@ public class Cessna172 {
 		case NAV1:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("nav1.png", 0, 0),
-					new RotateSurface("nav2.png", 0, 0, PlaneData.NAV1_RAD_SELECTED, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
 					new StaticSurface("nav3.png", 0, 0)
@@ -50,7 +51,7 @@ public class Cessna172 {
 		case NAV2:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("nav1.png", 0, 0),
-					new RotateSurface("nav2.png", 0, 0, PlaneData.NAV2_RAD_SELECTED, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
 					new StaticSurface("nav3.png", 0, 0)

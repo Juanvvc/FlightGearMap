@@ -1,17 +1,15 @@
+package com.juanvvc.flightgear;
+
 //FGFSConnection.java - client library for the FlightGear flight simulator.
 //Started June 2002 by David Megginson, david@megginson.com
 //This library is in the Public Domain and comes with NO WARRANTY.
 
-
-package com.juanvvc.flightgear;
-
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.net.Socket;
-import java.util.ArrayList;
 
 
 /**
@@ -51,6 +49,7 @@ import java.util.ArrayList;
 public class FGFSConnection
 {
 
+
  ////////////////////////////////////////////////////////////////////
  // Constructor.
  ////////////////////////////////////////////////////////////////////
@@ -65,7 +64,6 @@ public class FGFSConnection
   *
   * @param host The host name or IP address to connect to.
   * @param port The port number where FlightGear is listening.
-  * @param timeout The timeout of the socket
   * @exception IOException If it is not possible to connect to
   * a FlightGear process.
   */
@@ -74,11 +72,12 @@ public class FGFSConnection
  {
 	socket = new Socket(host, port);
 	socket.setSoTimeout(timeout);
-	in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	//content = socket.getInputStream();
+	in =
+	    new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	out = new PrintWriter(socket.getOutputStream(), true);
 	out.println("data\r");
  }
+
 
 
  ////////////////////////////////////////////////////////////////////
@@ -104,6 +103,11 @@ public class FGFSConnection
 	socket.close();
  }
  
+ public boolean isClosed() {
+	 return this.socket == null || this.socket.isClosed();
+ }
+
+
  /**
   * Get the raw string value for a property.
   *
@@ -128,54 +132,7 @@ public class FGFSConnection
 	throws IOException
  {
 	out.println("get " + name + '\r');
-	out.flush();
 	return in.readLine();
- }
- 
- public synchronized ArrayList<String> ls(String path) throws IOException {
-	out.println("ls " + path + '\r');
-	out.flush();
-	return getContentLines(content);
- }
- 
- public synchronized String getContent(InputStream is) throws IOException {
-	byte[] inbuffer = new byte[4096];
-	StringBuffer sb = new StringBuffer();
-	int c;
-	while ((c = is.read(inbuffer,0,4096)) != -1) {
-	    if (c != '\r' || c != '\n') {
-		sb.append((char) c);
-	    }
-	}
-	return sb.toString();
- }
- 
- public synchronized ArrayList<String> getContentLines(InputStream is) throws IOException {
-	byte[] inbuffer = new byte[4096];
-	StringBuffer sb = new StringBuffer();
-	ArrayList<String> lines = new ArrayList<String>();
-	int c;
-	while ((c = is.read(inbuffer, 0, 4096)) != -1) {
-	    if (c == '\r' || c == '\n') {
-		lines.add(sb.toString());
-		sb = sb.delete(0, sb.length());
-	    } else {
-		sb.append((char)c);
-	    }
-	}
-	return lines;
- }
- 
- public synchronized ArrayList<String >getAllProps(String path) throws IOException {
- 	out.println("ls " + path + '\r');
- 	ArrayList<String> lines = new ArrayList<String>();
- 	String line;
- 	out.flush();
- 	while ((line = in.readLine()) != null) {
- 		lines.add(line);
- 	}
- 	
- 	return lines;
  }
 
 
@@ -203,6 +160,7 @@ public class FGFSConnection
  {
 	out.println("set " + name + ' ' + value + '\r');
  }
+
 
 
  ////////////////////////////////////////////////////////////////////
@@ -350,14 +308,15 @@ public class FGFSConnection
  }
 
 
+
  ////////////////////////////////////////////////////////////////////
  // Internal state.
  ////////////////////////////////////////////////////////////////////
 
  private Socket socket;
  private BufferedReader in;
- private InputStream content;
  private PrintWriter out;
+
 }
 
 //end of FGFSConnection.java

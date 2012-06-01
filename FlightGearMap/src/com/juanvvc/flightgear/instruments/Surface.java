@@ -26,7 +26,7 @@ public abstract class Surface {
 	
 	/**
 	 * @param file The name of the file to load (does not include the directory)
-	 * @param x horizontal position insidet the in instrument
+	 * @param x horizontal position inside the instrument
 	 * @param y vertical position inside the instrument
 	 */
 	public Surface(final String file, final float x, final float y) {
@@ -51,6 +51,34 @@ public abstract class Surface {
 	public void postPlaneData(PlaneData pd) {
 		this.planeData = pd;
 	}
+	
+	/**
+	 * Check if this surface controls a point to change its value.
+	 * If this method returns true, the system will inform the surface abouot any movement
+	 * from this one to the end of the movement. Use to calibrate surfaces on touchable screens.
+	 * 
+	 * @param x The x position of an event from the user inside the instrument, in 512 scale
+	 * @param y The y position of an event from the user inside the instrument, in 512 scale
+	 * @return True if this surface controls an event on point (x, y). Currently,
+	 * this method returns always false ("we do not manage movements"). Override to do
+	 * something useful. 
+	 */
+	public boolean youControl(float x, float y) {
+		return false;
+	}
+	
+	
+	/** Gets a movement event from the user.
+	 * Currently, this method does nothing. To do something useful, override this method
+	 * and return true in youControl(x,y).
+	 * @param x The x position of an event from the user inside the instrument, in 512 scale
+	 * @param y The y position of an event from the user inside the instrument, in 512 scale
+	 * @param end If true, the movement has ended. It is up to the class to detect starting movements.
+	 */
+	public void onMove(float x, float y, boolean end) {
+		// Does nothing
+	}
+	
 	
 	/** Draws the surface.
 	 * @param c The canvas where draw the surface on.

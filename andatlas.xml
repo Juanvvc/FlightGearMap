@@ -139,13 +139,6 @@
    </chunk>
 
    <chunk>
-	   <name>Nav1 selected radial</name>
-	   <type>float</type>
-	   <format>%f</format>
-	   <node>/instrumentation/nav/radials/selected-deg</node>
-   </chunk>
-
-   <chunk>
 	   <name>Nav1 to flag </name>
 	   <type>bool</type>
 	   <node>/instrumentation/nav/to-flag</node>
@@ -162,13 +155,6 @@
 	   <type>float</type>
 	   <format>%f</format>
 	   <node>/instrumentation/nav/heading-needle-deflection</node>
-   </chunk>
-
-   <chunk>
-	   <name>Nav2 selected radial</name>
-	   <type>float</type>
-	   <format>%f</format>
-	   <node>/instrumentation/nav[1]/radials/selected-deg</node>
    </chunk>
 
    <chunk>

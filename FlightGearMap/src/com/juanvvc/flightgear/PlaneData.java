@@ -7,13 +7,14 @@ import java.util.Date;
  *
  */
 public class PlaneData {
-	
-	String[] data;
-	private Date date = new Date();
 	private FGFSConnection conn;
 	
-	public PlaneData(FGFSConnection c) {
-		conn = c;
+	String[] data;
+	String[] outData;
+	private Date date = new Date();
+	
+	public PlaneData(FGFSConnection conn) {
+		this.conn = conn;
 		data = null;
 	}
 	
@@ -27,7 +28,7 @@ public class PlaneData {
 		// check that we have the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
-		getFloat(NAV2_DEFLECTION);
+		getFloat(NAV2_SEL_RADIAL);
 	}
 	
 	public static final int SPEED = 0; // speed, in knots
@@ -49,14 +50,14 @@ public class PlaneData {
 	public static final int OIL_TEMP = 16; // oil temperature in degf
 	public static final int AMP = 17; // amperes
 	public static final int VOLT = 18; // voltage
-	public static final int NAV1_RAD_SELECTED = 19; // selected radial in NAV1
-	public static final int NAV1_TO = 20; // true if the to flag is set in NAV1
-	public static final int NAV1_FROM = 21; // true if the from flag is set in NAV1
-	public static final int NAV1_DEFLECTION = 22; // needle deflection in NAV1
-	public static final int NAV2_RAD_SELECTED = 23; // selected radial in NAV2
-	public static final int NAV2_TO = 24; // true if the to flag is set in NAV2
-	public static final int NAV2_FROM = 25; // true if the from flag is set in NAV2
-	public static final int NAV2_DEFLECTION = 26; // needle deflection in NAV2
+	public static final int NAV1_TO = 19; // true if the to flag is set in NAV1
+	public static final int NAV1_FROM = 20; // true if the from flag is set in NAV1
+	public static final int NAV1_DEFLECTION = 21; // needle deflection in NAV1
+	public static final int NAV1_SEL_RADIAL = 22; // selected radial in NAV2
+	public static final int NAV2_TO = 23; // true if the to flag is set in NAV2
+	public static final int NAV2_FROM = 24; // true if the from flag is set in NAV2
+	public static final int NAV2_DEFLECTION = 25; // needle deflection in NAV2
+	public static final int NAV2_SEL_RADIAL = 26; // selected radial in NAV2
 
 	
 	public int getInt(int i) {
@@ -90,12 +91,12 @@ public class PlaneData {
 	public Date getDate() {
 		return date;
 	}
-	
-	public FGFSConnection getConnection() {
-		return conn;
-	}
-	
+
 	public boolean hasData() {
 		return data != null;
+	}
+	
+	public FGFSConnection getConnection(){
+		return this.conn;
 	}
 }
