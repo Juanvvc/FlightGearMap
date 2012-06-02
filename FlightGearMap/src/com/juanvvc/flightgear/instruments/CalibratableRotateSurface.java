@@ -25,7 +25,7 @@ public class CalibratableRotateSurface extends Surface {
 	/** max value, and its angle. */
 	private float max, amax;
 	
-	private float rotationAngle = 0;
+	private float value = 0;
 	private boolean moving = false;
 	private boolean dirtyValue = false;
 //	private float angle_start = 0;
@@ -34,7 +34,8 @@ public class CalibratableRotateSurface extends Surface {
 	
 	private static final int TOUCHABLE_WIDTH = 256;
 	private static final float ROTATION_SCALE = 0.2f;
-	private static final String TAG = "CalibratableRotateSurface";
+	
+	private boolean firstRead = true;
 	
 	/**
 	 * @param file The file of the image (does not include directory)
@@ -64,38 +65,11 @@ public class CalibratableRotateSurface extends Surface {
 		this.amax = amax;
 		this.rscale = rscale;
 		this.prop = prop;
-	}
-	
-	@Override
-	public void postPlaneData(PlaneData pd) {
-		
-		FGFSConnection conn = pd.getConnection();
-		
-		// if our value is not dirty, read from the remote fgfs
-		if (!dirtyValue) {
-			super.postPlaneData(pd);
-			if (conn != null && !conn.isClosed()) {
-				try {
-					rotationAngle = conn.getFloat(prop);
-				} catch (IOException e) {
-					myLog.w(TAG, e.toString());
-				}
-			}
-		} else {
-			// if dirty, push the value
-			if (conn != null && !conn.isClosed()) {
-				try {
-					conn.setFloat(prop, rotationAngle);
-					dirtyValue = false;
-				} catch (IOException e) {
-					myLog.w(TAG, e.toString());
-				}
-			}
-		}
+		firstRead = true;
 	}
 	
 	/**
-	 * @param v value angle (commonly, this.rotationAngle)
+	 * @param v value angle
 	 * @return The angle to rotate the drawable to match that value
 	 */
 	protected float getDrawableRotationAngle(float v) {
@@ -118,7 +92,7 @@ public class CalibratableRotateSurface extends Surface {
 				(col + x / 512f ) * gridSize * scale,
 				(row + y / 512f ) * gridSize * scale);
 		m.postRotate(
-				getDrawableRotationAngle(rotationAngle),
+				getDrawableRotationAngle(value),
 				(col + rcx / 512f ) * gridSize * scale,
 				(row + rcy / 512f ) * gridSize * scale);
 		c.drawBitmap(b, m, null);
@@ -138,9 +112,8 @@ public class CalibratableRotateSurface extends Surface {
 			return;
 		}
 		
-		myLog.d(TAG, "Moving surface " + prop);
-		
 		float a1, a2, da;
+
 		
 		if (!moving) {
 			moving = true;
@@ -152,24 +125,61 @@ public class CalibratableRotateSurface extends Surface {
 			a1 = (float)Math.atan2(lastx - rcx, lasty - rcy);
 			a2 = (float)Math.atan2(x - rcx, y - rcy);
 			da = a2 - a1;
+			float rotateAngle = this.getDrawableRotationAngle(value);
 			if (Math.abs(da) < 1) {
 //				angle_moved += da;
-				this.rotationAngle += (da * 180 / Math.PI) * ROTATION_SCALE;
-				dirtyValue = true;
+				rotateAngle -= (da * 180 / Math.PI) * ROTATION_SCALE;
 			}
 			lastx = x;
 			lasty = y;
 			if (end) {
 				moving = false;
 			}
+			
+			// set rotationAngle in (0, 360)
+			while (rotateAngle < 0) {
+				rotateAngle += 360;
+			}
+			while (rotateAngle > 360) {
+				rotateAngle -= 360;
+			}
+			
+			value = (rotateAngle - amin) * (max - min) / (amax - amin) + min;
+			myLog.i(this, "Setting " + rotateAngle + ": " + value);
+			
+			this.dirtyValue = true;
+			
+			// TODO: make this surface calibrate (min, max)
 		}
+	}
+	
+	@Override
+	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
+		cs.register(this);
+	}
 
-		// set rotationAngle in (0,360)
-		while (this.rotationAngle < 0) {
-			this.rotationAngle += 360;
+
+	@Override
+	public boolean isDirty() {
+		return dirtyValue || firstRead;
+	}
+
+	@Override
+	public void update(FGFSConnection conn) throws IOException {
+		if (conn == null || conn.isClosed()) {
+			return;
 		}
-		while (this.rotationAngle > 360) {
-			this.rotationAngle -= 360;
+		// if our value is not dirty, read from the remote fgfs
+		if (!dirtyValue) {
+			value = conn.getFloat(prop);
+			// TODO: reading the state from the remote fgfs is SLOW.
+			// We only read once after creating the switch.
+			// So, if the user changes the state in the remote fgfs, we will never find out.
+			firstRead = false;
+		} else {
+			// if dirty, push the value
+			conn.setFloat(prop, value);
+			dirtyValue = false;
 		}
 	}
 }

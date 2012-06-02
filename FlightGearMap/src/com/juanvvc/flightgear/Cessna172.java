@@ -17,7 +17,6 @@ import com.juanvvc.flightgear.instruments.Surface;
 import com.juanvvc.flightgear.instruments.SwitchSurface;
 
 public class Cessna172 {
-	private static final String TAG = "Cessna172";
 	
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch (type) {
@@ -36,6 +35,7 @@ public class Cessna172 {
 				});
 		case ALTIMETER:
 			return new Instrument(col, row, context, new Surface[] {
+					new CalibratableRotateSurface("alt0.png", 64, 64, "/instrumentation/altimeter/setting-inhg", 1, 256, 256, 27.9f, 249, 31.5f, -111),
 					new StaticSurface("alt1.png", 0, 0),
 					new RotateSurface("hand2.png", 236, 56, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface("hand1.png", 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
@@ -45,7 +45,7 @@ public class Cessna172 {
 					new StaticSurface("nav1.png", 0, 0),
 					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
-					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
+					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
 				});	
 		case NAV2:
@@ -152,7 +152,7 @@ class C172AirSpeedSurface extends RotateSurface {
 		float v = pd.getFloat(pdIdx);
 		if (v < 40) {
 			// from 0 to 40: approximate to a linear behavior: 0=0º, 40=20º
-			// this simplifies the polynomial and in any case, speeds under 40knots are not common
+			// this simplifies the polynomial and in any case, speeds under 40knots are uncommon
 			return v/2;
 		} else {
 			// curve adjustment using octave:
@@ -160,7 +160,7 @@ class C172AirSpeedSurface extends RotateSurface {
 			// y=[20,70,120,160,205,240,270,290,310]; (angles calculated with gimp on speed1.png)
 			// p=polyfit(x,y,2);
 			// ans = -6.1147e-03   3.3009e+00  -1.0452e+02
-			return -0.0061147f * v * v+3.3f * v - 104.5f;
+			return -0.0061147f * v * v + 3.3f * v - 104.5f;
 		}
 	}
 }

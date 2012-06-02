@@ -38,8 +38,6 @@ public class Instrument {
 	/** The bitmap cache */
 	private static BitmapProvider bProvider = null;
 	
-	private static final String TAG = "Instrumet";
-	
 	/** Constructor. Call this constructor always from your extended classes!
 	 * @param c The column of the instrument
 	 * @param r The row of the instrument instrument
@@ -122,6 +120,11 @@ public class Instrument {
 		return null;
 	}
 	
+	
+	public Surface[] getSurfaces() {
+		return this.surfaces;
+	}
+	
 	/**
 	 * @param x The x position of a pixel on the screen
 	 * @return The X position of this x, as an inner, 512 scale point
@@ -150,7 +153,7 @@ public class Instrument {
 			String f = s.getFile();
 			Bitmap b = bProvider.getScaledBitmap(f);
 			if (b == null) {
-				myLog.w(TAG, "Null bitmap: " + f + ". Image not found?");
+				myLog.w(this, "Null bitmap: " + f + ". Image not found?");
 			}
 			// even if null, add the bitmap to respect position
 			imgsScaled.add(b);

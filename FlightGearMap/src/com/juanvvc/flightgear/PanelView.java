@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -14,6 +13,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.Surface;
@@ -46,8 +46,6 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 
 	/** Scaled to be applied to all sizes on screen. */
 	private float scale = 0;
-	/** Constant TAG to be used during development. */
-	private static final String TAG = "PanelView";
 	/** The available instruments. */
 	private ArrayList<Instrument> instruments;
 	/** Number of columns in the panel. */
@@ -116,9 +114,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		
 		synchronized(instruments) {
 			
-			myLog.v(TAG, "Loading distribution: " + distribution);
+			myLog.v(this, "Loading distribution: " + distribution);
 	
-			Instrument.getBitmapProvider(this.getContext()).recycle();
 			instruments.clear();
 	
 			Context context = getContext();
@@ -163,28 +160,20 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			default: // this includes Distribution.NO_MAP
 			}
 			
-			
-			// load the instruments. This could be in a different thread, but IN MY
-			// DEVICES, loading does not take long
-			for (Instrument i : instruments) {
-				if ( i != null) {
-					try {
-						i.loadImages(this.selectImageSet());
-					} catch (OutOfMemoryError e) {
-						// if out of memory, try forcing the low quality version
-						try {
-							i.loadImages(BitmapProvider.LOW_QUALITY);
-						} catch (Exception e2) {
-							myLog.e(TAG, "Cannot load instruments: " + myLog.stackToString(e2));
-						}
-					} catch (Exception e) {
-						myLog.e(TAG, "Cannot load instrument: " + myLog.stackToString(e));
-					}
-				}
-			}
+			this.reloadImages();
 			this.rescaleInstruments();
 		
 			this.distribution = distribution;
+		}
+	}
+	
+	/** Sets the calibratable surface manager, and register any available calibratable surface. */
+	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
+		for(Instrument i: instruments) {
+			Surface[] ss = i.getSurfaces();
+			for (int j = 0; j < ss.length; j++) {
+				ss[j].postCalibratableSurfaceManager(cs);
+			}
 		}
 	}
 	
@@ -204,7 +193,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			scale = Math.min(
 					1.0f * getWidth() / (cols * instruments.get(0).getGridSize()),
 					1.0f * getHeight()/ (rows * instruments.get(0).getGridSize()));
-			myLog.d(TAG, "Scale: " + scale);
+			myLog.d(this, "Scale: " + scale);
 
 			// prevent spurious scales
 			// if (Math.abs(scale - 1) < 0.1) {
@@ -219,12 +208,39 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			}
 		}
 	}
+	
+	private void reloadImages() {
+		// reload and rescale images
+		// load the instruments. This could be in a different thread, but IN MY
+		// DEVICES, loading does not take long
+		
+		Instrument.getBitmapProvider(this.getContext()).recycle();
+		
+		for (Instrument i : instruments) {
+			if ( i != null) {
+				try {
+					i.loadImages(this.selectImageSet());
+				} catch (OutOfMemoryError e) {
+					// if out of memory, try forcing the low quality version
+					try {
+						i.loadImages(BitmapProvider.LOW_QUALITY);
+					} catch (Exception e2) {
+						myLog.e(this, "Cannot load instruments: " + myLog.stackToString(e2));
+					}
+				} catch (Exception e) {
+					myLog.e(this, "Cannot load instrument: " + myLog.stackToString(e));
+				}
+			}
+		}
+	}
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		// reload and rescale images
-		setDistribution(distribution);
+		synchronized(instruments) {
+			this.reloadImages();
+			this.rescaleInstruments();
+		}
 	}
 
 	/**
@@ -233,8 +249,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	 */
 	public void postPlaneData(PlaneData pd) {
 		synchronized(instruments) {
-			for(Instrument i: instruments) {
-				i.postPlaneData(pd);
+			// TODO: if we do not synchronize this method, flickering appears
+			for(int j = 0; j < instruments.size(); j++) {
+				instruments.get(j).postPlaneData(pd);
 			}
 		}
 	}
@@ -249,8 +266,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			c.drawColor(Color.DKGRAY);
 	
 			try {
-				for(Instrument i: instruments) {
-					i.onDraw(c);
+				for(int j = 0; j < instruments.size(); j++) {
+					instruments.get(j).onDraw(c);
 				}
 			} catch(IndexOutOfBoundsException e) {
 				// TODO: this exception is thrown if redrawing() while the
@@ -280,11 +297,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						movingSurface.getParent().getYtoInnerY(event.getY()),
 						false);
 			} else {
-				myLog.d(TAG, "Event down and no surface controls the movement");
+				myLog.d(this, "Event down and no surface controls the movement");
 			}
 			break;
 		case MotionEvent.ACTION_UP:
-			myLog.d(TAG, "Event down");
 			if (this.movingSurface != null) {
 				movingSurface.onMove(
 						movingSurface.getParent().getXtoInnerX(event.getX()),
@@ -292,7 +308,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						true);
 				movingSurface = null;
 			} else {
-				myLog.d(TAG, "Event up and no surface controls the movement");
+				myLog.d(this, "Event up and no surface controls the movement");
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -303,7 +319,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						movingSurface.getParent().getYtoInnerY(event.getY()),
 						false);
 			} else {
-				myLog.d(TAG, "Event move and no surface controls the movement");
+				myLog.d(this, "Event move and no surface controls the movement");
 			}
 		}
 		

@@ -13,6 +13,18 @@ public class StaticSurface extends Surface {
 		super(file, x, y);
 		m = null;
 	}
+	
+	@Override
+	public void onMove() {
+		if (m == null) {
+			m = new Matrix();
+			final float gridSize = parent.getGridSize();
+			final float scale = parent.getScale();
+			final float col = parent.getCol();
+			final float row = parent.getRow();
+			m.setTranslate((col + x / 512f) * gridSize * scale, (row + y / 512f) * gridSize * scale);
+		}
+	}
 
 	@Override
 	public void onDraw(Canvas c, Bitmap b) {
@@ -22,12 +34,7 @@ public class StaticSurface extends Surface {
 		}
 		
 		if (m == null) {
-			m = new Matrix();
-			final float gridSize = parent.getGridSize();
-			final float scale = parent.getScale();
-			final float col = parent.getCol();
-			final float row = parent.getRow();
-			m.setTranslate((col + x / 512f) * gridSize * scale, (row + y / 512f) * gridSize * scale);
+			onMove();
 		}
 		c.drawBitmap(b, m, null);
 	}

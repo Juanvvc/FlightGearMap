@@ -2,19 +2,21 @@ package com.juanvvc.flightgear;
 
 import java.util.Date;
 
+import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
+
 /** Models the data that FlilghtGear sent.
  * @author juanvi
  *
  */
 public class PlaneData {
-	private FGFSConnection conn;
+	private CalibratableSurfaceManager cs;
 	
 	String[] data;
 	String[] outData;
 	private Date date = new Date();
 	
-	public PlaneData(FGFSConnection conn) {
-		this.conn = conn;
+	public PlaneData(CalibratableSurfaceManager cs) {
+		this.cs = cs;
 		data = null;
 	}
 	
@@ -96,7 +98,7 @@ public class PlaneData {
 		return data != null;
 	}
 	
-	public FGFSConnection getConnection(){
-		return this.conn;
+	public CalibratableSurfaceManager getCalibratableSurfaceManager() {
+		return cs;
 	}
 }

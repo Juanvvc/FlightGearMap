@@ -1,11 +1,9 @@
 package com.juanvvc.flightgear;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ConcurrentModificationException;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -31,6 +29,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
+
 // TODO: make tile source configurable
 // TODO: make port configurable
 // TODO: remember zoom level
@@ -47,12 +47,10 @@ public class FlightGearMap extends Activity {
 	private PlaneOverlay planeOverlay;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
-	/** A string used for debugging. */
-	private static final String TAG = "FlightGear";
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** Reference to the Telnet Thread. */
-	private TelnetReceiver telnetReceiver = null;
+	private CalibratableSurfaceManager calibratableManager = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
 	/** If set, use the wakeLock.
@@ -60,7 +58,7 @@ public class FlightGearMap extends Activity {
 	 */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
-	private static final int SOCKET_TIMEOUT = 10000;
+	public static final int SOCKET_TIMEOUT = 10000;
 	/** A reference to the currently displayed dialog. */
 	private AlertDialog currentDialog;
 	/** Identifier of the default panel distribution. */
@@ -147,18 +145,18 @@ public class FlightGearMap extends Activity {
     	
     	this.loadPreferences();
     	
-    	myLog.i(TAG, "Starting threads");
+    	myLog.i(this, "Starting threads");
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	if (telnetReceiver == null) {
-	        telnetReceiver = new TelnetReceiver();
-	        telnetReceiver.start();
+    	if (calibratableManager == null) {
+	        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(this));
+	        calibratableManager.start();
     	} else {
     		// in any case, restart the telnet receiver
-    		telnetReceiver.interrupt();
-	        telnetReceiver = new TelnetReceiver();
-	        telnetReceiver.start();
+    		calibratableManager.interrupt();
+	        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(this));
+	        calibratableManager.start();
 
     	}
     	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_LONG).show();
@@ -169,23 +167,23 @@ public class FlightGearMap extends Activity {
 	        	wakeLock.release();
 	        }
 	        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-	        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+	        wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "FlightGearMap");
 	        wakeLock.acquire();
     	}
     }
     
     @Override
     protected void onPause() {
-    	myLog.i(TAG, "Pausing threads");
+    	myLog.i(this, "Pausing threads");
     	if (udpReceiver != null) {
     		udpReceiver.cancel(true); // TODO: actually, the thread only stops after a timeout
     		udpReceiver = null;
     	}
-        if (telnetReceiver != null) {
-        	telnetReceiver.interrupt();
-        	telnetReceiver = null;
+        if (calibratableManager != null) {
+        	calibratableManager.interrupt();
+        	calibratableManager = null;
         }
-    	myLog.i(TAG, "Stopping dialogs");
+    	myLog.i(this, "Stopping dialogs");
     	if (currentDialog != null) {
     		currentDialog.dismiss();
     		currentDialog = null;
@@ -204,8 +202,8 @@ public class FlightGearMap extends Activity {
     		udpReceiver.cancel(true);
     		udpReceiver = null;
     	}
-        if (telnetReceiver != null) {
-        	telnetReceiver.interrupt();
+        if (calibratableManager != null) {
+        	calibratableManager.interrupt();
         }
     	if (USE_WAKELOCK && wakeLock != null && wakeLock.isHeld()) {
     		wakeLock.release();
@@ -226,6 +224,10 @@ public class FlightGearMap extends Activity {
 	        case R.id.map_simplepanel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(defaultDistribution);
+	        	if (this.calibratableManager != null) {
+	        		this.calibratableManager.empty();
+	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+	        	}
 	        	mapView.setVisibility(View.VISIBLE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();
@@ -233,6 +235,9 @@ public class FlightGearMap extends Activity {
 	        case R.id.only_map:
 	        	panelView.setVisibility(View.GONE);
 	        	panelView.setDistribution(PanelView.Distribution.ONLY_MAP);
+	        	if (this.calibratableManager != null) {
+	        		this.calibratableManager.empty();
+	        	}
 	        	mapView.setVisibility(View.VISIBLE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();
@@ -240,6 +245,9 @@ public class FlightGearMap extends Activity {
 	        case R.id.only_simplepanel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_HORIZONTAL_PANEL);
+	        	if (this.calibratableManager != null) {
+	        		this.calibratableManager.empty();
+	        	}
 	        	mapView.setVisibility(View.GONE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();
@@ -247,6 +255,10 @@ public class FlightGearMap extends Activity {
 	        case R.id.c172_panel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
+	        	if (this.calibratableManager != null) {
+	        		this.calibratableManager.empty();
+	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+	        	}
 	        	mapView.setVisibility(View.GONE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();
@@ -273,7 +285,7 @@ public class FlightGearMap extends Activity {
 				socket = new DatagramSocket(params[0]);
 				socket.setSoTimeout(SOCKET_TIMEOUT);
 			} catch (SocketException e) {
-				myLog.e(TAG, e.toString());
+				myLog.e(this, e.toString());
 				return e.toString() + " " + getString(R.string.wait);
 			}
 			
@@ -300,11 +312,11 @@ public class FlightGearMap extends Activity {
 					
 					canceled = this.isCancelled();
 				} catch(SocketTimeoutException e) {
-					myLog.e(TAG, e.toString());
+					myLog.e(this, e.toString());
 					canceled = true;
 					msg = getString(R.string.conn_timeout);
 				} catch (Exception e) {
-					myLog.e(TAG, myLog.stackToString(e));
+					myLog.e(this, myLog.stackToString(e));
 					canceled = true;
 					msg = e.toString() + "\n" + getResources().getString(R.string.update_andatlas);
 				}
@@ -399,11 +411,11 @@ public class FlightGearMap extends Activity {
 							public void onClick(DialogInterface dialog, int which) {
 								// when the user click ok, the receivers restart
 						        udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
-						        if (telnetReceiver != null) {
-						        	telnetReceiver.interrupt();
+						        if (calibratableManager != null) {
+						        	calibratableManager.interrupt();
 						        }
-						        telnetReceiver = new TelnetReceiver();
-						        telnetReceiver.start();
+						        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(FlightGearMap.this));
+						        calibratableManager.start();
 							}
 						})
 						.setNegativeButton(R.string.quit, new OnClickListener() {
@@ -417,92 +429,6 @@ public class FlightGearMap extends Activity {
 	        } catch (Exception e) {
 	        	Toast.makeText(FlightGearMap.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
 	        }
-		}
-	}
-	
-	/** An Thread to receive data from a remote Telnet server.
-	 * This was an AsyncTask. On some devices, only a single AsynTask may be running
-	 * at any time. We need the UDPReceiver connected to the UI thread, so
-	 * this class was changed to a simple Thread. It is isolated from the UI thread. */
-	private class TelnetReceiver extends Thread {
-
-		@Override
-		public void run() {
-			FGFSConnection conn = null;
-			boolean cancelled = false;
-			int waitPeriod = 5000;
-			int port = 9000;
-			String fgfsIP = "192.168.1.2";
-			
-			// read preferences
-	    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(FlightGearMap.this);
-	    	try {
-	    		waitPeriod = new Integer(sp.getString("update_period", "5000")).intValue();
-	    		// check limits
-	    		waitPeriod = Math.max(waitPeriod, 500);
-	    	} catch (NumberFormatException e) {
-	    		myLog.w(TAG, "Config error: wrong update_period=" + sp.getString("update_period", "default") +".");
-	    		waitPeriod = 5000;
-	    	}
-	    	try {
-	    		port = new Integer(sp.getString("telnet_port", "9000")).intValue();
-	    		// check limits
-	    		port = Math.max(port, 1);
-	    	} catch (ClassCastException e) {
-	    		myLog.w(TAG, "Config error: wrong port=" + sp.getString("telnet_port", "default"));
-	    		port = 9000;
-	    	}
-    		fgfsIP = sp.getString("fgfs_ip", "192.168.1.2");
-    		
-    		myLog.i(TAG, "Telnet: " + fgfsIP + ":" + port + " " + waitPeriod + "ms");
-			
-			try {
-				myLog.e(TAG, "Trying telnet connection to " + fgfsIP + ":" + port);
-				conn = new FGFSConnection(fgfsIP, port, SOCKET_TIMEOUT);
-				myLog.d(TAG, "Upwards connection ready");
-			} catch (IOException e) {
-				myLog.w(TAG, e.toString());
-				conn = null;
-				return;
-			}
-			
-			PlaneData pd = new PlaneData(conn);
-			
-			while (!cancelled) {
-				try {
-					
-					if (conn == null || conn.isClosed() || this.isInterrupted()) {
-						cancelled = true;
-					} else {
-						panelView.postPlaneData(pd);
-					}
-
-					Thread.sleep(waitPeriod);
-					// notice that we do not force an invalidate().
-					// We trust that there is a UDPReceiver invalidating views periodically
-				} catch (InterruptedException e) {
-					myLog.w(TAG, myLog.stackToString(e));
-					cancelled = true;
-				} catch (NullPointerException e) {
-					// TODO: sometimes (don't know why) the connection is closed or lost and we cannot detect it.
-					// In this case, a NullPointerException is throw. Manage it.
-					myLog.w(TAG, e.toString());
-					cancelled = true;
-				} catch (ConcurrentModificationException e) {
-					// this exception is thrown if the instruments are not ready for new data.
-					// since this thread may be running while the user changes the panel type, this
-					// exception is quite common (especially if the updating period is 500ms)
-					// Just ignore
-				}
-			}
-			
-			if (conn != null && !conn.isClosed()) {
-				try {
-					conn.close();
-				} catch (IOException e) {
-					myLog.w(TAG, e.toString());
-				}
-			}
 		}
 	}
 }

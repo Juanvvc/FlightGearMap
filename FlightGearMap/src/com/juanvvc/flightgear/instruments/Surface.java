@@ -1,8 +1,11 @@
 package com.juanvvc.flightgear.instruments;
 
+import java.io.IOException;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.PlaneData;
 
 /** Manages a layer of an instrument.
@@ -13,7 +16,7 @@ import com.juanvvc.flightgear.PlaneData;
  *
  */
 public abstract class Surface {
-	/** Horizontal posiition inside the instrument. */
+	/** Horizontal position inside the instrument. */
 	protected float x;
 	/** Vertical position inside the instrument. */
 	protected float y;
@@ -86,4 +89,21 @@ public abstract class Surface {
 	 * This bitmap is not managed directly in the surface to let some smart modifications, such as scaling.
 	 * @param pd The current PlaneData object. */
 	public abstract void onDraw(final Canvas c, final Bitmap b);
+	
+	/** Called when the instrument has been moved on the screen. */
+	public void onMove() {
+		
+	}
+	
+	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
+		
+	}
+	
+	public boolean isDirty() {
+		return false;
+	}
+	
+	public void update(FGFSConnection conn) throws IOException {
+		
+	}
 }
