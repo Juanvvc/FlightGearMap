@@ -125,10 +125,10 @@ public class CalibratableRotateSurface extends Surface {
 			a1 = (float)Math.atan2(lastx - rcx, lasty - rcy);
 			a2 = (float)Math.atan2(x - rcx, y - rcy);
 			da = a2 - a1;
-			float rotateAngle = this.getDrawableRotationAngle(value);
+			float rotateAngle = value; //this.getDrawableRotationAngle(value);
 			if (Math.abs(da) < 1) {
 //				angle_moved += da;
-				rotateAngle -= (da * 180 / Math.PI) * ROTATION_SCALE;
+				rotateAngle += (da * 180 / Math.PI) * ROTATION_SCALE;
 			}
 			lastx = x;
 			lasty = y;
@@ -144,12 +144,10 @@ public class CalibratableRotateSurface extends Surface {
 				rotateAngle -= 360;
 			}
 			
-			value = (rotateAngle - amin) * (max - min) / (amax - amin) + min;
+			value = rotateAngle; //(rotateAngle - amin) * (max - min) / (amax - amin) + min;
 			myLog.i(this, "Setting " + rotateAngle + ": " + value);
 			
 			this.dirtyValue = true;
-			
-			// TODO: make this surface calibrate (min, max)
 		}
 	}
 	

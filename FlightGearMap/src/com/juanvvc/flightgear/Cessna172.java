@@ -53,7 +53,7 @@ public class Cessna172 {
 					new StaticSurface("nav1.png", 0, 0),
 					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
-					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 20, 10, -20),
+					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
 				});	
 		case HEADING:
