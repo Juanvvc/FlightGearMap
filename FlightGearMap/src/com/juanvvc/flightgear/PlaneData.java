@@ -30,7 +30,7 @@ public class PlaneData {
 		// check that we have the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
-		getFloat(NAV2_SEL_RADIAL);
+		getFloat(ADF_DEFLECTION);
 	}
 	
 	public static final int SPEED = 0; // speed, in knots
@@ -60,6 +60,7 @@ public class PlaneData {
 	public static final int NAV2_FROM = 24; // true if the from flag is set in NAV2
 	public static final int NAV2_DEFLECTION = 25; // needle deflection in NAV2
 	public static final int NAV2_SEL_RADIAL = 26; // selected radial in NAV2
+	public static final int ADF_DEFLECTION = 27; 
 
 	
 	public int getInt(int i) {

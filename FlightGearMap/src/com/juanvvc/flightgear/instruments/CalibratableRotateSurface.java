@@ -167,9 +167,20 @@ public class CalibratableRotateSurface extends Surface {
 		if (conn == null || conn.isClosed()) {
 			return;
 		}
+		
+		if (this.prop == null && dirtyValue) {
+			// if prop is null, we cannot send/receive our value to the server. We are done.
+			dirtyValue = false;
+			return;
+		}
+		
 		// if our value is not dirty, read from the remote fgfs
 		if (!dirtyValue) {
-			value = conn.getFloat(prop);
+			try {
+				value = conn.getFloat(prop);
+			} catch (NumberFormatException e) {
+				myLog.e(this, prop + ": " + e.toString());
+			}
 			// TODO: reading the state from the remote fgfs is SLOW.
 			// We only read once after creating the switch.
 			// So, if the user changes the state in the remote fgfs, we will never find out.

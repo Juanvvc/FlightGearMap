@@ -55,7 +55,15 @@ public class Cessna172 {
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
-				});	
+				});
+		case ADF:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("black.png", 0, 0),
+					new CalibratableRotateSurface("nav2.png", 0, 0, null, 1, 256, 256, 0, 0, 360, -360),
+					new RotateSurface("hand4.png", 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
+					new StaticSurface("nav5.png", 0, 0),
+					new StaticSurface("nav3.png", 0, 0)
+				});
 		case HEADING:
 			return new Instrument(col, row, context, new Surface[] {
 					new RotateSurface("hdg1.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
@@ -123,6 +131,7 @@ public class Cessna172 {
 		instruments.add(Cessna172.createInstrument(InstrumentType.NAV2, context, 4, 1));
 
 		instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 4, 2));
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
 		instruments.add(Cessna172.createInstrument(InstrumentType.OIL, context, 0.2f, 1));

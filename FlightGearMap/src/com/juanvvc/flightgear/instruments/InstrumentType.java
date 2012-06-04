@@ -13,6 +13,7 @@ public enum InstrumentType {
 	FUEL,
 	NAV1,
 	NAV2,
+	ADF,
 	BATT,
 	SWITCHES
 }
