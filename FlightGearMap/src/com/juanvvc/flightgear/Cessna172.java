@@ -35,7 +35,7 @@ public class Cessna172 {
 				});
 		case ALTIMETER:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface("alt0.png", 64, 64, "/instrumentation/altimeter/setting-inhg", 1, 256, 256, 27.9f, 249, 31.5f, -111),
+					new CalibratableRotateSurface("alt0.png", 0, 0, "/instrumentation/altimeter/setting-inhg", 1, true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
 					new StaticSurface("alt1.png", 0, 0),
 					new RotateSurface("hand2.png", 236, 56, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface("hand1.png", 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
@@ -43,7 +43,7 @@ public class Cessna172 {
 		case NAV1:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("nav1.png", 0, 0),
-					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
@@ -51,7 +51,7 @@ public class Cessna172 {
 		case NAV2:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("nav1.png", 0, 0),
-					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
 					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
@@ -59,14 +59,14 @@ public class Cessna172 {
 		case ADF:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("black.png", 0, 0),
-					new CalibratableRotateSurface("nav2.png", 0, 0, null, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, null, 1, true, -1, 256, 256, 0, 0, 360, -360),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
 					new StaticSurface("nav5.png", 0, 0),
 					new StaticSurface("nav3.png", 0, 0)
 				});
 		case HEADING:
 			return new Instrument(col, row, context, new Surface[] {
-					new RotateSurface("hdg1.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("hdg1.png", 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", 1, true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
 					new StaticSurface("hdg2.png", 0, 0)
 				});
 		case TURN_RATE:

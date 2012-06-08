@@ -71,7 +71,6 @@ public class CalibratableSurfaceManager extends Thread {
 		
 		while (!cancelled) {
 			try{
-				myLog.i(this, "Update event");
 				synchronized(surfaces) {
 					for(Surface cs: surfaces) {
 						if (cs.isDirty()) {
@@ -85,6 +84,8 @@ public class CalibratableSurfaceManager extends Thread {
 				cancelled = true;
 			} catch (IOException e) {
 				myLog.w(this, myLog.stackToString(e));
+			} catch (NullPointerException e) {
+				// a null pointer exception usually means that the connection is lost
 			}
 		}
 		

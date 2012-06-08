@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import com.juanvvc.flightgear.FGFSConnection;
-import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.myLog;
 
 /** A surface that is rotated according to the telnet connection, and can be calibrated. */
@@ -17,6 +16,10 @@ public class CalibratableRotateSurface extends Surface {
 	private float rscale;
 	/** The property to read from the remote fgfs */
 	private String prop;
+	/** If true, the value is wrapped (after max, it is min again) */
+	private boolean wrapped = false;
+	/** The property to read from PlaneData, if positive. */
+	private int propIdx;
 	/** ration center */
 	private float rcx;
 	private float rcy;
@@ -33,7 +36,7 @@ public class CalibratableRotateSurface extends Surface {
 	private float lastx, lasty;
 	
 	private static final int TOUCHABLE_WIDTH = 256;
-	private static final float ROTATION_SCALE = 0.2f;
+	private static final float ROTATION_SCALE = 0.3f;
 	
 	private boolean firstRead = true;
 	
@@ -52,7 +55,8 @@ public class CalibratableRotateSurface extends Surface {
 	 */
 	public CalibratableRotateSurface(
 			String file, float x, float y,
-			String prop, float rscale,
+			String prop, float rscale, boolean wrap,
+			int propIdx,
 			int rcx, int rcy,
 			float min, float amin, float max, float amax) {
 		super(file, x, y);
@@ -63,9 +67,10 @@ public class CalibratableRotateSurface extends Surface {
 		this.amin = amin;
 		this.max = max;
 		this.amax = amax;
+		this.wrapped = wrap;
+		this.propIdx = propIdx;
 		this.rscale = rscale;
 		this.prop = prop;
-		firstRead = true;
 	}
 	
 	/**
@@ -83,6 +88,11 @@ public class CalibratableRotateSurface extends Surface {
 
 	@Override
 	public void onDraw(Canvas c, Bitmap b) {
+		
+		if (!this.dirtyValue && this.propIdx > -1 && this.planeData != null && planeData.hasData()) {
+			value = planeData.getFloat(this.propIdx);
+		}
+		
 		m.reset();
 		final float gridSize = parent.getGridSize();
 		final float scale = parent.getScale();
@@ -117,7 +127,6 @@ public class CalibratableRotateSurface extends Surface {
 		
 		if (!moving) {
 			moving = true;
-//			angle_moved = 0;
 //			angle_start = (float)Math.atan2(x - rcx, y - rcy);
 			lastx = x;
 			lasty = y;
@@ -125,10 +134,10 @@ public class CalibratableRotateSurface extends Surface {
 			a1 = (float)Math.atan2(lastx - rcx, lasty - rcy);
 			a2 = (float)Math.atan2(x - rcx, y - rcy);
 			da = a2 - a1;
-			float rotateAngle = value; //this.getDrawableRotationAngle(value);
-			if (Math.abs(da) < 1) {
-//				angle_moved += da;
-				rotateAngle += (da * 180 / Math.PI) * ROTATION_SCALE;
+			float rotateAngle = 0; //value; //this.getDrawableRotationAngle(value);
+			if (Math.abs(da) < 1) { // do not consider the discontinuity in 0-360. This is a small error. Noticeable? Don't think so.
+				//rotateAngle += (da * 180 / Math.PI) * ROTATION_SCALE;
+				rotateAngle += (da * 180 / Math.PI);
 			}
 			lastx = x;
 			lasty = y;
@@ -136,16 +145,32 @@ public class CalibratableRotateSurface extends Surface {
 				moving = false;
 			}
 			
-			// set rotationAngle in (0, 360)
-			while (rotateAngle < 0) {
-				rotateAngle += 360;
-			}
-			while (rotateAngle > 360) {
-				rotateAngle -= 360;
-			}
+//			// set rotationAngle in (0, 360)
+//			while (rotateAngle < 0) {
+//				rotateAngle += 360;
+//			}
+//			while (rotateAngle > 360) {
+//				rotateAngle -= 360;
+//			}
+//			
+//			value = rotateAngle; //(rotateAngle - amin) * (max - min) / (amax - amin) + min;
+//			myLog.i(this, "Setting " + rotateAngle + ": " + value);
 			
-			value = rotateAngle; //(rotateAngle - amin) * (max - min) / (amax - amin) + min;
-			myLog.i(this, "Setting " + rotateAngle + ": " + value);
+			value += rotateAngle * ROTATION_SCALE * (this.max - this.min) / 360;
+			
+			if (value > max) {
+				if (this.wrapped) {
+					value = min + (value - max);
+				} else {
+					value = max;
+				}
+			} else if (value < min) {
+				if (this.wrapped) {
+					value = max - Math.abs(min - value);
+				} else {
+					value = min;
+				}
+			}
 			
 			this.dirtyValue = true;
 		}
@@ -154,6 +179,7 @@ public class CalibratableRotateSurface extends Surface {
 	@Override
 	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
 		cs.register(this);
+		firstRead = true;
 	}
 
 
@@ -175,16 +201,13 @@ public class CalibratableRotateSurface extends Surface {
 		}
 		
 		// if our value is not dirty, read from the remote fgfs
-		if (!dirtyValue) {
+		if (!dirtyValue || firstRead) {
 			try {
 				value = conn.getFloat(prop);
+				firstRead = false;
 			} catch (NumberFormatException e) {
 				myLog.e(this, prop + ": " + e.toString());
 			}
-			// TODO: reading the state from the remote fgfs is SLOW.
-			// We only read once after creating the switch.
-			// So, if the user changes the state in the remote fgfs, we will never find out.
-			firstRead = false;
 		} else {
 			// if dirty, push the value
 			conn.setFloat(prop, value);

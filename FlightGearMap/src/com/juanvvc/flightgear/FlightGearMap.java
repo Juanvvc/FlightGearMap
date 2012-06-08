@@ -149,16 +149,6 @@ public class FlightGearMap extends Activity {
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	if (calibratableManager == null) {
-	        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(this));
-	        calibratableManager.start();
-    	} else {
-    		// in any case, restart the telnet receiver
-    		calibratableManager.interrupt();
-	        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(this));
-	        calibratableManager.start();
-
-    	}
     	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_LONG).show();
     	
 
@@ -345,6 +335,13 @@ public class FlightGearMap extends Activity {
 				// update the panel and overlay
 				planeOverlay.setPlaneData(values[0], p);
 				mapView.invalidate();
+				
+				// check if the calibratable manager is still running
+				if (calibratableManager == null || !calibratableManager.isAlive()) {
+			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(FlightGearMap.this));
+			        calibratableManager.start();
+			        panelView.postCalibratableSurfaceManager(calibratableManager);
+				}
 			}
 		}
 		
@@ -414,8 +411,7 @@ public class FlightGearMap extends Activity {
 						        if (calibratableManager != null) {
 						        	calibratableManager.interrupt();
 						        }
-						        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(FlightGearMap.this));
-						        calibratableManager.start();
+
 							}
 						})
 						.setNegativeButton(R.string.quit, new OnClickListener() {
