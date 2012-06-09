@@ -9,7 +9,7 @@ import android.graphics.Rect;
 
 import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.myLog;
+import com.juanvvc.flightgear.MyLog;
 
 public class SwitchSurface extends Surface {
 	private String prop;
@@ -34,7 +34,7 @@ public class SwitchSurface extends Surface {
 		textPaint = new Paint();
 		textPaint.setColor(0xffffffff);
 		
-		myLog.d(this, "Creating new " + label);
+		MyLog.d(this, "Creating new " + label);
 	}
 	
 	@Override
@@ -45,14 +45,14 @@ public class SwitchSurface extends Surface {
 	@Override
 	public void onMove(float x, float y, boolean end) {
 		if (end) {
-			myLog.d(this, "Switching " + this.label);
+			MyLog.d(this, "Switching " + this.label);
 			setState(!getState());
 		}
 	}
 	
 	public void setState(boolean s) {
 		this.state2 = s;
-		myLog.d(this, label + " sets state to " + this.state2);
+		MyLog.d(this, label + " sets state to " + this.state2);
 		dirty = true;
 	}
 	
@@ -105,7 +105,7 @@ public class SwitchSurface extends Surface {
 		// if not moving, just read from the remote connection
 		if (dirty) {
 			// if dirty, post the state of the switch
-			myLog.i(this, "Updating: " + label + " " + getState());
+			MyLog.i(this, "Updating: " + label + " " + getState());
 			conn.setBoolean(this.prop, getState());
 			dirty = false;
 		} else {

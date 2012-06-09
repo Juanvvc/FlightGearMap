@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.juanvvc.flightgear.BitmapProvider;
 import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.myLog;
+import com.juanvvc.flightgear.MyLog;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -144,7 +144,9 @@ public class Instrument {
 	/** Sets the scale and loads the scaled images into the inner array. */
 	public void setScale(float scale) {
 		for (Bitmap b: imgsScaled) {
-			b.recycle();
+			if ( b!=null ) {
+				b.recycle();
+			}
 		}
 		imgsScaled.clear();
 		
@@ -153,7 +155,7 @@ public class Instrument {
 			String f = s.getFile();
 			Bitmap b = bProvider.getScaledBitmap(f);
 			if (b == null) {
-				myLog.w(this, "Null bitmap: " + f + ". Image not found?");
+				MyLog.w(this, "Null bitmap: " + f + ". Image not found?");
 			}
 			// even if null, add the bitmap to respect position
 			imgsScaled.add(b);

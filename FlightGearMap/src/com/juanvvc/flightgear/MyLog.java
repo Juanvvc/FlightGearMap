@@ -10,7 +10,7 @@ import android.util.Log;
 /** Use this class instead of android.util.Log: simplify the process of uploading to Google Play
  * @author juanvi
  */
-public class myLog{
+public class MyLog{
 	private static final boolean debug=true;
 	
 	public static void i(Object o, String msg){

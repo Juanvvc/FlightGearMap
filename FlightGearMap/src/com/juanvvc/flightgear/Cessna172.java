@@ -12,6 +12,7 @@ import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
+import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 import com.juanvvc.flightgear.instruments.SwitchSurface;
@@ -104,8 +105,14 @@ public class Cessna172 {
 					new RotateSurface("hand3.png", -20, 12, PlaneData.AMP, 1, 0, 230, -40, 145, 40, 35),
 					new RotateSurface("hand3.png", 268, 12, PlaneData.VOLT, 1, 288, 230, 0, -145, 40, -35)
 				});
+		case TRIMFLAPS:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface("trimflaps.png", 65, 10),
+					new SlippingSurface("hand3.png", 90, PlaneData.ELEV_TRIM, -1, 280, 394, 1, 280, 26),
+					new SlippingSurface("hand3.png", -90, PlaneData.FLAPS, 0, 200, 66, 1, 200, 434)
+				});
 		case SWITCHES:
-			Instrument switches = new Instrument(col, row, context, new Surface[] {
+			return new Instrument(col, row, context, new Surface[] {
 					new SwitchSurface("switches.png", 0, 152, "/controls/anti-ice/pitot-heat", "PTO"),
 					new SwitchSurface("switches.png", 128, 152, "/controls/lighting/nav-lights", "NAV"),
 					new SwitchSurface("switches.png", 256, 0, "/controls/lighting/taxi-light", "TAX"),
@@ -113,7 +120,6 @@ public class Cessna172 {
 					new SwitchSurface("switches.png", 384, 0, "/controls/lighting/landing-lights", "LNG"),
 					new SwitchSurface("switches.png", 384, 152, "/controls/lighting/strobe", "DTR"),
 				});
-			return switches;
 		default:
 			return null;
 		}
@@ -138,6 +144,7 @@ public class Cessna172 {
 		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.SWITCHES, context, 2, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2));
 		return instruments;
 	}
 }

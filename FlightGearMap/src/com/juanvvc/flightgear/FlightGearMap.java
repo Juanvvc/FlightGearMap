@@ -145,7 +145,7 @@ public class FlightGearMap extends Activity {
     	
     	this.loadPreferences();
     	
-    	myLog.i(this, "Starting threads");
+    	MyLog.i(this, "Starting threads");
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
@@ -164,7 +164,7 @@ public class FlightGearMap extends Activity {
     
     @Override
     protected void onPause() {
-    	myLog.i(this, "Pausing threads");
+    	MyLog.i(this, "Pausing threads");
     	if (udpReceiver != null) {
     		udpReceiver.cancel(true); // TODO: actually, the thread only stops after a timeout
     		udpReceiver = null;
@@ -173,7 +173,7 @@ public class FlightGearMap extends Activity {
         	calibratableManager.interrupt();
         	calibratableManager = null;
         }
-    	myLog.i(this, "Stopping dialogs");
+    	MyLog.i(this, "Stopping dialogs");
     	if (currentDialog != null) {
     		currentDialog.dismiss();
     		currentDialog = null;
@@ -213,14 +213,14 @@ public class FlightGearMap extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.map_simplepanel:
 	        	panelView.setVisibility(View.VISIBLE);
+	        	mapView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(defaultDistribution);
+	        	mapView.invalidate();
+	        	panelView.invalidate();
 	        	if (this.calibratableManager != null) {
 	        		this.calibratableManager.empty();
 	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
 	        	}
-	        	mapView.setVisibility(View.VISIBLE);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
 	            return true;
 	        case R.id.only_map:
 	        	panelView.setVisibility(View.GONE);
@@ -235,23 +235,25 @@ public class FlightGearMap extends Activity {
 	        case R.id.only_simplepanel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_HORIZONTAL_PANEL);
-	        	if (this.calibratableManager != null) {
-	        		this.calibratableManager.empty();
-	        	}
 	        	mapView.setVisibility(View.GONE);
 	        	mapView.invalidate();
 	        	panelView.invalidate();
+
+	        	if (this.calibratableManager != null) {
+	        		this.calibratableManager.empty();
+	        	}
 	        	return true;
 	        case R.id.c172_panel:
 	        	panelView.setVisibility(View.VISIBLE);
 	        	panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
+	        	mapView.setVisibility(View.GONE);
+	        	mapView.invalidate();
+	        	panelView.invalidate();
+
 	        	if (this.calibratableManager != null) {
 	        		this.calibratableManager.empty();
 	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
 	        	}
-	        	mapView.setVisibility(View.GONE);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
 	        	return true;
 	        case R.id.settings:
 	        	startActivity(new Intent(this, Preferences.class));
@@ -275,7 +277,7 @@ public class FlightGearMap extends Activity {
 				socket = new DatagramSocket(params[0]);
 				socket.setSoTimeout(SOCKET_TIMEOUT);
 			} catch (SocketException e) {
-				myLog.e(this, e.toString());
+				MyLog.e(this, e.toString());
 				return e.toString() + " " + getString(R.string.wait);
 			}
 			
@@ -302,11 +304,11 @@ public class FlightGearMap extends Activity {
 					
 					canceled = this.isCancelled();
 				} catch(SocketTimeoutException e) {
-					myLog.e(this, e.toString());
+					MyLog.e(this, e.toString());
 					canceled = true;
 					msg = getString(R.string.conn_timeout);
 				} catch (Exception e) {
-					myLog.e(this, myLog.stackToString(e));
+					MyLog.e(this, MyLog.stackToString(e));
 					canceled = true;
 					msg = e.toString() + "\n" + getResources().getString(R.string.update_andatlas);
 				}

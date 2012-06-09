@@ -60,7 +60,9 @@ public class PlaneData {
 	public static final int NAV2_FROM = 24; // true if the from flag is set in NAV2
 	public static final int NAV2_DEFLECTION = 25; // needle deflection in NAV2
 	public static final int NAV2_SEL_RADIAL = 26; // selected radial in NAV2
-	public static final int ADF_DEFLECTION = 27; 
+	public static final int ADF_DEFLECTION = 27;
+	public static final int ELEV_TRIM = 28;
+	public static final int FLAPS = 29;
 
 	
 	public int getInt(int i) {

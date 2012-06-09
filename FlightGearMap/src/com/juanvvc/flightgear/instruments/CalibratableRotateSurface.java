@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import com.juanvvc.flightgear.FGFSConnection;
-import com.juanvvc.flightgear.myLog;
+import com.juanvvc.flightgear.MyLog;
 
 /** A surface that is rotated according to the telnet connection, and can be calibrated. */
 public class CalibratableRotateSurface extends Surface {
@@ -194,9 +194,10 @@ public class CalibratableRotateSurface extends Surface {
 			return;
 		}
 		
-		if (this.prop == null && dirtyValue) {
+		if (this.prop == null) {
 			// if prop is null, we cannot send/receive our value to the server. We are done.
 			dirtyValue = false;
+			firstRead = false;
 			return;
 		}
 		
@@ -206,7 +207,7 @@ public class CalibratableRotateSurface extends Surface {
 				value = conn.getFloat(prop);
 				firstRead = false;
 			} catch (NumberFormatException e) {
-				myLog.e(this, prop + ": " + e.toString());
+				MyLog.e(this, prop + ": " + e.toString());
 			}
 		} else {
 			// if dirty, push the value

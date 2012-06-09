@@ -114,7 +114,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		
 		synchronized(instruments) {
 			
-			myLog.v(this, "Loading distribution: " + distribution);
+			MyLog.v(this, "Loading distribution: " + distribution);
 	
 			instruments.clear();
 	
@@ -193,7 +193,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			scale = Math.min(
 					1.0f * getWidth() / (cols * instruments.get(0).getGridSize()),
 					1.0f * getHeight()/ (rows * instruments.get(0).getGridSize()));
-			myLog.d(this, "Scale: " + scale);
+			MyLog.d(this, "Scale: " + scale);
 
 			// prevent spurious scales
 			// if (Math.abs(scale - 1) < 0.1) {
@@ -225,10 +225,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 					try {
 						i.loadImages(BitmapProvider.LOW_QUALITY);
 					} catch (Exception e2) {
-						myLog.e(this, "Cannot load instruments: " + myLog.stackToString(e2));
+						MyLog.e(this, "Cannot load instruments: " + MyLog.stackToString(e2));
 					}
 				} catch (Exception e) {
-					myLog.e(this, "Cannot load instrument: " + myLog.stackToString(e));
+					MyLog.e(this, "Cannot load instrument: " + MyLog.stackToString(e));
 				}
 			}
 		}
@@ -272,6 +272,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			} catch(IndexOutOfBoundsException e) {
 				// TODO: this exception is thrown if redrawing() while the
 				// instruments are not ready. Prevent this.
+			} catch(NullPointerException e) {
+				// This usually means that an image is not found
+				MyLog.w(this, MyLog.stackToString(e));
 			}
 			
 			surfaceHolder.unlockCanvasAndPost(c);
@@ -297,7 +300,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						movingSurface.getParent().getYtoInnerY(event.getY()),
 						false);
 			} else {
-				myLog.d(this, "Event down and no surface controls the movement");
+				MyLog.d(this, "Event down and no surface controls the movement");
 			}
 			break;
 		case MotionEvent.ACTION_UP:
@@ -308,7 +311,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						true);
 				movingSurface = null;
 			} else {
-				myLog.d(this, "Event up and no surface controls the movement");
+				MyLog.d(this, "Event up and no surface controls the movement");
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -319,7 +322,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						movingSurface.getParent().getYtoInnerY(event.getY()),
 						false);
 			} else {
-				myLog.d(this, "Event move and no surface controls the movement");
+				MyLog.d(this, "Event move and no surface controls the movement");
 			}
 		}
 		

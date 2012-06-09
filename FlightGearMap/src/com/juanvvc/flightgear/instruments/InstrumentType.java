@@ -15,5 +15,6 @@ public enum InstrumentType {
 	NAV2,
 	ADF,
 	BATT,
-	SWITCHES
+	SWITCHES,
+	TRIMFLAPS
 }
