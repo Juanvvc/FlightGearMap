@@ -11,7 +11,7 @@ import android.util.Log;
  * @author juanvi
  */
 public class MyLog{
-	private static final boolean debug=true;
+	private static final boolean debug=false;
 	
 	public static void i(Object o, String msg){
 		if(debug) Log.i(o.getClass().getSimpleName(), msg);
