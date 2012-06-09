@@ -62,7 +62,7 @@
             android:dialogTitle="Remote update"
             android:dialogMessage="Remote update period"
             android:inputType="number"
-            android:defaultValue="5000" />
+            android:defaultValue="500" />
 
 
     </PreferenceCategory>

@@ -158,6 +158,13 @@
    </chunk>
 
    <chunk>
+	   <name>Nav1 selected radial </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/selected-deg</node>
+   </chunk>
+
+   <chunk>
 	   <name>Nav2 to flag </name>
 	   <type>bool</type>
 	   <node>/instrumentation/nav[1]/to-flag</node>
@@ -174,6 +181,34 @@
 	   <type>float</type>
 	   <format>%f</format>
 	   <node>/instrumentation/nav[1]/heading-needle-deflection</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 selected radial </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav[1]/selected-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>ADF bearing </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/adf/indicated-bearing-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Elev trim</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/controls/flight/elevator-trim</node>
+   </chunk>
+
+   <chunk>
+	   <name>Flaps</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/controls/flight/flaps</node>
    </chunk>
  
  </output>

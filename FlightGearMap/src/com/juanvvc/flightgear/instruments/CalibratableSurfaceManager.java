@@ -40,7 +40,7 @@ public class CalibratableSurfaceManager extends Thread {
 		
 		// read preferences
     	try {
-    		waitPeriod = new Integer(sp.getString("update_period", "5000")).intValue();
+    		waitPeriod = new Integer(sp.getString("update_period", "500")).intValue();
     		// check limits
     		waitPeriod = Math.max(waitPeriod, 500);
     	} catch (NumberFormatException e) {
