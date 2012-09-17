@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import android.content.SharedPreferences;
 
 import com.juanvvc.flightgear.FGFSConnection;
-import com.juanvvc.flightgear.FlightGearMap;
 import com.juanvvc.flightgear.MyLog;
+import com.juanvvc.flightgear.panels.MapControls;
 
 public class CalibratableSurfaceManager extends Thread {
 	private ArrayList<Surface> surfaces;
@@ -61,7 +61,7 @@ public class CalibratableSurfaceManager extends Thread {
 		
 		try {
 			MyLog.e(this, "Trying telnet connection to " + fgfsIP + ":" + port);
-			conn = new FGFSConnection(fgfsIP, port, FlightGearMap.SOCKET_TIMEOUT);
+			conn = new FGFSConnection(fgfsIP, port, MapControls.SOCKET_TIMEOUT);
 			MyLog.d(this, "Upwards connection ready");
 		} catch (IOException e) {
 			MyLog.w(this, e.toString());

@@ -81,7 +81,10 @@ public class Instrument {
 	public void loadImages(String dir) throws Exception {
 		for(Surface s: this.surfaces) {
 			// ensures that the manager has loaded the image
-			bProvider.getBitmap(dir,  s.getFile());
+			String file = s.getFile();
+			if (file!= null) {
+				bProvider.getBitmap(dir,  file);
+			}
 		}
 		
 		if (dir.equals(BitmapProvider.HIGH_QUALITY)) {
@@ -153,9 +156,12 @@ public class Instrument {
 		this.scale = scale;
 		for(Surface s: surfaces) {
 			String f = s.getFile();
-			Bitmap b = bProvider.getScaledBitmap(f);
-			if (b == null) {
-				MyLog.w(this, "Null bitmap: " + f + ". Image not found?");
+			Bitmap b = null;
+			if (f != null) {
+				b = bProvider.getScaledBitmap(f);
+				if (b == null) {
+					MyLog.w(this, "Null bitmap: " + f + ". Image not found?");
+				}
 			}
 			// even if null, add the bitmap to respect position
 			imgsScaled.add(b);
@@ -187,6 +193,7 @@ public class Instrument {
 			Surface s = surfaces[i];
 			if (s != null) {
 				Bitmap b = imgsScaled.get(i);
+				// we call onDraw() even if b==null. Maybe the surface is creating its own bitmap
 				s.onDraw(c, b);
 			}
 		}

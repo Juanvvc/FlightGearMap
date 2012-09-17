@@ -7,12 +7,6 @@
     android:orientation="vertical"
     android:keepScreenOn="true"
     android:id="@+id/rootSimple" >
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:clickable="true"
-        android:layout_weight="70" />   
     <com.juanvvc.flightgear.panels.PanelView
         android:id="@+id/panel"
         android:layout_weight="30"
@@ -21,4 +15,3 @@
         custom:distribution="1"
         />
 </LinearLayout>
-<!--         android:background="@drawable/panel_back" -->

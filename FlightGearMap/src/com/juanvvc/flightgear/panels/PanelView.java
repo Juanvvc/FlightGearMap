@@ -1,4 +1,4 @@
-package com.juanvvc.flightgear;
+package com.juanvvc.flightgear.panels;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.juanvvc.flightgear.BitmapProvider;
+import com.juanvvc.flightgear.MyLog;
+import com.juanvvc.flightgear.PlaneData;
+import com.juanvvc.flightgear.R;
+import com.juanvvc.flightgear.R.styleable;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
@@ -28,7 +33,7 @@ import com.juanvvc.flightgear.instruments.Surface;
 public class PanelView extends SurfaceView implements OnTouchListener {
 
 	/** Specifies the distribution type. */
-	// TODO: change this to a enum
+	// Note: this cannot be an enum since the XML needs an integer to refer to a ditribution type
 	public class Distribution {
 		/** A 2x3 panel with simple instruments. */
 		public static final int SIMPLE_VERTICAL_PANEL = 0;
@@ -40,8 +45,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int ONLY_MAP = 3;
 		/** Show a complete Cessna-172 instrument panel. */
 		public static final int C172_INSTRUMENTS = 4;
-		/** Show a complete Cessna-172 comm panel. */
-		public static final int C172_COMM = 5;
+		/** Show a Liquid panel. */
+		public static final int LIQUID_PANEL = 5;
+		/** Show a complete Cessna-172 comm panel.
+		 * TODO: this is not implemented */
+		public static final int C172_COMM = 6;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -107,8 +115,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/**
 	 * Sets the distribution of this panel.
 	 * 
-	 * @param The
-	 *            distribution to use
+	 * @param The distribution to use (see Distribution class for values)
 	 */
 	public void setDistribution(int distribution) {
 		
@@ -156,6 +163,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 5;
 				rows = 3;
 				instruments = Cessna172.getInstrumentPanel(context);
+				break;
+			case Distribution.LIQUID_PANEL:
+				cols = 3;
+				rows = 3;
+				instruments = LiquidDisplay.getInstrumentPanel(context);
 	
 			default: // this includes Distribution.NO_MAP
 			}
@@ -199,11 +211,19 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			// if (Math.abs(scale - 1) < 0.1) {
 			// scale = 1;
 			// }
-
-			Instrument.getBitmapProvider(this.getContext()).setScale(scale);
-			for (Instrument i: instruments) {
-				if (i != null) {
-					i.setScale(scale);
+			
+			boolean scaled = false;
+			while (!scaled) {
+				try {
+					Instrument.getBitmapProvider(this.getContext()).setScale(scale);
+					for (Instrument i: instruments) {
+						if (i != null) {
+							i.setScale(scale);
+						}
+					}
+					scaled = true;
+				} catch (OutOfMemoryError e) {
+					scale = scale / 2;
 				}
 			}
 		}
@@ -263,6 +283,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			}
 			
 			Canvas c = surfaceHolder.lockCanvas();
+			if (c == null) {
+				return;
+			}
 			c.drawColor(Color.DKGRAY);
 	
 			try {
@@ -275,6 +298,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			} catch(NullPointerException e) {
 				// This usually means that an image is not found
 				MyLog.w(this, MyLog.stackToString(e));
+			} catch(RuntimeException e) {
+				// this exception is thrown when using a recycled bitmap on Canvas, for example
+				// TODO: I'm ignoring this exception, but I'm sure that it shows an error in the program flow
 			}
 			
 			surfaceHolder.unlockCanvasAndPost(c);

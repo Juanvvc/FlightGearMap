@@ -44,10 +44,12 @@ public class BitmapProvider {
 	public void setScale(float scale) {
 		Matrix matrix = new Matrix();
 		matrix.setScale(scale,  scale);
+		// remove from memory previous versions of the bitmaps
 		for(Bitmap b: this.scaledBitmaps.values()) {
 			b.recycle();
 		}
 		scaledBitmaps.clear();
+		
 		for (String imgName: bitmaps.keySet()) {
 			Bitmap b = bitmaps.get(imgName);
 			scaledBitmaps.put(imgName, Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true));

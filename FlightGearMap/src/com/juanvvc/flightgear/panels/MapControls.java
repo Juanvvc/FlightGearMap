@@ -1,4 +1,4 @@
-package com.juanvvc.flightgear;
+package com.juanvvc.flightgear.panels;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,7 +13,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
@@ -22,35 +21,32 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.juanvvc.flightgear.MyLog;
+import com.juanvvc.flightgear.PlaneData;
+import com.juanvvc.flightgear.PlaneOverlay;
+import com.juanvvc.flightgear.R;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
-
-// TODO: make tile source configurable
-// TODO: make port configurable
-// TODO: remember zoom level
 
 /** Main activity of the application.
  * @author juanvi
  */
-public class FlightGearMap extends Activity {
+public class MapControls extends Activity {
 	/** Reference to the map view. */
-	private MapView mapView;
+	MapView mapView = null;
 	/** Reference to the panel view. */
-	private PanelView panelView;
+	PanelView panelView = null;
 	/** Reference to the available overlays. */
-	private PlaneOverlay planeOverlay;
+	PlaneOverlay planeOverlay;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** Reference to the Telnet Thread. */
-	private CalibratableSurfaceManager calibratableManager = null;
+	CalibratableSurfaceManager calibratableManager = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
 	/** If set, use the wakeLock.
@@ -61,31 +57,47 @@ public class FlightGearMap extends Activity {
 	public static final int SOCKET_TIMEOUT = 10000;
 	/** A reference to the currently displayed dialog. */
 	private AlertDialog currentDialog;
-	/** Identifier of the default panel distribution. */
-	private int defaultDistribution;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        if (this.planeOverlay != null) {
+        	// we use planeOverlay to check if the views have been started.
+        	// Activities that extend this view should initiate planeOverlay
+        	// and then call super.onCreate()
+        	return;
+        }
+        
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        setContentView(R.layout.map_simplepanel);
-        mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setBuiltInZoomControls(true);
-        mapView.getController().setZoom(15);
-        
+		
         planeOverlay = new PlaneOverlay(this);
-        mapView.getOverlays().add(planeOverlay);
         
-        panelView = (PanelView) findViewById(R.id.panel);
-//mapView.setVisibility(View.GONE);
-//panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
-        // get the default distribution
-        this.defaultDistribution = panelView.getDistribution();        
+        boolean onlymap = false;
+        if (this.getIntent() != null && this.getIntent().getExtras() != null) {
+        	onlymap = this.getIntent().getExtras().getBoolean("onlymap");
+        }
+        
+        if (onlymap) {
+        	this.setContentView(R.layout.only_map);
+        	this.panelView = null;
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        } else {
+        	this.setContentView(R.layout.map_simplepanel);
+        	this.panelView = (PanelView)this.findViewById(R.id.panel);
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        	
+        	// notice that the distribution of the panel does not change: use the one specified in the XML
+        	mapView.invalidate();
+        	panelView.invalidate();
+        	if (this.calibratableManager != null) {
+        		this.calibratableManager.empty();
+        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+        	}
+        }
     }
     
     /** Load preferences. */
@@ -113,23 +125,30 @@ public class FlightGearMap extends Activity {
   		}
   		
   		// select the map type
-  		try {
-  			if (mapType.equals("cycle")) {
-  				mapView.setTileSource(TileSourceFactory.CYCLEMAP);
-//  			} else if (mapType.equals("hills")) {
-//  				mapView.setTileSource(TileSourceFactory.HILLS);
-//  			} else if (mapType.equals("topo")) {
-//  				mapView.setTileSource(TileSourceFactory.TOPO);
-  			} else if (mapType.equals("public_transport")) {
-  				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
-  			} else if (mapType.equals("mapquest")) {
-  				mapView.setTileSource(TileSourceFactory.MAPQUESTAERIAL);
-  			} else {
-  				mapView.setTileSource(TileSourceFactory.MAPNIK);
-  			}
-  		} catch (Exception e) {
-  			mapView.setTileSource(TileSourceFactory.MAPNIK);
-  		}
+		if (mapView != null) {
+	  		try {
+	  			if (mapType.equals("cycle")) {
+	  				mapView.setTileSource(TileSourceFactory.CYCLEMAP);
+	//  			} else if (mapType.equals("hills")) {
+	//  				mapView.setTileSource(TileSourceFactory.HILLS);
+	//  			} else if (mapType.equals("topo")) {
+	//  				mapView.setTileSource(TileSourceFactory.TOPO);
+	  			} else if (mapType.equals("public_transport")) {
+	  				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
+	  			} else if (mapType.equals("mapquest")) {
+	  				mapView.setTileSource(TileSourceFactory.MAPQUESTAERIAL);
+	  			} else {
+	  				mapView.setTileSource(TileSourceFactory.MAPNIK);
+	  			}
+	  		} catch (Exception e) {
+	  			mapView.setTileSource(TileSourceFactory.MAPNIK);
+	  		}
+	  		
+	        mapView.setBuiltInZoomControls(true);
+	        mapView.getController().setZoom(15);
+	       
+	        mapView.getOverlays().add(planeOverlay);
+		}
   		
   		// select the UDP port
   		try {
@@ -200,69 +219,7 @@ public class FlightGearMap extends Activity {
     	}
     }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.available_distributions, menu);
-	    return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// panel is not redrawn after a change in distribution, do not know the reason
-	    switch (item.getItemId()) {
-	        case R.id.map_simplepanel:
-	        	panelView.setVisibility(View.VISIBLE);
-	        	mapView.setVisibility(View.VISIBLE);
-	        	panelView.setDistribution(defaultDistribution);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
-	        	if (this.calibratableManager != null) {
-	        		this.calibratableManager.empty();
-	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
-	        	}
-	            return true;
-	        case R.id.only_map:
-	        	panelView.setVisibility(View.GONE);
-	        	panelView.setDistribution(PanelView.Distribution.ONLY_MAP);
-	        	if (this.calibratableManager != null) {
-	        		this.calibratableManager.empty();
-	        	}
-	        	mapView.setVisibility(View.VISIBLE);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
-	        	return true;
-	        case R.id.only_simplepanel:
-	        	panelView.setVisibility(View.VISIBLE);
-	        	panelView.setDistribution(PanelView.Distribution.SIMPLE_HORIZONTAL_PANEL);
-	        	mapView.setVisibility(View.GONE);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
 
-	        	if (this.calibratableManager != null) {
-	        		this.calibratableManager.empty();
-	        	}
-	        	return true;
-	        case R.id.c172_panel:
-	        	panelView.setVisibility(View.VISIBLE);
-	        	panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
-	        	mapView.setVisibility(View.GONE);
-	        	mapView.invalidate();
-	        	panelView.invalidate();
-
-	        	if (this.calibratableManager != null) {
-	        		this.calibratableManager.empty();
-	        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
-	        	}
-	        	return true;
-	        case R.id.settings:
-	        	startActivity(new Intent(this, Preferences.class));
-	        	return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-	
 	/** An AsyncTask to receive data from a remote UDP server.
 	 * When new data is received, the panelView is updated.
 	 * THIS IS THE THREAD THAT UPDATES THE PANELVIEW */
@@ -295,12 +252,14 @@ public class FlightGearMap extends Activity {
 					PlaneData pd = new PlaneData(null);
 					pd.parse(new String(p.getData()));
 					// new data is managed as a "progressUpdate" event of the AsyncTask
-					panelView.postPlaneData(pd);
-					this.publishProgress(pd);
-					
-					if (panelView.getVisibility() == View.VISIBLE) {
-						panelView.redraw();
+					if (panelView != null) {
+						panelView.postPlaneData(pd);
+						if (panelView.getVisibility() == View.VISIBLE) {
+							panelView.redraw();
+						}
 					}
+					
+					this.publishProgress(pd);
 					
 					canceled = this.isCancelled();
 				} catch(SocketTimeoutException e) {
@@ -322,27 +281,30 @@ public class FlightGearMap extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(FlightGearMap.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
+				Toast.makeText(MapControls.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
 				firstMessage = false;
 			}
 			
 			// A new data arrived to the UDP listener
-			if (planeOverlay != null) {
-				// move the overlay to the new position
-				GeoPoint p = new GeoPoint(
-						(int)(values[0].getFloat(PlaneData.LATITUDE) * 1E6),
-						(int)(values[0].getFloat(PlaneData.LONGITUDE) * 1E6));
-				mapView.getController().setCenter(p);
-				
-				// update the panel and overlay
-				planeOverlay.setPlaneData(values[0], p);
-				mapView.invalidate();
-				
+			if (planeOverlay != null && mapView != null) {
+					GeoPoint p = new GeoPoint(
+							(int)(values[0].getFloat(PlaneData.LATITUDE) * 1E6),
+							(int)(values[0].getFloat(PlaneData.LONGITUDE) * 1E6));
+					mapView.getController().setCenter(p);
+					
+					// update the panel and overlay
+					planeOverlay.setPlaneData(values[0], p);
+					mapView.invalidate();
+			}
+			
+			if (panelView != null) {
 				// check if the calibratable manager is still running
 				if (calibratableManager == null || !calibratableManager.isAlive()) {
-			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(FlightGearMap.this));
+			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(MapControls.this));
 			        calibratableManager.start();
-			        panelView.postCalibratableSurfaceManager(calibratableManager);
+			        if (panelView != null) {
+			        	panelView.postCalibratableSurfaceManager(calibratableManager);
+			        }
 				}
 			}
 		}
@@ -358,7 +320,7 @@ public class FlightGearMap extends Activity {
 	    		currentDialog.dismiss();
 	    	}
 	    	
-	    	if(FlightGearMap.this.isFinishing()) {
+	    	if(MapControls.this.isFinishing()) {
 	    		return;
 	    	}
 	        
@@ -380,7 +342,7 @@ public class FlightGearMap extends Activity {
 		        
 		        if (ipAddress == 0) {
 		        	// if no IP in the wifi network.
-		        	currentDialog = new AlertDialog.Builder(FlightGearMap.this).setIcon(R.drawable.ic_launcher)
+		        	currentDialog = new AlertDialog.Builder(MapControls.this).setIcon(R.drawable.ic_launcher)
 		        		.setTitle(getString(R.string.warning))
 						.setMessage(getString(R.string.network_not_detected) + " " + getString(R.string.critical_error))
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -402,7 +364,7 @@ public class FlightGearMap extends Activity {
 			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=9000";
 			        
 			        // show the dialog on screen
-					currentDialog = new AlertDialog.Builder(FlightGearMap.this).setIcon(R.drawable.ic_launcher)
+					currentDialog = new AlertDialog.Builder(MapControls.this).setIcon(R.drawable.ic_launcher)
 						.setTitle(getString(R.string.warning))
 						.setMessage(txt)
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -425,7 +387,7 @@ public class FlightGearMap extends Activity {
 						.show();
 		        }
 	        } catch (Exception e) {
-	        	Toast.makeText(FlightGearMap.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
+	        	Toast.makeText(MapControls.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
 	        }
 		}
 	}

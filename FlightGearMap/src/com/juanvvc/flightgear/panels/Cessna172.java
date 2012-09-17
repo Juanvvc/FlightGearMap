@@ -1,4 +1,4 @@
-package com.juanvvc.flightgear;
+package com.juanvvc.flightgear.panels;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
+import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
