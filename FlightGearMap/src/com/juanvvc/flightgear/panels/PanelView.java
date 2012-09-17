@@ -165,7 +165,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments = Cessna172.getInstrumentPanel(context);
 				break;
 			case Distribution.LIQUID_PANEL:
-				cols = 3;
+				cols = 2;
 				rows = 3;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
 	
@@ -271,7 +271,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		synchronized(instruments) {
 			// TODO: if we do not synchronize this method, flickering appears
 			for(int j = 0; j < instruments.size(); j++) {
-				instruments.get(j).postPlaneData(pd);
+				Instrument ins = instruments.get(j);
+				if (ins != null) {
+					ins.postPlaneData(pd);
+				}
 			}
 		}
 	}
@@ -290,7 +293,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	
 			try {
 				for(int j = 0; j < instruments.size(); j++) {
-					instruments.get(j).onDraw(c);
+					Instrument ins = instruments.get(j);
+					if (ins != null) {
+						ins.onDraw(c);
+					}
 				}
 			} catch(IndexOutOfBoundsException e) {
 				// TODO: this exception is thrown if redrawing() while the

@@ -28,12 +28,12 @@ public class LiquidDisplay {
 					new RotateSurface("ai.roll.ref.png", 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
 					new StaticSurface("ai.ref.png", 0, 0)
 				});
-		case NAV1:
+		case HSI1:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
-					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
-				});	
+					new RotateSurface("hsi.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("hand4.png", 236, 56, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+					new StaticSurface("hsi2.png", 0, 0)
+			});
 		default:
 			return null;
 		}
@@ -41,8 +41,8 @@ public class LiquidDisplay {
 	
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
-		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 1, 0.5f));
-		instruments.add(createInstrument(InstrumentType.NAV1, context, 1, 1.5f));
+		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 0.5f, 0.25f));
+		instruments.add(createInstrument(InstrumentType.HSI1, context, 0.5f, 1.5f));
 		return instruments;
 	}
 }

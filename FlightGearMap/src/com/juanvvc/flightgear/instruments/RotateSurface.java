@@ -58,7 +58,7 @@ public class RotateSurface extends Surface {
 
 	@Override
 	public void onDraw(Canvas c, Bitmap b) {
-		if (planeData == null || !planeData.hasData()) {
+		if (planeData == null || !planeData.hasData() || b == null) {
 			return;
 		}
 		

@@ -16,5 +16,6 @@ public enum InstrumentType {
 	ADF,
 	BATT,
 	SWITCHES,
-	TRIMFLAPS
+	TRIMFLAPS,
+	HSI1
 }
