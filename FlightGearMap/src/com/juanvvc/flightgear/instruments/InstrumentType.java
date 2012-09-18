@@ -17,5 +17,6 @@ public enum InstrumentType {
 	BATT,
 	SWITCHES,
 	TRIMFLAPS,
-	HSI1
+	HSI1,
+	BELTS
 }
