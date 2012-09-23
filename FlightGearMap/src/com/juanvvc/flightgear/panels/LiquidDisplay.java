@@ -28,7 +28,7 @@ public class LiquidDisplay {
 			return new Instrument(col, row, context, new Surface[] {
 					new LiquidAtiSurface("pitchscale.png", 70, 138),
 					new RotateSurface("ai.roll.ref.png", 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
-					new StaticSurface("ai.ref.png", 0, 0)
+					new StaticSurface("ai.ref.png", -256, -162)
 				});
 		case HSI1:
 			return new Instrument(col, row, context, new Surface[] {
@@ -48,9 +48,9 @@ public class LiquidDisplay {
 	
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
-		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 0.5f, 0.25f));
-		instruments.add(createInstrument(InstrumentType.HSI1, context, 0.5f, 1.5f));
-		instruments.add(createInstrument(InstrumentType.BELTS, context, 0.5f, 0.25f));
+		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 1f, 0.25f));
+		instruments.add(createInstrument(InstrumentType.HSI1, context, 1f, 1.5f));
+		instruments.add(createInstrument(InstrumentType.BELTS, context, 0, 0.25f));
 		return instruments;
 	}
 }
@@ -155,7 +155,7 @@ abstract class NumberBeltSurface extends Surface {
 
 class AltitudeBeltSurface extends NumberBeltSurface {
 	public AltitudeBeltSurface(int width, int height) {
-		super(512, 0, 1000, 200, true, width, height);
+		super(512 * 2 - width, 0, 1000, 200, true, width, height);
 	}
 
 	@Override
@@ -168,7 +168,7 @@ class AltitudeBeltSurface extends NumberBeltSurface {
 }
 class SpeedBeltSurface extends NumberBeltSurface {
 	public SpeedBeltSurface(int width, int height) {
-		super(-width, 0, 50, 10, false, width, height);
+		super(0, 0, 50, 10, false, width, height);
 	}
 
 	@Override

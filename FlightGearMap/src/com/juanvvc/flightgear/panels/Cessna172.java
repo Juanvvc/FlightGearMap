@@ -61,7 +61,7 @@ public class Cessna172 {
 		case ADF:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("black.png", 0, 0),
-					new CalibratableRotateSurface("nav2.png", 0, 0, null, 1, true, -1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/adf/rotation-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
 					new RotateSurface("hand4.png", 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
 					new StaticSurface("nav5.png", 0, 0),
 					new StaticSurface("nav3.png", 0, 0)
