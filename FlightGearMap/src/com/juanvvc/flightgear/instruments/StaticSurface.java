@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
-import com.juanvvc.flightgear.PlaneData;
-
 /** An surfaces that draws an static image on a position. */
 public class StaticSurface extends Surface {
 	Matrix m;

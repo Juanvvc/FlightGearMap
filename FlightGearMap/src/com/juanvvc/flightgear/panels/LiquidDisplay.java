@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
@@ -37,9 +38,10 @@ public class LiquidDisplay {
 					new StaticSurface("hsi2.png", 0, 0)
 			});
 		case BELTS:
+			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {
-					new AltitudeBeltSurface(128, 512),
-					new SpeedBeltSurface(128, 512)
+					new AltitudeBeltSurface(128, 512, face),
+					new SpeedBeltSurface(128, 512, face)
 			});
 		default:
 			return null;
@@ -48,9 +50,9 @@ public class LiquidDisplay {
 	
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
-		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 1f, 0.25f));
-		instruments.add(createInstrument(InstrumentType.HSI1, context, 1f, 1.5f));
-		instruments.add(createInstrument(InstrumentType.BELTS, context, 0, 0.25f));
+		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 0f, 0.0f));
+		instruments.add(createInstrument(InstrumentType.HSI1, context, 0f, 1.0f));
+		instruments.add(createInstrument(InstrumentType.BELTS, context, 0, 0.15f));
 		return instruments;
 	}
 }
@@ -108,14 +110,16 @@ abstract class NumberBeltSurface extends Surface {
 	private int interval1;
 	private  boolean negative;
 	private int size;
+	private Typeface face;
 		
-	public NumberBeltSurface(float x, float y, int size, int interval1, boolean negative, int width, int height) {
+	public NumberBeltSurface(float x, float y, int size, int interval1, boolean negative, int width, int height, Typeface face) {
 		super(null, x, y);
 		this.interval1 = interval1;
 		this.size = size;
 		this.negative = negative;
 		this.width = width;
 		this.height = height;
+		this.face = face;
 		
 		MyLog.d(this, "NumberBeltInitialized");
 	}
@@ -133,7 +137,7 @@ abstract class NumberBeltSurface extends Surface {
 		final float row = parent.getRow();
 		
 		Paint grey = new Paint();
-		grey.setColor(0xaaaaaaaa);
+		grey.setColor(0xee666666);
 		grey.setStyle(Paint.Style.FILL);
 		
 		float x0 = (col + x / 512f) * gridSize * scale;
@@ -143,7 +147,8 @@ abstract class NumberBeltSurface extends Surface {
 		
 		Paint font = new Paint();
 		font.setColor(Color.WHITE); 
-		font.setTextSize(20); 
+		font.setTextSize(20);
+		font.setTypeface(this.face);
 		for (int j=j0; j<=j1; j++) {
 			float oy = (height / 512f) * (1.0f - (1.0f * j * interval1 - value) / size - 0.5f) * gridSize * scale;
 			c.drawText((Integer.valueOf(j*interval1).toString()), x0, y0 + oy, font);
@@ -154,8 +159,8 @@ abstract class NumberBeltSurface extends Surface {
 }
 
 class AltitudeBeltSurface extends NumberBeltSurface {
-	public AltitudeBeltSurface(int width, int height) {
-		super(512 * 2 - width, 0, 1000, 200, true, width, height);
+	public AltitudeBeltSurface(int width, int height, Typeface face) {
+		super(512 - width, 0, 1000, 200, true, width, height, face);
 	}
 
 	@Override
@@ -167,8 +172,8 @@ class AltitudeBeltSurface extends NumberBeltSurface {
 	}
 }
 class SpeedBeltSurface extends NumberBeltSurface {
-	public SpeedBeltSurface(int width, int height) {
-		super(0, 0, 50, 10, false, width, height);
+	public SpeedBeltSurface(int width, int height, Typeface face) {
+		super(0, 0, 50, 10, false, width, height, face);
 	}
 
 	@Override

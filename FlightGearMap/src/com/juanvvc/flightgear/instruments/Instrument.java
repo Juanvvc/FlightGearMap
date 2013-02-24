@@ -9,7 +9,6 @@ import com.juanvvc.flightgear.MyLog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 
 /** A generic instrument.
  * This class manages the list of resources that instruments need, and

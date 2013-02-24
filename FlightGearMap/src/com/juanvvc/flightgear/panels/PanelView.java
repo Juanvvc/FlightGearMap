@@ -17,7 +17,6 @@ import com.juanvvc.flightgear.BitmapProvider;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.R;
-import com.juanvvc.flightgear.R.styleable;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
@@ -165,8 +164,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments = Cessna172.getInstrumentPanel(context);
 				break;
 			case Distribution.LIQUID_PANEL:
-				cols = 2;
-				rows = 3;
+				cols = 1;
+				rows = 2;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
 	
 			default: // this includes Distribution.NO_MAP
@@ -295,7 +294,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				for(int j = 0; j < instruments.size(); j++) {
 					Instrument ins = instruments.get(j);
 					if (ins != null) {
-						ins.onDraw(c);
+						ins.onDraw(c); // this is a "suspicious call" according to Eclipse: switch the warning off!!
 					}
 				}
 			} catch(IndexOutOfBoundsException e) {
