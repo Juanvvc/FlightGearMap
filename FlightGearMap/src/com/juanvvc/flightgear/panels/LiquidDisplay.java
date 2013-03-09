@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.Typeface;
@@ -70,7 +72,7 @@ class LiquidAtiSurface extends Surface {
 			return;
 		}
 		
-		// draw pitch
+		// calculate pitch and matrix
 		matrix.reset();
 		float col = parent.getCol();
 		float row = parent.getRow();
@@ -85,11 +87,10 @@ class LiquidAtiSurface extends Surface {
 		if (pitch > 45) {
 			pitch = 45;
 		}
-		
 		matrix.postTranslate(((0.5f + col) * gridSize) * scale - b.getWidth() / 2, ((0.5f + row) * gridSize + pitch * (25 * gridSize/ 512) / 5) * scale - b.getHeight() / 2);
 		matrix.postRotate(-roll, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
-		c.drawBitmap(b, matrix, null);
 		
+		// draw background
 		float[] p = {0, 0, 0, b.getHeight()};
 		matrix.mapPoints(p);
 		Paint paintGrad = new Paint();
@@ -100,8 +101,15 @@ class LiquidAtiSurface extends Surface {
 				Shader.TileMode.CLAMP));
 		c.drawPaint(paintGrad);
 		
-		c.drawBitmap(b, matrix, null);
-		
+		// draw scale
+		Paint shader = new Paint();
+		shader.setShader(new LinearGradient(
+			((col + 0.5f) * gridSize) * scale, (row * gridSize) * scale,
+			((col + 0.5f) * gridSize) * scale, ((1f + row) * gridSize) * scale,
+			new int[]{0x0fff, 0xffff, 0xffff, 0x0fff}, null,
+			Shader.TileMode.CLAMP));
+	    shader.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.DST_IN));
+		c.drawBitmap(b, matrix, shader);
 	}
 }
 
@@ -136,15 +144,16 @@ abstract class NumberBeltSurface extends Surface {
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		
+		// The background
 		Paint grey = new Paint();
 		grey.setColor(0xee666666);
 		grey.setStyle(Paint.Style.FILL);
-		
 		float x0 = (col + x / 512f) * gridSize * scale;
 		float y0 = (row + y / 512f) * gridSize * scale;
 		c.clipRect(x0, y0, x0 + (width / 512f) * gridSize * scale, y0 + (height / 512f) * gridSize * scale, Region.Op.REPLACE);
 		c.drawPaint(grey);
 		
+		// the scale
 		Paint font = new Paint();
 		font.setColor(Color.WHITE); 
 		font.setTextSize(20);
@@ -154,7 +163,17 @@ abstract class NumberBeltSurface extends Surface {
 			c.drawText((Integer.valueOf(j*interval1).toString()), x0, y0 + oy, font);
 		}
 		
-		c.clipRect(0, 0, c.getWidth(), c.getHeight(), Region.Op.REPLACE);
+		// the actual value and its background
+		font.setColor(Color.WHITE);
+		font.setTextSize(40);
+		c.clipRect(x0, y0 + 0.4f * (height / 512f) * gridSize * scale, x0 + (width / 512f) * gridSize * scale, y0 + 0.6f * (height / 512f) * gridSize * scale);
+		Paint black = new Paint();
+		black.setColor(Color.BLACK);
+		black.setStyle(Paint.Style.FILL);
+		c.drawPaint(black);
+		c.drawText(Float.valueOf(value).toString(), x0, y0 + (height / (2 * 512f)) * gridSize * scale, font);
+				
+		//c.clipRect(0, 0, c.getWidth(), c.getHeight(), Region.Op.REPLACE);
 	}
 }
 
@@ -173,7 +192,7 @@ class AltitudeBeltSurface extends NumberBeltSurface {
 }
 class SpeedBeltSurface extends NumberBeltSurface {
 	public SpeedBeltSurface(int width, int height, Typeface face) {
-		super(0, 0, 50, 10, false, width, height, face);
+		super(0, 0, 40, 10, false, width, height, face);
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.juanvvc.flightgear.FGFSConnection;
-import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.MyLog;
 
 public class SwitchSurface extends Surface {

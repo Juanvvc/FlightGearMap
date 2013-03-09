@@ -44,18 +44,20 @@ public class Cessna172 {
 				});
 		case NAV1:
 			return new Instrument(col, row, context, new Surface[] {
-					new StaticSurface("nav1.png", 0, 0),
+					new StaticSurface("nav6.png", 0, 0),
 					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM),
-					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
+					new C172FromToGSSurface("nav4.png", 310, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM, -1),
+					new C172FromToGSSurface("nav4.png", 185, 210, -1, -1, PlaneData.GS1_INRANGE),
+					new RotateSurface("hand5.png", 245, 100, PlaneData.NAV1_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
+					new RotateSurface("hand5.png", 105, 266, PlaneData.GS1_DEFLECTION, 1, 105, 266, -1, -65, 1, -115),
 					new StaticSurface("nav3.png", 0, 0)
 				});	
 		case NAV2:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface("nav1.png", 0, 0),
 					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-					new C172FromToSurface("nav4.png", 300, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM),
-					new RotateSurface("hand4.png", 236, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
+					new C172FromToGSSurface("nav4.png", 308, 220, PlaneData.NAV2_TO, PlaneData.NAV2_FROM, -1),
+					new RotateSurface("hand5.png", 245, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
 					new StaticSurface("nav3.png", 0, 0)
 				});
 		case ADF:
@@ -238,13 +240,14 @@ class C172AtiSurface extends Surface {
 }
 
 /** Draw the flag from/to in the OVR */
-class C172FromToSurface extends Surface {
-	private int nav_to, nav_from; // position of this flags in PlaneData
+class C172FromToGSSurface extends Surface {
+	private int nav_to, nav_from, gs; // position of this flags in PlaneData
 
-	public C172FromToSurface(String file, float x, float y, int nav_to, int nav_from) {
+	public C172FromToGSSurface(String file, float x, float y, int nav_to, int nav_from, int gs) {
 		super(file, x, y);
 		this.nav_from = nav_from;
 		this.nav_to = nav_to;
+		this.gs = gs;
 	}
 	@Override
 	public void onDraw(Canvas c, Bitmap b) {
@@ -259,18 +262,26 @@ class C172FromToSurface extends Surface {
 		
 		int left = (int) ((col + x / 512f) * gridSize * scale);
 		int top = (int) ((row + y / 512f) * gridSize * scale);
-		
-		
-		if (planeData.getBool(nav_to)) {
-			c.drawBitmap(b,
-					new Rect(0, 0, b.getWidth() / 2, b.getHeight()),
-					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),
-					null);
-		} else if (planeData.getBool(nav_from)) {
-			c.drawBitmap(b,
-					new Rect(b.getWidth() / 2, 0, b.getWidth(), b.getHeight()),
-					new Rect(left, top, (int)(left + b.getWidth() / 2 * scale), (int)(top + b.getHeight() * scale)),
-					null);
+
+		if (gs == -1) {
+			if (planeData.getBool(nav_to)) {
+				c.drawBitmap(b,
+						new Rect(0, 0, b.getWidth() / 3, b.getHeight()),
+						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
+						null);
+			} else if (planeData.getBool(nav_from)) {
+				c.drawBitmap(b,
+						new Rect(b.getWidth() / 3, 0, 2 * b.getWidth() / 3, b.getHeight()),
+						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
+						null);
+			}
+		} else {
+			if (planeData.getBool(gs)) {
+				c.drawBitmap(b,
+						new Rect(2 * b.getWidth() / 3, 0, b.getWidth(), b.getHeight()),
+						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
+						null);
+			}
 		}
 	}
 }

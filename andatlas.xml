@@ -210,6 +210,19 @@
 	   <format>%f</format>
 	   <node>/controls/flight/flaps</node>
    </chunk>
+
+   <chunk>
+	   <name>GS deflection in NAV1</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/gs-needle-deflection-norm</node>
+   </chunk>
+
+   <chunk>
+	   <name>GS in range for NAV1</name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/gs-in-range</node>
+   </chunk>
  
  </output>
 

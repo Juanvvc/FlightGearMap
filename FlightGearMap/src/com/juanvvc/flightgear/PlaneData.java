@@ -30,7 +30,7 @@ public class PlaneData {
 		// check that we have the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
-		getFloat(ADF_DEFLECTION);
+		getFloat(GS1_INRANGE);
 	}
 	
 	public static final int SPEED = 0; // speed, in knots
@@ -63,6 +63,9 @@ public class PlaneData {
 	public static final int ADF_DEFLECTION = 27;
 	public static final int ELEV_TRIM = 28;
 	public static final int FLAPS = 29;
+	public static final int GS1_DEFLECTION = 30; // normalized needle deflection (only NAV1)
+	public static final int GS1_INRANGE = 31; // true if GS in range (only NAV1)
+	
 
 	
 	public int getInt(int i) {
