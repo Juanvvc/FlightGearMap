@@ -31,13 +31,9 @@
         </activity>
         <activity android:name=".Preferences" >
         </activity>
-        <activity android:name=".panels.MapControls" >
-        </activity>
-        <activity android:name=".panels.OnlyMap" >
+        <activity android:name=".panels.MapInstrumentPanel" >
         </activity>
         <activity android:name=".panels.InstrumentPanel" >
-        </activity>
-        <activity android:name=".panels.LiquidPanel" >
         </activity>
     </application>
 

@@ -12,9 +12,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.juanvvc.flightgear.panels.InstrumentPanel;
-import com.juanvvc.flightgear.panels.LiquidPanel;
-import com.juanvvc.flightgear.panels.MapControls;
+import com.juanvvc.flightgear.panels.MapInstrumentPanel;
+import com.juanvvc.flightgear.panels.PanelView;
 
+/** This activity shows a list of the available distributions. */
 public class PanelList extends ListActivity {
 	
 	@Override
@@ -23,7 +24,12 @@ public class PanelList extends ListActivity {
 		
 		setContentView(R.layout.panellist);
 		
-		ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{"Map and simple controls", "Only map", "Cessna 172", "Generic glass panel"});
+		// TODO: choose a better way to manage this list
+		ListAdapter adapter = new ArrayAdapter<String>(
+				this,
+				android.R.layout.simple_list_item_1,
+				new String[]{"Map and simple controls", "Only map", "Cessna 172", "Seneca II", "Generic glass panel"}
+				);
 		this.setListAdapter(adapter);
 	}
 
@@ -33,24 +39,32 @@ public class PanelList extends ListActivity {
 		Bundle bundle = new Bundle();
 		
 		switch(position) {
-		case 0:
-			intent = new Intent(this.getApplicationContext(), MapControls.class);
+		case 0: // map and simple controls
+			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
 			bundle.putBoolean("onlymap", false);
 			intent.putExtras(bundle);
 			break;
-		case 1:
-			intent = new Intent(this.getApplicationContext(), MapControls.class);
+		case 1: // only map
+			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
 			bundle.putBoolean("onlymap", true);
 			intent.putExtras(bundle);
 			break;
-		case 2:
+		case 2: // Cessna 172
 			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 			bundle.putBoolean("onlymap", false);
+			bundle.putInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
 			intent.putExtras(bundle);
 			break;
-		case 3:
-			intent = new Intent(this.getApplicationContext(), LiquidPanel.class);
+		case 3: // Seneca II
+			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 			bundle.putBoolean("onlymap", false);
+			bundle.putInt("distribution", PanelView.Distribution.SENECAII_PANEL);
+			intent.putExtras(bundle);
+			break;			
+		case 4: // generic glass panel
+			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
+			bundle.putBoolean("onlymap", false);
+			bundle.putBoolean("liquid", true);
 			intent.putExtras(bundle);
 		default:
 		}
@@ -63,7 +77,7 @@ public class PanelList extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.available_distributions, menu);
+	    inflater.inflate(R.menu.main, menu);
 	    return true;
 	}
 	

@@ -33,9 +33,14 @@ import com.juanvvc.flightgear.R;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 
 /** Main activity of the application.
+ * It manages a map and a PanelView.
+ * If onlymap is set as true in the Intent, only the Map is shown. If onlymap is not set, the liquid is chcked.
+ * If liquid is set to true in the intent, the PanelView has the distribution LIQUID_PANEL.
+ * If liquid is not set or set to false, the PanelView is distributed following the distribution set in the layout map_simplepanel.
+ * 
  * @author juanvi
  */
-public class MapControls extends Activity {
+public class MapInstrumentPanel extends Activity {
 	/** Reference to the map view. */
 	MapView mapView = null;
 	/** Reference to the panel view. */
@@ -78,15 +83,31 @@ public class MapControls extends Activity {
         planeOverlay = new PlaneOverlay(this);
         
         boolean onlymap = false;
+        boolean liquid = false;
         if (this.getIntent() != null && this.getIntent().getExtras() != null) {
         	onlymap = this.getIntent().getExtras().getBoolean("onlymap");
+        	liquid = this.getIntent().getExtras().getBoolean("liquid");
         }
         
         if (onlymap) {
         	this.setContentView(R.layout.only_map);
         	this.panelView = null;
         	this.mapView = (MapView)this.findViewById(R.id.mapview);
-        } else {
+        } else if (liquid) {
+           	this.setContentView(R.layout.map_liquid);
+        	this.panelView = (PanelView) findViewById(R.id.panel);
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        	
+        	panelView.setVisibility(View.VISIBLE);
+        	panelView.setDistribution(PanelView.Distribution.LIQUID_PANEL);
+        	panelView.invalidate();
+        	panelView.invalidate();
+
+        	if (this.calibratableManager != null) {
+        		this.calibratableManager.empty();
+        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+        	} 		
+    	} else {
         	this.setContentView(R.layout.map_simplepanel);
         	this.panelView = (PanelView)this.findViewById(R.id.panel);
         	this.mapView = (MapView)this.findViewById(R.id.mapview);
@@ -282,7 +303,7 @@ public class MapControls extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(MapControls.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
+				Toast.makeText(MapInstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
 				firstMessage = false;
 			}
 			
@@ -301,7 +322,7 @@ public class MapControls extends Activity {
 			if (panelView != null) {
 				// check if the calibratable manager is still running
 				if (calibratableManager == null || !calibratableManager.isAlive()) {
-			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(MapControls.this));
+			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(MapInstrumentPanel.this));
 			        calibratableManager.start();
 			        if (panelView != null) {
 			        	panelView.postCalibratableSurfaceManager(calibratableManager);
@@ -321,7 +342,7 @@ public class MapControls extends Activity {
 	    		currentDialog.dismiss();
 	    	}
 	    	
-	    	if(MapControls.this.isFinishing()) {
+	    	if(MapInstrumentPanel.this.isFinishing()) {
 	    		return;
 	    	}
 	        
@@ -343,7 +364,7 @@ public class MapControls extends Activity {
 		        
 		        if (ipAddress == 0) {
 		        	// if no IP in the wifi network.
-		        	currentDialog = new AlertDialog.Builder(MapControls.this).setIcon(R.drawable.ic_launcher)
+		        	currentDialog = new AlertDialog.Builder(MapInstrumentPanel.this).setIcon(R.drawable.ic_launcher)
 		        		.setTitle(getString(R.string.warning))
 						.setMessage(getString(R.string.network_not_detected) + " " + getString(R.string.critical_error))
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -365,7 +386,7 @@ public class MapControls extends Activity {
 			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=9000";
 			        
 			        // show the dialog on screen
-					currentDialog = new AlertDialog.Builder(MapControls.this).setIcon(R.drawable.ic_launcher)
+					currentDialog = new AlertDialog.Builder(MapInstrumentPanel.this).setIcon(R.drawable.ic_launcher)
 						.setTitle(getString(R.string.warning))
 						.setMessage(txt)
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -388,7 +409,7 @@ public class MapControls extends Activity {
 						.show();
 		        }
 	        } catch (Exception e) {
-	        	Toast.makeText(MapControls.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
+	        	Toast.makeText(MapInstrumentPanel.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
 	        }
 		}
 	}

@@ -41,6 +41,8 @@ public class InstrumentPanel extends Activity {
 	private CalibratableSurfaceManager calibratableManager = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
+	/** The identifier of the distribution. Must be an integer from PanelView.Distribution. */
+	private int distribution;
 	/** If set, use the wakeLock.
 	 * TODO: the wakeLock was not always working. Use this option for debugging
 	 */
@@ -60,6 +62,14 @@ public class InstrumentPanel extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
         setContentView(R.layout.instruments);
+        
+        // get the distribution from the intent
+        try{
+        	this.distribution = getIntent().getExtras().getInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
+        	// TODO: check savedInstanceState?
+        } catch(Exception e) {
+        	this.distribution = PanelView.Distribution.C172_INSTRUMENTS;
+        }
         
         panelView = (PanelView) this.findViewById(R.id.panel);
         this.setDistribution();
@@ -133,9 +143,9 @@ public class InstrumentPanel extends Activity {
         if (calibratableManager != null) {
         	calibratableManager.interrupt();
         }
-    	if (USE_WAKELOCK && wakeLock != null && wakeLock.isHeld()) {
-    		wakeLock.release();
-    	}
+//    	if (USE_WAKELOCK && wakeLock != null && wakeLock.isHeld()) {
+//    		wakeLock.release();
+//    	}
     }
 
 	/** Sets a distribution of instruments on screen.
@@ -146,7 +156,7 @@ public class InstrumentPanel extends Activity {
     	panelView = (PanelView) findViewById(R.id.panel);
     	
     	panelView.setVisibility(View.VISIBLE);
-    	panelView.setDistribution(PanelView.Distribution.C172_INSTRUMENTS);
+    	panelView.setDistribution(this.distribution);
     	panelView.invalidate();
 
     	if (this.calibratableManager != null) {

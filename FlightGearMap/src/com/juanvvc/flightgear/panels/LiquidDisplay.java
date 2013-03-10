@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.graphics.Shader;
@@ -24,6 +23,7 @@ import com.juanvvc.flightgear.instruments.RotateSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 
+/** Distributes instruments in a liquid display */
 public class LiquidDisplay {
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch(type) {

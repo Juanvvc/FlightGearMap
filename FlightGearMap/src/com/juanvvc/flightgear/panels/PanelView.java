@@ -23,8 +23,8 @@ import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.Surface;
 
 /**
- * Shows a small panel on the screen. This panel resize controls to the
- * available space.
+ * Shows a instrument panel on the screen.
+ * This panel resizes controls to the available space.
  * 
  * @author juanvi
  * 
@@ -32,8 +32,8 @@ import com.juanvvc.flightgear.instruments.Surface;
 public class PanelView extends SurfaceView implements OnTouchListener {
 
 	/** Specifies the distribution type. */
-	// Note: this cannot be an enum since the XML needs an integer to refer to a ditribution type
-	public class Distribution {
+	// Note: this cannot be an enum since the XML needs an integer to refer to a distribution type.
+	public static class Distribution {
 		/** A 2x3 panel with simple instruments. */
 		public static final int SIMPLE_VERTICAL_PANEL = 0;
 		/** 6x1 panel with simple instruments. */
@@ -44,11 +44,12 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int ONLY_MAP = 3;
 		/** Show a complete Cessna-172 instrument panel. */
 		public static final int C172_INSTRUMENTS = 4;
+		/** Show a SenecaII panel */
+		public static final int SENECAII_PANEL = 5;
 		/** Show a Liquid panel. */
-		public static final int LIQUID_PANEL = 5;
-		/** Show a complete Cessna-172 comm panel.
-		 * TODO: this is not implemented */
-		public static final int C172_COMM = 6;
+		public static final int LIQUID_PANEL = 6;
+		/** Show a complete comm panel. */
+		public static final int COMM_PANEL = 7;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -132,7 +133,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 1));
-				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 1, 1));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 0, 2));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
 	
@@ -144,7 +145,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 2, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 1));
-				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 1));
+				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 1, 1));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 1));
 	
 				break;
@@ -154,7 +155,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 2, 0));
-				instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 3, 0));
+				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 3, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 4, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 5, 0));
 				break;
@@ -162,6 +163,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 5;
 				rows = 3;
 				instruments = Cessna172.getInstrumentPanel(context);
+				break;
+			case Distribution.SENECAII_PANEL:
+				cols = 5;
+				rows = 3;
+				instruments = SenecaII.getInstrumentPanel(context);
 				break;
 			case Distribution.LIQUID_PANEL:
 				cols = 1;
@@ -181,6 +187,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/** Sets the calibratable surface manager, and register any available calibratable surface. */
 	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
 		for(Instrument i: instruments) {
+			 // TODO: an instrument should never be null. Use only during development
+			if ( i == null ) {
+				MyLog.w(PanelView.class, "Instrument is null");
+				continue;
+			}
 			Surface[] ss = i.getSurfaces();
 			for (int j = 0; j < ss.length; j++) {
 				ss[j].postCalibratableSurfaceManager(cs);
