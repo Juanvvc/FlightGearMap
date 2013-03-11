@@ -14,42 +14,40 @@ import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 import com.juanvvc.flightgear.instruments.SwitchSurface;
-import com.juanvvc.flightgear.instruments2.AtiSurface;
-import com.juanvvc.flightgear.instruments2.FromToGSSurface;
 
 public class SenecaII {
 	
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		// Note: only includes those instruments that are different from the ones provided by Cessna172
 		switch (type) {
-		case NAV2:
-			return new Instrument(col, row, context, new Surface[] {
-					new StaticSurface("nav1.png", 0, 0),
-					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-					new FromToGSSurface("nav4.png", 308, 220, PlaneData.NAV2_TO, PlaneData.NAV2_FROM, -1),
-					new RotateSurface("hand5.png", 245, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
-					new StaticSurface("nav3.png", 0, 0)
-				});
-		case HSI1:
-			return new Instrument(col, row, context, new Surface[] {
-					new RotateSurface("hdg1.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
-					new StaticSurface("hdg2.png", 0, 0)
-				});
-		case TRIMFLAPS:
-			return new Instrument(col, row, context, new Surface[] {
-					new StaticSurface("trimflaps.png", 65, 10),
-					new SlippingSurface("hand3.png", 90, PlaneData.ELEV_TRIM, -1, 280, 394, 1, 280, 26),
-					new SlippingSurface("hand3.png", -90, PlaneData.FLAPS, 0, 200, 66, 1, 200, 434)
-				});
-		case SWITCHES:
-			return new Instrument(col, row, context, new Surface[] {
-					new SwitchSurface("switches.png", 0, 152, "/controls/lighting/taxi-light", "TAX"),
-					new SwitchSurface("switches.png", 128, 152, "/controls/lighting/nav-lights", "NAV"),
-					new SwitchSurface("switches.png", 256, 152, "/controls/lighting/beacon", "BCN"),
-					new SwitchSurface("switches.png", 384, 152, "/controls/lighting/landing-lights", "LNG"),
-				});
+//		case NAV2:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new StaticSurface("nav1.png", 0, 0),
+//					new CalibratableRotateSurface("nav2.png", 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+//					new FromToGSSurface("nav4.png", 308, 220, PlaneData.NAV2_TO, PlaneData.NAV2_FROM, -1),
+//					new RotateSurface("hand5.png", 245, 100, PlaneData.NAV2_DEFLECTION, 1, 256, 100, -10, 25, 10, -25),
+//					new StaticSurface("nav3.png", 0, 0)
+//				});
+//		case HSI1:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new RotateSurface("hdg1.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+//					new StaticSurface("hdg2.png", 0, 0)
+//				});
+//		case TRIMFLAPS:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new StaticSurface("trimflaps.png", 65, 10),
+//					new SlippingSurface("hand3.png", 90, PlaneData.ELEV_TRIM, -1, 280, 394, 1, 280, 26),
+//					new SlippingSurface("hand3.png", -90, PlaneData.FLAPS, 0, 200, 66, 1, 200, 434)
+//				});
+//		case SWITCHES:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new SwitchSurface("switches.png", 0, 152, "/controls/lighting/taxi-light", "TAX"),
+//					new SwitchSurface("switches.png", 128, 152, "/controls/lighting/nav-lights", "NAV"),
+//					new SwitchSurface("switches.png", 256, 152, "/controls/lighting/beacon", "BCN"),
+//					new SwitchSurface("switches.png", 384, 152, "/controls/lighting/landing-lights", "LNG"),
+//				});
 		default:
-			MyLog.w(SenecaII.class, "Instrument not available: " + type);
+			MyLog.w(SenecaII.class.getSimpleName(), "Instrument not available: " + type);
 			return null;
 		}
 	}

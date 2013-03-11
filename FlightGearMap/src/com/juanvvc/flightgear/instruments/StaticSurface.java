@@ -1,5 +1,7 @@
 package com.juanvvc.flightgear.instruments;
 
+import com.juanvvc.flightgear.MyBitmap;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -7,13 +9,13 @@ import android.graphics.Matrix;
 /** An surfaces that draws an static image on a position. */
 public class StaticSurface extends Surface {
 	Matrix m;
-	public StaticSurface(String file, float x, float y) {
-		super(file, x, y);
+	public StaticSurface(MyBitmap bitmap, float x, float y) {
+		super(bitmap, x, y);
 		m = null;
 	}
 	
 	@Override
-	public void onMove() {
+	public void onBitmapChanged() {
 		if (m == null) {
 			m = new Matrix();
 			final float gridSize = parent.getGridSize();
@@ -25,15 +27,12 @@ public class StaticSurface extends Surface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
 		
-		if (planeData == null || !planeData.hasData() || b == null) {
+		if (planeData == null || !planeData.hasData() || bitmap == null || bitmap.getScaledBitmap() == null || m == null) {
 			return;
 		}
 		
-		if (m == null) {
-			onMove();
-		}
-		c.drawBitmap(b, m, null);
+		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

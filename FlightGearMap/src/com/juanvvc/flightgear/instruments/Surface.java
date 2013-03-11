@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import com.juanvvc.flightgear.FGFSConnection;
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.PlaneData;
 
 /** Manages a layer of an instrument.
@@ -21,7 +22,7 @@ public abstract class Surface {
 	/** Vertical position inside the instrument. */
 	protected float y;
 	/** The name of the image file of this surface (does not include the directory) */
-	protected String file;
+	protected MyBitmap bitmap;
 	/** The parent instrument for this surface. */
 	protected Instrument parent;
 	/** The last PlaneData object. */
@@ -32,8 +33,8 @@ public abstract class Surface {
 	 * @param x horizontal position inside the instrument
 	 * @param y vertical position inside the instrument
 	 */
-	public Surface(final String file, final float x, final float y) {
-		this.file = file;
+	public Surface(MyBitmap bitmap, final float x, final float y) {
+		this.bitmap = bitmap;
 		this.x = x;
 		this.y = y;
 	}
@@ -46,8 +47,15 @@ public abstract class Surface {
 		return parent;
 	}
 	
-	public String getFile() {
-		return file;
+	public MyBitmap getBitmap() {
+		return this.bitmap;
+	}
+	
+	/** The bitmap that the surface uses has changed.
+	 * The default behaviour does nothing, but some surfaces may update their reference points.
+	 */
+	public void onBitmapChanged() {
+		// Does nothing
 	}
 	
 	/** @param pd The last PlaneData object */
@@ -85,18 +93,11 @@ public abstract class Surface {
 	
 	/** Draws the surface.
 	 * @param c The canvas where draw the surface on.
-	 * @param b The bitmap of the surface. If must correspond to this.getFile().
-	 * This bitmap is not managed directly in the surface to let some smart modifications, such as scaling.
 	 * @param pd The current PlaneData object. */
-	public abstract void onDraw(final Canvas c, final Bitmap b);
-	
-	/** Called when the instrument has been moved on the screen. */
-	public void onMove() {
-		
-	}
+	public abstract void onDraw(final Canvas c);
 	
 	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
-		
+		// Does nothing
 	}
 	
 	public boolean isDirty() {

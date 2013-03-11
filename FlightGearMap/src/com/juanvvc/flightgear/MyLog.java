@@ -29,6 +29,22 @@ public class MyLog{
 		if(debug) Log.e(o.getClass().getSimpleName(), msg);
 	}
 	
+	public static void i(String t, String msg){
+		if(debug) Log.i(t, msg);
+	}
+	public static void d(String t, String msg){
+		if(debug) Log.d(t, msg);
+	}
+	public static void v(String t, String msg){
+		if(debug) Log.v(t, msg);
+	}
+	public static void e(String t, String msg){
+		if(debug) Log.e(t, msg);
+	}
+	public static void w(String t, String msg){
+		if(debug) Log.e(t, msg);
+	}
+	
 	public static String stackToString(Exception e) {
 		Writer result = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(result);

@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import com.juanvvc.flightgear.FGFSConnection;
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 
 /** A surface that is rotated according to the telnet connection, and can be calibrated. */
@@ -54,12 +55,12 @@ public class CalibratableRotateSurface extends Surface {
 	 * @param amax Angle that corresponds to the max value.
 	 */
 	public CalibratableRotateSurface(
-			String file, float x, float y,
+			MyBitmap bitmap, float x, float y,
 			String prop, float rscale, boolean wrap,
 			int propIdx,
 			int rcx, int rcy,
 			float min, float amin, float max, float amax) {
-		super(file, x, y);
+		super(bitmap, x, y);
 		m = new Matrix();
 		this.rcx = rcx;
 		this.rcy = rcy;
@@ -87,7 +88,10 @@ public class CalibratableRotateSurface extends Surface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
+		if (planeData == null || !planeData.hasData() || bitmap == null) {
+			return;
+		}
 		
 		if (!this.dirtyValue && this.propIdx > -1 && this.planeData != null && planeData.hasData()) {
 			value = planeData.getFloat(this.propIdx);
@@ -105,7 +109,7 @@ public class CalibratableRotateSurface extends Surface {
 				getDrawableRotationAngle(value),
 				(col + rcx / 512f ) * gridSize * scale,
 				(row + rcy / 512f ) * gridSize * scale);
-		c.drawBitmap(b, m, null);
+		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 	
 	@Override

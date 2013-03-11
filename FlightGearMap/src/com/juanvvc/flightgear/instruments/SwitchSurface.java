@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.juanvvc.flightgear.FGFSConnection;
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 
 public class SwitchSurface extends Surface {
@@ -24,8 +25,8 @@ public class SwitchSurface extends Surface {
 	/** If true, the switch needs to be post to the remote fgfs (do not read) */
 	private boolean dirty = false;
 	
-	public SwitchSurface(final String file, final float x, final float y, final String prop, final String label) {
-		super(file, x, y);
+	public SwitchSurface(MyBitmap bitmap, final float x, final float y, final String prop, final String label) {
+		super(bitmap, x, y);
 		this.label = label;
 		this.prop = prop;
 		firstRead = true;
@@ -60,7 +61,7 @@ public class SwitchSurface extends Surface {
 	}
 	
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
 		// calculate the position of the switch
 		final float gridSize = parent.getGridSize();
 		final float scale = parent.getScale();
@@ -69,6 +70,8 @@ public class SwitchSurface extends Surface {
 		final int left = (int)((x / 512f + col) * gridSize * scale);
 		final int top = (int)((y / 512f + row) * gridSize * scale);
 		
+		Bitmap b = this.bitmap.getScaledBitmap();
+
 		// draw the label
 		c.drawText(label, left + b.getWidth() / 5 * scale, top + b.getHeight() / 2 * scale, textPaint);
 		// draw the switch according to its state

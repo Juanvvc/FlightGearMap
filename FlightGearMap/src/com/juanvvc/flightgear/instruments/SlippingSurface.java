@@ -1,5 +1,7 @@
 package com.juanvvc.flightgear.instruments;
 
+import com.juanvvc.flightgear.MyBitmap;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -28,12 +30,12 @@ public class SlippingSurface extends Surface {
 	 * @param ymax
 	 */
 	public SlippingSurface(
-			String file,
+			MyBitmap bitmap,
 			float rotation,
 			int prop,
 			float min, int xmin, int ymin,
 			float max, int xmax, int ymax) {
-		super(file, 0, 0);
+		super(bitmap, 0, 0);
 		this.min = min;
 		this.xmin = xmin;
 		this.xmax = xmax;
@@ -45,8 +47,8 @@ public class SlippingSurface extends Surface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
-		if (planeData == null || !planeData.hasData()) {
+	public void onDraw(Canvas c) {
+		if (planeData == null || !planeData.hasData() || bitmap == null || bitmap.getScaledBitmap() == null) {
 			return;
 		}
 
@@ -66,6 +68,6 @@ public class SlippingSurface extends Surface {
 				this.rotation,
 				(col + x / 512f ) * gridSize * scale,
 				(row + y / 512f ) * gridSize * scale);
-		c.drawBitmap(b, m, null);
+		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

@@ -14,6 +14,7 @@ import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
@@ -27,18 +28,18 @@ import com.juanvvc.flightgear.instruments.Surface;
 public class LiquidDisplay {
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch(type) {
-		case ATTITUDE:
-			return new Instrument(col, row, context, new Surface[] {
-					new LiquidAtiSurface("pitchscale.png", 70, 138),
-					new RotateSurface("ai.roll.ref.png", 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
-					new StaticSurface("ai.ref.png", -256, -162)
-				});
-		case HSI1:
-			return new Instrument(col, row, context, new Surface[] {
-					new RotateSurface("hsi.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
-					new CalibratableRotateSurface("hand4.png", 236, 56, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-					new StaticSurface("hsi2.png", 0, 0)
-			});
+//		case ATTITUDE:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new LiquidAtiSurface("pitchscale.png", 70, 138),
+//					new RotateSurface("ai.roll.ref.png", 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
+//					new StaticSurface("ai.ref.png", -256, -162)
+//				});
+//		case HSI1:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new RotateSurface("hsi.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+//					new CalibratableRotateSurface("hand4.png", 236, 56, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+//					new StaticSurface("hsi2.png", 0, 0)
+//			});
 		case BELTS:
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {
@@ -62,15 +63,17 @@ public class LiquidDisplay {
 class LiquidAtiSurface extends Surface {
 	private Matrix matrix;
 
-	public LiquidAtiSurface(String file, float x, float y) {
-		super(file, x, y);
+	public LiquidAtiSurface(MyBitmap bitmap, float x, float y) {
+		super(bitmap, x, y);
 		matrix = new Matrix();
 	}
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
 		if (planeData == null) {
 			return;
 		}
+		
+		Bitmap b = bitmap.getScaledBitmap();
 		
 		// calculate pitch and matrix
 		matrix.reset();
@@ -132,7 +135,7 @@ abstract class NumberBeltSurface extends Surface {
 		MyLog.d(this, "NumberBeltInitialized");
 	}
 
-	public void onDraw(Canvas c, Bitmap b, float value) {
+	public void onDraw(Canvas c, float value) {
 		int j0 = (int) Math.ceil(value / interval1 - size / (2.0 * interval1));
 		if (!negative) {
 			j0 = Math.max(0, j0);
@@ -183,11 +186,11 @@ class AltitudeBeltSurface extends NumberBeltSurface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
 		if (planeData == null) {
 			return;
 		}
-		super.onDraw(c, b, (int) Math.floor(planeData.getFloat(PlaneData.ALTITUDE)));
+		super.onDraw(c, (int) Math.floor(planeData.getFloat(PlaneData.ALTITUDE)));
 	}
 }
 class SpeedBeltSurface extends NumberBeltSurface {
@@ -196,10 +199,10 @@ class SpeedBeltSurface extends NumberBeltSurface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
+	public void onDraw(Canvas c) {
 		if (planeData == null) {
 			return;
 		}
-		super.onDraw(c, b, (int) Math.floor(planeData.getFloat(PlaneData.SPEED)));
+		super.onDraw(c, (int) Math.floor(planeData.getFloat(PlaneData.SPEED)));
 	}
 }

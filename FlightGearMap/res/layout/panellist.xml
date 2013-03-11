@@ -6,7 +6,7 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp" >
 
-    <ListView
+    <!-- ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,6 +17,17 @@
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No panel" />
+        android:text="No panel" / -->
+    <GridView 
+    android:id="@+id/gridview"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:columnWidth="330dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="10dp"
+    android:horizontalSpacing="10dp"
+    android:stretchMode="columnWidth"
+    android:gravity="center"
+/>
 
 </LinearLayout>

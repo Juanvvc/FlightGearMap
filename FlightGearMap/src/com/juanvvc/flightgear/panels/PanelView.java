@@ -239,11 +239,13 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		}
 	}
 	
+	/** Reload and rescale images inside the instruments.
+	 * Call this method when the view is created or its size changes.
+	 * TODO: This method could be run on a different thread, but
+	 * on my devices loading does not takes long and can be
+	 * in the main thread.
+	 */
 	private void reloadImages() {
-		// reload and rescale images
-		// load the instruments. This could be in a different thread, but IN MY
-		// DEVICES, loading does not take long
-		
 		Instrument.getBitmapProvider(this.getContext()).recycle();
 		
 		for (Instrument i : instruments) {

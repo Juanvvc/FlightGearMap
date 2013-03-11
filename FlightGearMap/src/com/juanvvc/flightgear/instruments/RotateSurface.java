@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.PlaneData;
 
 /** A surface that is rotated according to some data in PlaneData. */
@@ -30,11 +31,11 @@ public class RotateSurface extends Surface {
 	 * @param amax Angle that corresponds to the max value.
 	 */
 	public RotateSurface(
-			String file, float x, float y,
+			MyBitmap bitmap, float x, float y,
 			int pdIdx, float rscale,
 			int rcx, int rcy,
 			float min, float amin, float max, float amax) {
-		super(file, x, y);
+		super(bitmap, x, y);
 		m = new Matrix();
 		this.pdIdx = pdIdx;
 		this.rcx = rcx;
@@ -57,8 +58,8 @@ public class RotateSurface extends Surface {
 	}
 
 	@Override
-	public void onDraw(Canvas c, Bitmap b) {
-		if (planeData == null || !planeData.hasData() || b == null) {
+	public void onDraw(Canvas c) {
+		if (planeData == null || !planeData.hasData() || bitmap == null || bitmap.getScaledBitmap() == null) {
 			return;
 		}
 		
@@ -74,6 +75,6 @@ public class RotateSurface extends Surface {
 				getRotationAngle(this.planeData),
 				(col + rcx / 512f ) * gridSize * scale,
 				(row + rcy / 512f ) * gridSize * scale);
-		c.drawBitmap(b, m, null);
+		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

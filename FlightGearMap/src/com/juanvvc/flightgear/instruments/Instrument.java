@@ -3,6 +3,7 @@ package com.juanvvc.flightgear.instruments;
 import java.util.ArrayList;
 
 import com.juanvvc.flightgear.BitmapProvider;
+import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.MyLog;
 
@@ -26,8 +27,6 @@ public class Instrument {
 	Context context;
 	/** Surfaces of this instrument */
 	Surface[] surfaces;
-	/** The scaled bitmaps of your instruments. */
-	ArrayList<Bitmap> imgsScaled;
 	/** The grid are squares of gridSize x gridSize */
 	protected int gridSize = 256;
 	/** If true, the instrument is ready to be drawn.
@@ -47,7 +46,6 @@ public class Instrument {
 		this.row = r;
 		context = ctx;
 		scale = 1; // we begin unscaled
-		imgsScaled = new ArrayList<Bitmap>();
 		setSurfaces(surfaces);
 		ready = false;
 	}
@@ -80,9 +78,9 @@ public class Instrument {
 	public void loadImages(String dir) throws Exception {
 		for(Surface s: this.surfaces) {
 			// ensures that the manager has loaded the image
-			String file = s.getFile();
-			if (file!= null) {
-				bProvider.getBitmap(dir,  file);
+			MyBitmap b = s.getBitmap();
+			if (b != null) {
+				bProvider.getBitmap(dir,  b.getFile());
 			}
 		}
 		
@@ -145,25 +143,22 @@ public class Instrument {
 	
 	/** Sets the scale and loads the scaled images into the inner array. */
 	public void setScale(float scale) {
-		for (Bitmap b: imgsScaled) {
-			if ( b!=null ) {
-				b.recycle();
+		for (Surface s: surfaces) {
+			MyBitmap b = s.getBitmap();
+			if ( b!=null && b.getScaledBitmap() != null) {
+				b.getScaledBitmap().recycle();
 			}
 		}
-		imgsScaled.clear();
 		
 		this.scale = scale;
+		// Update all bitmaps
 		for(Surface s: surfaces) {
-			String f = s.getFile();
-			Bitmap b = null;
-			if (f != null) {
-				b = bProvider.getScaledBitmap(f);
-				if (b == null) {
-					MyLog.w(this, "Null bitmap: " + f + ". Image not found?");
-				}
+			MyBitmap b = s.getBitmap();
+			if (b != null) {
+				b.updateBitmap(bProvider, this.gridSize);
 			}
-			// even if null, add the bitmap to respect position
-			imgsScaled.add(b);
+			// Inform the surfaces that the bitmap has changed
+			s.onBitmapChanged();
 		}
 	}
 	
@@ -191,9 +186,8 @@ public class Instrument {
 		for (int i = 0; i < surfaces.length; i++) {
 			Surface s = surfaces[i];
 			if (s != null) {
-				Bitmap b = imgsScaled.get(i);
 				// we call onDraw() even if b==null. Maybe the surface is creating its own bitmap
-				s.onDraw(c, b);
+				s.onDraw(c);
 			}
 		}
 	}

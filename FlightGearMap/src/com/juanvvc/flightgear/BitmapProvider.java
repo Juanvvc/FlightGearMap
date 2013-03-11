@@ -27,6 +27,8 @@ public class BitmapProvider {
 	public static final String MEDIUM_QUALITY = "medium";
 	/** Directory inside assets for high quality bitmaps. */
 	public static final String HIGH_QUALITY = "high";
+	/** The scale of the bitmaps */
+	private float scale = -1;
 	
 	/** Constructor.
 	 * @param ctx The context of the provider.
@@ -41,8 +43,9 @@ public class BitmapProvider {
 	 * 
 	 * @param scale scale=1 original size
 	 */
-	public void setScale(float scale) {
+	public void setScale(float s) {
 		Matrix matrix = new Matrix();
+		this.scale = s;
 		matrix.setScale(scale,  scale);
 		// remove from memory previous versions of the bitmaps
 		for(Bitmap b: this.scaledBitmaps.values()) {
@@ -54,6 +57,10 @@ public class BitmapProvider {
 			Bitmap b = bitmaps.get(imgName);
 			scaledBitmaps.put(imgName, Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true));
 		}
+	}
+	
+	public float getScale() {
+		return scale;
 	}
 	
 	/**
@@ -76,7 +83,7 @@ public class BitmapProvider {
 		return bitmaps.get(imgName);
 	}
 	
-	/** Returns a scaled image. Call to setScale prio to this method.
+	/** Returns a scaled image. Call to setScale before this method.
 	 * @param imgName The name of the image to return.
 	 * @return The scaled version of the image.
 	 */
