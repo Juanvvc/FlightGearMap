@@ -21,6 +21,7 @@ import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
+import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 
@@ -34,12 +35,19 @@ public class LiquidDisplay {
 					new RotateSurface(new MyBitmap("ai.roll.ref.png", -1, -1, -1, -1), 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
 					new StaticSurface(new MyBitmap("ai.ref.png", -1, -1, -1, -1), -256, -162)
 				});
-//		case HSI1:
-//			return new Instrument(col, row, context, new Surface[] {
-//					new RotateSurface("hsi.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
-//					new CalibratableRotateSurface("hand4.png", 236, 56, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
-//					new StaticSurface("hsi2.png", 0, 0)
-//			});
+		case HSI1:
+			// The center of the instrument is (256, 274)
+			return new Instrument(col, row, context, new Surface[] {
+					new CalibratableRotateSurface(new MyBitmap("liquid.hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", 1, true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
+					new StaticSurface(new MyBitmap("liquid.hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
+					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
+					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
+					new HSINeedle(new MyBitmap("liquid.hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, head
+					new HSINeedle(new MyBitmap("liquid.hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, tail
+					new HSINeedle(new MyBitmap("liquid.hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 0), // CDI, scale
+					new HSINeedleDeflection(new MyBitmap("liquid.hsi2.png", 412, 172, 16, 152), 256-8, 274-76, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
+					new StaticSurface(new MyBitmap("liquid.hsi1.png", -1, -1, -1, -1), 0, 0)
+				});
 		case BELTS:
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {
@@ -55,7 +63,7 @@ public class LiquidDisplay {
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
 		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 0f, 0.0f));
-//		instruments.add(createInstrument(InstrumentType.HSI1, context, 0f, 1.0f));
+		instruments.add(createInstrument(InstrumentType.HSI1, context, 0f, 1.0f));
 		instruments.add(createInstrument(InstrumentType.BELTS, context, 0, 0.15f));
 		return instruments;
 	}
@@ -112,7 +120,7 @@ class LiquidAtiSurface extends Surface {
 			((col + 0.5f) * gridSize) * scale, ((1f + row) * gridSize) * scale,
 			new int[]{0x0fff, 0xffff, 0xffff, 0x0fff}, null,
 			Shader.TileMode.CLAMP));
-	    shader.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.DST_IN));
+//	    shader.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
 		c.drawBitmap(b, matrix, shader);
 	}
 }

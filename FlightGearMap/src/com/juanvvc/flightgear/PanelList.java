@@ -129,7 +129,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 			return 0;
 		}
 		
-		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_senecaii, R.drawable.dist_onlymap, R.drawable.dist_onlymap};
+		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_senecaii, R.drawable.dist_liquid, R.drawable.dist_onlymap};
 		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_senecaii, R.string.dist_liquid, R.string.dist_comms};
 
 		@Override

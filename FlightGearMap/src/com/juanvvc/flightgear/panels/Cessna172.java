@@ -41,7 +41,6 @@ public class Cessna172 {
 			});
 		case ATTITUDE:
 			return new Instrument(col, row, context, new Surface[] {
-					new StaticSurface(new MyBitmap("ati3.png", -1, -1, -1, -1), 0, 0),
 					new C172AtiSurface(new MyBitmap("misc1.png", 0, 268, 376, 236), 70, 138),
 					new RotateSurface(new MyBitmap("ati2.png", -1, -1, -1, -1), 23, 23, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
 					new StaticSurface(new MyBitmap("ati4.png", -1, -1, -1, -1), 0, 0)
