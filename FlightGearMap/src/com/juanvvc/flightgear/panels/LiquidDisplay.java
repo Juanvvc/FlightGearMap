@@ -28,12 +28,12 @@ import com.juanvvc.flightgear.instruments.Surface;
 public class LiquidDisplay {
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch(type) {
-//		case ATTITUDE:
-//			return new Instrument(col, row, context, new Surface[] {
-//					new LiquidAtiSurface("pitchscale.png", 70, 138),
-//					new RotateSurface("ai.roll.ref.png", 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
-//					new StaticSurface("ai.ref.png", -256, -162)
-//				});
+		case ATTITUDE:
+			return new Instrument(col, row, context, new Surface[] {
+					new LiquidAtiSurface(new MyBitmap("pitchscale.png", -1, -1, -1, -1), 70, 138),
+					new RotateSurface(new MyBitmap("ai.roll.ref.png", -1, -1, -1, -1), 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
+					new StaticSurface(new MyBitmap("ai.ref.png", -1, -1, -1, -1), -256, -162)
+				});
 //		case HSI1:
 //			return new Instrument(col, row, context, new Surface[] {
 //					new RotateSurface("hsi.png", 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
@@ -47,6 +47,7 @@ public class LiquidDisplay {
 					new SpeedBeltSurface(128, 512, face)
 			});
 		default:
+			MyLog.w(LiquidDisplay.class, "Instrument is null: " + type);
 			return null;
 		}
 	}
@@ -54,7 +55,7 @@ public class LiquidDisplay {
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
 		instruments.add(createInstrument(InstrumentType.ATTITUDE, context, 0f, 0.0f));
-		instruments.add(createInstrument(InstrumentType.HSI1, context, 0f, 1.0f));
+//		instruments.add(createInstrument(InstrumentType.HSI1, context, 0f, 1.0f));
 		instruments.add(createInstrument(InstrumentType.BELTS, context, 0, 0.15f));
 		return instruments;
 	}
@@ -142,8 +143,7 @@ abstract class NumberBeltSurface extends Surface {
 		}
 		int j1 = (int) Math.floor(value / interval1 + size / (2.0 * interval1));
 		
-		float gridSize = parent.getGridSize();
-		float scale = parent.getScale();
+		float realscale = parent.getScale() * parent.getGridSize();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		
@@ -151,9 +151,9 @@ abstract class NumberBeltSurface extends Surface {
 		Paint grey = new Paint();
 		grey.setColor(0xee666666);
 		grey.setStyle(Paint.Style.FILL);
-		float x0 = (col + x / 512f) * gridSize * scale;
-		float y0 = (row + y / 512f) * gridSize * scale;
-		c.clipRect(x0, y0, x0 + (width / 512f) * gridSize * scale, y0 + (height / 512f) * gridSize * scale, Region.Op.REPLACE);
+		float x0 = (col + relx) * realscale;
+		float y0 = (row + rely) * realscale;
+		c.clipRect(x0, y0, x0 + (width / 512f) * realscale, y0 + (height / 512f) * realscale, Region.Op.REPLACE);
 		c.drawPaint(grey);
 		
 		// the scale
@@ -162,19 +162,19 @@ abstract class NumberBeltSurface extends Surface {
 		font.setTextSize(20);
 		font.setTypeface(this.face);
 		for (int j=j0; j<=j1; j++) {
-			float oy = (height / 512f) * (1.0f - (1.0f * j * interval1 - value) / size - 0.5f) * gridSize * scale;
+			float oy = (height / 512f) * (1.0f - (1.0f * j * interval1 - value) / size - 0.5f) * realscale;
 			c.drawText((Integer.valueOf(j*interval1).toString()), x0, y0 + oy, font);
 		}
 		
 		// the actual value and its background
 		font.setColor(Color.WHITE);
 		font.setTextSize(40);
-		c.clipRect(x0, y0 + 0.4f * (height / 512f) * gridSize * scale, x0 + (width / 512f) * gridSize * scale, y0 + 0.6f * (height / 512f) * gridSize * scale);
+		c.clipRect(x0, y0 + 0.4f * (height / 512f) * realscale, x0 + (width / 512f) * realscale, y0 + 0.6f * (height / 512f) * realscale);
 		Paint black = new Paint();
 		black.setColor(Color.BLACK);
 		black.setStyle(Paint.Style.FILL);
 		c.drawPaint(black);
-		c.drawText(Float.valueOf(value).toString(), x0, y0 + (height / (2 * 512f)) * gridSize * scale, font);
+		c.drawText(Float.valueOf(value).toString(), x0, y0 + (height / (2 * 512f)) * realscale, font);
 				
 		//c.clipRect(0, 0, c.getWidth(), c.getHeight(), Region.Op.REPLACE);
 	}

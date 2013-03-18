@@ -98,17 +98,16 @@ public class CalibratableRotateSurface extends Surface {
 		}
 		
 		m.reset();
-		final float gridSize = parent.getGridSize();
-		final float scale = parent.getScale();
+		final float realscale = parent.getScale() * parent.getGridSize();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		m.setTranslate(
-				(col + x / 512f ) * gridSize * scale,
-				(row + y / 512f ) * gridSize * scale);
+				(col + relx ) * realscale,
+				(row + rely ) * realscale);
 		m.postRotate(
 				getDrawableRotationAngle(value),
-				(col + rcx / 512f ) * gridSize * scale,
-				(row + rcy / 512f ) * gridSize * scale);
+				(col + rcx / 512f ) * realscale,
+				(row + rcy / 512f ) * realscale);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 	

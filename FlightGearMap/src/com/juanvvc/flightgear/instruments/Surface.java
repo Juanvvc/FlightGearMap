@@ -17,10 +17,11 @@ import com.juanvvc.flightgear.PlaneData;
  *
  */
 public abstract class Surface {
-	/** Horizontal position inside the instrument. */
-	protected float x;
+	public static final float DEFAULT_SURFACE_SIZE = 512f;
+	/** Horizontal position inside the instrument. 1.0=DEFAULT_SURFACE_FACE pixels */
+	protected float relx;
 	/** Vertical position inside the instrument. */
-	protected float y;
+	protected float rely;
 	/** The name of the image file of this surface (does not include the directory) */
 	protected MyBitmap bitmap;
 	/** The parent instrument for this surface. */
@@ -35,8 +36,8 @@ public abstract class Surface {
 	 */
 	public Surface(MyBitmap bitmap, final float x, final float y) {
 		this.bitmap = bitmap;
-		this.x = x;
-		this.y = y;
+		this.relx = x / DEFAULT_SURFACE_SIZE;
+		this.rely = y / DEFAULT_SURFACE_SIZE;
 	}
 	
 	public void setParent(final Instrument ins) {

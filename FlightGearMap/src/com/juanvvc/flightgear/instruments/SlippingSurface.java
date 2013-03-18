@@ -53,21 +53,20 @@ public class SlippingSurface extends Surface {
 		}
 
 		float value = planeData.getFloat(this.prop);
-		x = (value - min) * (xmax - xmin) / (max - min) + xmin;
-		y = (value - min) * (ymax - ymin) / (max - min) + ymin;
+		relx = ((value - min) * (xmax - xmin) / (max - min) + xmin) / DEFAULT_SURFACE_SIZE;
+		rely = ((value - min) * (ymax - ymin) / (max - min) + ymin) / DEFAULT_SURFACE_SIZE;
 		
 		m.reset();
-		final float gridSize = parent.getGridSize();
-		final float scale = parent.getScale();
+		final float realscale = parent.getScale() * parent.getGridSize();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		m.setTranslate(
-				(col + x / 512f ) * gridSize * scale,
-				(row + y / 512f ) * gridSize * scale);
+				(col + relx ) * realscale,
+				(row + rely ) * realscale);
 		m.postRotate(
 				this.rotation,
-				(col + x / 512f ) * gridSize * scale,
-				(row + y / 512f ) * gridSize * scale);
+				(col + relx ) * realscale,
+				(row + rely ) * realscale);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

@@ -270,13 +270,13 @@ class C172FromToGSSurface extends Surface {
 			return;
 		}
 		
-		float col = parent.getCol();
-		float row = parent.getRow();
-		float gridSize = parent.getGridSize();
-		float scale = parent.getScale();
+		final float col = parent.getCol();
+		final float row = parent.getRow();
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final float scale = parent.getScale();
 		
-		int left = (int) ((col + x / 512f) * gridSize * scale);
-		int top = (int) ((row + y / 512f) * gridSize * scale);
+		final int left = (int) ((col + relx) * realscale);
+		final int top = (int) ((row + rely) * realscale);
 
 		Bitmap b = bitmap.getScaledBitmap();
 		

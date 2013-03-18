@@ -39,7 +39,8 @@ public class SwitchSurface extends Surface {
 	
 	@Override
 	public boolean youControl(float x, float y) {
-		return x > this.x && x < (this.x + SWITCH_WIDTH) && y > this.y && y < (this.y + SWITCH_HEIGHT);
+		return x > relx * DEFAULT_SURFACE_SIZE && x < (relx * DEFAULT_SURFACE_SIZE + SWITCH_WIDTH)
+				&& y > rely * DEFAULT_SURFACE_SIZE && y < (rely * DEFAULT_SURFACE_SIZE + SWITCH_HEIGHT);
 	}
 	
 	@Override
@@ -63,12 +64,12 @@ public class SwitchSurface extends Surface {
 	@Override
 	public void onDraw(Canvas c) {
 		// calculate the position of the switch
-		final float gridSize = parent.getGridSize();
+		final float realscale = parent.getScale() + parent.getGridSize();
 		final float scale = parent.getScale();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
-		final int left = (int)((x / 512f + col) * gridSize * scale);
-		final int top = (int)((y / 512f + row) * gridSize * scale);
+		final int left = (int)((relx + col) * realscale);
+		final int top = (int)((rely + row) * realscale);
 		
 		Bitmap b = this.bitmap.getScaledBitmap();
 

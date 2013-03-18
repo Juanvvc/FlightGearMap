@@ -210,8 +210,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	 */
 	private void rescaleInstruments() {
 		if (getWidth() > 0 && instruments != null && instruments.size() > 0) {
-			// scale to match the available size. All instrumewnts should be
-			// visible.
+			// scale to match the available size. All instrumewnts should be visible.
+			// TODO: this assumes that the first instrument is not null
 			scale = Math.min(
 					1.0f * getWidth() / (cols * instruments.get(0).getGridSize()),
 					1.0f * getHeight()/ (rows * instruments.get(0).getGridSize()));
@@ -313,12 +313,16 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			} catch(IndexOutOfBoundsException e) {
 				// TODO: this exception is thrown if redrawing() while the
 				// instruments are not ready. Prevent this.
+				MyLog.w(this, MyLog.stackToString(e));
 			} catch(NullPointerException e) {
 				// This usually means that an image is not found
 				MyLog.w(this, MyLog.stackToString(e));
+			} catch(NumberFormatException e) {
+				// Most probable cause: wrong XML in FlightGear
+				MyLog.w(this, MyLog.stackToString(e));
 			} catch(RuntimeException e) {
 				// this exception is thrown when using a recycled bitmap on Canvas, for example
-				// TODO: I'm ignoring this exception, but I'm sure that it shows an error in the program flow
+				// TODO: I'm ignoring this exception, but I'm sure that it means an error in the program
 			}
 			
 			surfaceHolder.unlockCanvasAndPost(c);

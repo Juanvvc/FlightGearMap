@@ -9,10 +9,10 @@ import com.juanvvc.flightgear.PlaneData;
 
 /** A surface that is rotated according to some data in PlaneData. */
 public class RotateSurface extends Surface {
-	private Matrix m;
+	protected Matrix m;
 	protected int pdIdx;
-	private float rcx;
-	private float rcy;
+	protected float rcx;
+	protected float rcy;
 	private float rscale;
 	private float min, amin;
 	private float max, amax;
@@ -64,17 +64,16 @@ public class RotateSurface extends Surface {
 		}
 		
 		m.reset();
-		final float gridSize = parent.getGridSize();
-		final float scale = parent.getScale();
+		final float realscale = parent.getScale() * parent.getGridSize();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		m.setTranslate(
-				(col + x / 512f ) * gridSize * scale,
-				(row + y / 512f ) * gridSize * scale);
+				(col + relx ) * realscale,
+				(row + rely ) * realscale);
 		m.postRotate(
 				getRotationAngle(this.planeData),
-				(col + rcx / 512f ) * gridSize * scale,
-				(row + rcy / 512f ) * gridSize * scale);
+				(col + rcx / 512f ) * realscale,
+				(row + rcy / 512f ) * realscale);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

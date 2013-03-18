@@ -22,7 +22,7 @@ public class StaticSurface extends Surface {
 			final float scale = parent.getScale();
 			final float col = parent.getCol();
 			final float row = parent.getRow();
-			m.setTranslate((col + x / 512f) * gridSize * scale, (row + y / 512f) * gridSize * scale);
+			m.setTranslate((col + relx) * gridSize * scale, (row + rely) * gridSize * scale);
 		}
 	}
 

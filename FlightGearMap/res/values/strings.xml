@@ -20,8 +20,8 @@
 	<string name="waiting_connection">Trying to connect to FlightGear</string>
 	<string name="dist_simplemap">Map and controls</string>
 	<string name="dist_onlymap">Only map</string>
-	<string name="dist_senecaii">Seneca IIl</string>
-	<string name="dist_c172">Cessna 172</string>
+	<string name="dist_senecaii">Seneca II (two engines, 200kts, HSI)</string>
+	<string name="dist_c172">Cessna 172P (single engine, 120kts)</string>
 	<string name="dist_liquid">Liquid panel</string>
 	<string name="dist_comms">Comm panel</string>
 </resources>
