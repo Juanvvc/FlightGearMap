@@ -26,7 +26,7 @@ import com.juanvvc.flightgear.panels.InstrumentPanel;
 import com.juanvvc.flightgear.panels.MapInstrumentPanel;
 import com.juanvvc.flightgear.panels.PanelView;
 
-/** This activity shows a list of the available distributions. */
+/** This activity shows a list of the available panel distributions. */
 public class PanelList extends Activity implements OnItemClickListener{
 	
 	@Override
@@ -37,15 +37,14 @@ public class PanelList extends Activity implements OnItemClickListener{
 		
 		GridView gridview = (GridView) this.findViewById(R.id.gridview);
 		
-		// TODO: choose a better way to manage this list
 		gridview.setAdapter(new DistributionAdapter());
 		gridview.setOnItemClickListener(this);
-//		new ArrayAdapter<String>(
-//				this,
-//				android.R.layout.simple_list_item_1,
-//				new String[]{"Map and simple controls", "Only map", "Cessna 172", "Seneca II", "Generic glass panel"}
-//				);
-//		this.setListAdapter(adapter);
+
+		// if it is the first run of this version, show the changelog.txt
+		ChangeLog cl = new ChangeLog(this);
+        if (cl.firstRun())
+            cl.getLogDialog().show();
+
 	}
 
 	@Override
@@ -53,7 +52,8 @@ public class PanelList extends Activity implements OnItemClickListener{
 		Intent intent = null;
 		Bundle bundle = new Bundle();
 		
-		// This select muct match the order of the images in the THUMBS array (see bellow)
+		// This index must match the order of the images in the THUMBS array (see bellow)
+		// We will start a MapInstrumentPanel or a InstrumentPanel depending on the choose
 		switch(position) {
 		case 0: // map and simple controls
 			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
@@ -110,6 +110,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 	    }
 	}
 	
+	/** The Adapter of the available distributions */
 	private class DistributionAdapter extends BaseAdapter {
 
 		@Override
@@ -119,19 +120,20 @@ public class PanelList extends Activity implements OnItemClickListener{
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		
+		// List of thumbnails of the distributions
 		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_senecaii, R.drawable.dist_liquid, R.drawable.dist_onlymap};
+		// List of labels
 		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_senecaii, R.string.dist_liquid, R.string.dist_comms};
 
+		/** Creates a thumbnail and label of a distribution */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			

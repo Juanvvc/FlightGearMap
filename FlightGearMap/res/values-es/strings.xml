@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FlightGearMap</string>
+    <string name="network_not_detected">Sin conexión wifi.</string>
+    <string name="critical_error">FlighGearMap no puede continuar. Por favor, vuelva a intentarlo.</string>
+    <string name="run_fgfs_using">Ejecute fgfs usando</string>
+    <string name="warning">Atención</string>
+	<string name="conn_established">Comunicación establecida.</string>
+	<string name="conn_timeout">Tiempo de espera sobrepasado.</string>
+	<string name="settings">Opciones&#8230;</string>
+	<string name="quit">Salir</string>
+	<string name="wait">Por favor, espere 10 segundos y vuelva a intentarlo.</string>
+	<string name="update_andatlas">¿Actualizó andatlas.xml in su PC?</string>
+	<string name="waiting_connection">Intentado conexión a FlightGear</string>
+	<string name="dist_simplemap">Mapa e instrumentos</string>
+	<string name="dist_onlymap">Solo mapa</string>
+	<string name="dist_senecaii">Seneca II (dos motores, 200kts, HSI)</string>
+	<string name="dist_c172">Cessna 172P (un motor, 120kts)</string>
+	<string name="dist_liquid">Pantalla avanzada</string>
+	<string name="dist_comms">Panel comms</string>
+	<string name="changelog_title">Cambios recientes</string>
+	<string name="changelog_full_title">Historia</string>
+	<string name="changelog_ok_button">OK</string>
+	<string name="changelog_show_full">Muestra historia</string>
+</resources>
