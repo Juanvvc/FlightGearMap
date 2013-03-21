@@ -173,8 +173,14 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 1;
 				rows = 2;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
-	
-			default: // this includes Distribution.NO_MAP
+				break;
+			case Distribution.COMM_PANEL:
+				cols = 3;
+				rows = 3;
+				instruments = Comms.getInstrumentPanel(context);
+				break;
+			default:
+				MyLog.w(this, "No distribution configured for panel");
 			}
 			
 			this.reloadImages();

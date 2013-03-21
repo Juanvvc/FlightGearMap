@@ -18,5 +18,8 @@ public enum InstrumentType {
 	SWITCHES,
 	TRIMFLAPS,
 	HSI1,
-	BELTS
+	BELTS,
+	COMM1,
+	COMM2,
+	COMMADF
 }

@@ -2,7 +2,6 @@ package com.juanvvc.flightgear.instruments;
 
 import java.io.IOException;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import com.juanvvc.flightgear.FGFSConnection;
@@ -53,7 +52,7 @@ public abstract class Surface {
 	}
 	
 	/** The bitmap that the surface uses has changed.
-	 * The default behaviour does nothing, but some surfaces may update their reference points.
+	 * The default behavior does nothing, but some surfaces may update their reference points.
 	 */
 	public void onBitmapChanged() {
 		// Does nothing

@@ -20,6 +20,9 @@ public class SwitchSurface extends Surface {
 	private static final int SWITCH_HEIGHT = 152;
 	private static final int SWITCH_WIDTH = 126;
 	
+	private Rect rectOn, rectOff, rectPos;
+	private float textX, textY;
+	
 	private boolean firstRead;
 	
 	/** If true, the switch needs to be post to the remote fgfs (do not read) */
@@ -62,30 +65,36 @@ public class SwitchSurface extends Surface {
 	}
 	
 	@Override
-	public void onDraw(Canvas c) {
-		// calculate the position of the switch
+	public void onBitmapChanged() {
 		final float realscale = parent.getScale() + parent.getGridSize();
 		final float scale = parent.getScale();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
 		final int left = (int)((relx + col) * realscale);
 		final int top = (int)((rely + row) * realscale);
+		final Bitmap b = this.bitmap.getScaledBitmap();
+		
+		rectOn = new Rect(0, 0, b.getWidth(), b.getHeight() / 2);
+		rectOff = new Rect(0, b.getHeight() / 2, b.getWidth(), b.getHeight());
+		rectPos = new Rect(left, top, (int)(left + b.getWidth() * scale), (int)(top + b.getHeight() / 2 * scale));
+		textX = left + b.getWidth() / 5 * scale;
+		textY = top + b.getHeight() / 2 * scale;
+	}
+	
+	@Override
+	public void onDraw(Canvas c) {
+		// calculate the position of the switch
+
 		
 		Bitmap b = this.bitmap.getScaledBitmap();
 
 		// draw the label
-		c.drawText(label, left + b.getWidth() / 5 * scale, top + b.getHeight() / 2 * scale, textPaint);
+		c.drawText(label, textX, textY, textPaint);
 		// draw the switch according to its state
 		if (getState()) {
-			c.drawBitmap(b,
-					new Rect(0, 0, b.getWidth(), b.getHeight() / 2),
-					new Rect(left, top, (int)(left + b.getWidth() * scale), (int)(top + b.getHeight() / 2 * scale)),
-					null);		
+			c.drawBitmap(b, rectOn, rectPos, null);		
 		} else {
-			c.drawBitmap(b,
-				new Rect(0, b.getHeight() / 2, b.getWidth(), b.getHeight()),
-				new Rect(left, top, (int)(left + b.getWidth() * scale), (int)(top + b.getHeight() / 2 * scale)),
-				null);
+			c.drawBitmap(b, rectOff, rectPos, null);
 		}
 		
 	}

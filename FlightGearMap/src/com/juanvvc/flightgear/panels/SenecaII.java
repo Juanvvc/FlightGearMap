@@ -15,7 +15,6 @@ import com.juanvvc.flightgear.instruments.RotateSurface;
 import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
-import com.juanvvc.flightgear.instruments.SwitchSurface;
 
 public class SenecaII {
 	
@@ -34,7 +33,7 @@ public class SenecaII {
 		case HSI1:
 			// The center of the instrument is (256, 274)
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", 1, true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
+					new CalibratableRotateSurface(new MyBitmap("hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
 					new StaticSurface(new MyBitmap("hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
 					new SlippingSurface(new MyBitmap("hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
 					new SlippingSurface(new MyBitmap("hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),

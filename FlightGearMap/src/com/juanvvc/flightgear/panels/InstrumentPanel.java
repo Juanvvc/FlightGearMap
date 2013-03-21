@@ -27,7 +27,7 @@ import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.R;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 
-/** Main activity of the application.
+/** Shows a panel with only instruments.
  * @author juanvi
  */
 public class InstrumentPanel extends Activity {

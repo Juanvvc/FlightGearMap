@@ -47,7 +47,7 @@ public class Cessna172 {
 				});
 		case ALTIMETER:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/altimeter/setting-inhg", 1, true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
+					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/altimeter/setting-inhg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
 					new StaticSurface(new MyBitmap("alt1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand2, 236, 56, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface(hand1, 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
@@ -55,7 +55,7 @@ public class Cessna172 {
 		case NAV1:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav6.png", -1, -1, -1, -1), 0, 0),
-					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/nav/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/nav/radials/selected-deg", true, -1, 256, 256, 0, 0, 360, -360),
 					new C172FromToGSSurface(fromto, 310, 210, PlaneData.NAV1_TO, PlaneData.NAV1_FROM, -1),
 					new C172FromToGSSurface(fromto, 185, 210, -1, -1, PlaneData.GS1_INRANGE),
 					new RotateSurface(hand5, 245, 120, PlaneData.NAV1_DEFLECTION, 1, 256, 120, -10, 25, 10, -25),
@@ -66,7 +66,7 @@ public class Cessna172 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
 					new StaticSurface(new MyBitmap("nav4.png", 0, 122, 244, 148), 256-122, 256-30),
-					new CalibratableRotateSurface(new MyBitmap("nav2.png", -1, -1, -1, -1), 0, 0, "/instrumentation/nav[1]/radials/selected-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(new MyBitmap("nav2.png", -1, -1, -1, -1), 0, 0, "/instrumentation/nav[1]/radials/selected-deg", true, -1, 256, 256, 0, 0, 360, -360),
 					new C172FromToGSSurface(fromto, 310, 210, PlaneData.NAV2_TO, PlaneData.NAV2_FROM, -1),
 					new RotateSurface(hand5, 245, 120, PlaneData.NAV2_DEFLECTION, 1, 256, 120, -10, 25, 10, -25),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
@@ -74,13 +74,13 @@ public class Cessna172 {
 		case ADF:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
-					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/adf/rotation-deg", 1, true, -1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/adf/rotation-deg", true, -1, 256, 256, 0, 0, 360, -360),
 					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
 				});
 		case HEADING:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("hdg1.png", -1, -1, -1, -1), 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", 1, true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(new MyBitmap("hdg1.png", -1, -1, -1, -1), 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
 					new StaticSurface(new MyBitmap("hdg2.png", -1, -1, -1, -1), 0, 0)
 				});
 		case TURN_RATE:
@@ -113,7 +113,6 @@ public class Cessna172 {
 					new RotateSurface(hand3, 288, 218, PlaneData.OIL_PRESS, 1, 288, 230, 0, -250, 115, -210)
 				});
 		case BATT:
-			// TODO: change this for EGT
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("battery-c172p.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand3, 0, 218, PlaneData.AMP, 1, 0, 230, -40, 55, 40, -55),
@@ -256,47 +255,52 @@ class C172AtiSurface extends Surface {
 /** A special surface to draw the flag from/to in a VOR. See an example in the C172 */
 class C172FromToGSSurface extends Surface {
 	private int nav_to, nav_from, gs; // position of this flags in PlaneData
+	// if gs == -1, this surface manages to/from flags
+	// if gs != -1, this surface manages the gs (to/from are ignored)
+	
+	private Rect rectFrom, rectTo, rectGs, rectPos;
 
 	public C172FromToGSSurface(MyBitmap bitmap, float x, float y, int nav_to, int nav_from, int gs) {
 		super(bitmap, x, y);
 		this.nav_from = nav_from;
 		this.nav_to = nav_to;
 		this.gs = gs;
+		rectFrom = rectTo = rectGs = rectPos = null;
 	}
+	
+	@Override
+	public void onBitmapChanged() {
+		final float col = parent.getCol();
+		final float row = parent.getRow();
+		final float scale = parent.getScale();
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final int left = (int) ((col + relx) * realscale);
+		final int top = (int) ((row + rely) * realscale);
+		
+		Bitmap b = this.bitmap.getScaledBitmap();
+		rectFrom = new Rect(b.getWidth() / 3, 0, 2 * b.getWidth() / 3, b.getHeight());
+		rectTo = new Rect(0, 0, b.getWidth() / 3, b.getHeight());
+		rectGs = new Rect(2 * b.getWidth() / 3, 0, b.getWidth(), b.getHeight());
+		rectPos = new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale));
+	}
+	
 	@Override
 	public void onDraw(Canvas c) {
 		if (planeData == null || bitmap == null || bitmap.getScaledBitmap() == null) {
 			return;
 		}
-		
-		final float col = parent.getCol();
-		final float row = parent.getRow();
-		final float realscale = parent.getScale() * parent.getGridSize();
-		final float scale = parent.getScale();
-		
-		final int left = (int) ((col + relx) * realscale);
-		final int top = (int) ((row + rely) * realscale);
 
 		Bitmap b = bitmap.getScaledBitmap();
 		
 		if (gs == -1) {
 			if (planeData.getBool(nav_to)) {
-				c.drawBitmap(b,
-						new Rect(0, 0, b.getWidth() / 3, b.getHeight()),
-						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
-						null);
+				c.drawBitmap(b, rectTo, rectPos, null);
 			} else if (planeData.getBool(nav_from)) {
-				c.drawBitmap(b,
-						new Rect(b.getWidth() / 3, 0, 2 * b.getWidth() / 3, b.getHeight()),
-						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
-						null);
+				c.drawBitmap(b,	rectFrom, rectPos, null);
 			}
 		} else {
 			if (planeData.getBool(gs)) {
-				c.drawBitmap(b,
-						new Rect(2 * b.getWidth() / 3, 0, b.getWidth(), b.getHeight()),
-						new Rect(left, top, (int)(left + b.getWidth() / 3 * scale), (int)(top + b.getHeight() * scale)),
-						null);
+				c.drawBitmap(b, rectGs, rectPos, null);
 			}
 		}
 	}

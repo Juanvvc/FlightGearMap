@@ -1,15 +1,11 @@
 package com.juanvvc.flightgear.instruments;
 
-import java.util.ArrayList;
+import android.content.Context;
+import android.graphics.Canvas;
 
 import com.juanvvc.flightgear.BitmapProvider;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.MyLog;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 
 /** A generic instrument.
  * This class manages the list of resources that instruments need, and

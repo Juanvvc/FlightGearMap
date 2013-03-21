@@ -1,6 +1,5 @@
 package com.juanvvc.flightgear.instruments;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
@@ -10,12 +9,20 @@ import com.juanvvc.flightgear.PlaneData;
 /** A surface that is rotated according to some data in PlaneData. */
 public class RotateSurface extends Surface {
 	protected Matrix m;
+	private float rscale;
+	/** The property to read from PlaneData, if positive. */
 	protected int pdIdx;
+	/** ration center */
 	protected float rcx;
 	protected float rcy;
-	private float rscale;
+	/** min value, and its angle. */
 	private float min, amin;
+	/** max value, and its angle. */
 	private float max, amax;
+	// The final position of the surface, scale and gridsize considered (calculated in onBitmapChanged())
+	private float finalx, finaly;
+	// The final position of the rotation center, scale and gridsize considered (calculated in onBitmapChanged())
+	private float finalrx, finalry;
 	
 	/**
 	 * @param file The file of the image (does not include directory)
@@ -56,6 +63,17 @@ public class RotateSurface extends Surface {
 		}
 		return (v - min) * (amax - amin) / (max - min) + amin;
 	}
+	
+	@Override
+	public void onBitmapChanged() {
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final float col = parent.getCol();
+		final float row = parent.getRow();
+		finalx = (col + relx ) * realscale;
+		finaly = (row + rely ) * realscale;
+		finalrx = (col + rcx / 512f ) * realscale;
+		finalry = (row + rcy / 512f ) * realscale;
+	}
 
 	@Override
 	public void onDraw(Canvas c) {
@@ -64,16 +82,8 @@ public class RotateSurface extends Surface {
 		}
 		
 		m.reset();
-		final float realscale = parent.getScale() * parent.getGridSize();
-		final float col = parent.getCol();
-		final float row = parent.getRow();
-		m.setTranslate(
-				(col + relx ) * realscale,
-				(row + rely ) * realscale);
-		m.postRotate(
-				getRotationAngle(this.planeData),
-				(col + rcx / 512f ) * realscale,
-				(row + rcy / 512f ) * realscale);
+		m.setTranslate(finalx, finaly);
+		m.postRotate(getRotationAngle(this.planeData), finalrx, finalry);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 }

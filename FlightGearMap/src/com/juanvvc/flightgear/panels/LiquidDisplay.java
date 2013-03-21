@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.Typeface;
@@ -38,7 +37,7 @@ public class LiquidDisplay {
 		case HSI1:
 			// The center of the instrument is (256, 274)
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("liquid.hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", 1, true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
+					new CalibratableRotateSurface(new MyBitmap("liquid.hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
 					new StaticSurface(new MyBitmap("liquid.hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
 					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
 					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),

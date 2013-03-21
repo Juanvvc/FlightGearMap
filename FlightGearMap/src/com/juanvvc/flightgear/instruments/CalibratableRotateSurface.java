@@ -2,19 +2,17 @@ package com.juanvvc.flightgear.instruments;
 
 import java.io.IOException;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
+import com.juanvvc.flightgear.PlaneData;
 
 /** A surface that is rotated according to the telnet connection, and can be calibrated. */
 public class CalibratableRotateSurface extends Surface {
 	private Matrix m;
-	/** A scale factor to apply to the property */
-	private float rscale;
 	/** The property to read from the remote fgfs */
 	private String prop;
 	/** If true, the value is wrapped (after max, it is min again) */
@@ -28,6 +26,10 @@ public class CalibratableRotateSurface extends Surface {
 	private float min, amin;
 	/** max value, and its angle. */
 	private float max, amax;
+	// The final position of the surface, scale and gridsize considered (calculated in onBitmapChanged())
+	private float finalx, finaly;
+	// The final position of the rotation center, scale and gridsize considered (calculated in onBitmapChanged())
+	private float finalrx, finalry;
 	
 	private float value = 0;
 	private boolean moving = false;
@@ -56,7 +58,7 @@ public class CalibratableRotateSurface extends Surface {
 	 */
 	public CalibratableRotateSurface(
 			MyBitmap bitmap, float x, float y,
-			String prop, float rscale, boolean wrap,
+			String prop, boolean wrap,
 			int propIdx,
 			int rcx, int rcy,
 			float min, float amin, float max, float amax) {
@@ -70,7 +72,6 @@ public class CalibratableRotateSurface extends Surface {
 		this.amax = amax;
 		this.wrapped = wrap;
 		this.propIdx = propIdx;
-		this.rscale = rscale;
 		this.prop = prop;
 	}
 	
@@ -78,13 +79,24 @@ public class CalibratableRotateSurface extends Surface {
 	 * @param v value angle
 	 * @return The angle to rotate the drawable to match that value
 	 */
-	protected float getDrawableRotationAngle(float v) {
+	protected float getRotationAngle(float v) {
 		if (v < min) {
 			v = min;
 		} else if (v > max) {
 			v = max;
 		}
 		return (v - min) * (amax - amin) / (max - min) + amin;
+	}
+	
+	@Override
+	public void onBitmapChanged() {
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final float col = parent.getCol();
+		final float row = parent.getRow();
+		finalx = (col + relx ) * realscale;
+		finaly = (row + rely ) * realscale;
+		finalrx = (col + rcx / 512f ) * realscale;
+		finalry = (row + rcy / 512f ) * realscale;
 	}
 
 	@Override
@@ -98,16 +110,9 @@ public class CalibratableRotateSurface extends Surface {
 		}
 		
 		m.reset();
-		final float realscale = parent.getScale() * parent.getGridSize();
-		final float col = parent.getCol();
-		final float row = parent.getRow();
-		m.setTranslate(
-				(col + relx ) * realscale,
-				(row + rely ) * realscale);
-		m.postRotate(
-				getDrawableRotationAngle(value),
-				(col + rcx / 512f ) * realscale,
-				(row + rcy / 512f ) * realscale);
+		m.reset();
+		m.setTranslate(finalx, finaly);
+		m.postRotate(getRotationAngle(value), finalrx, finalry);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
 	}
 	

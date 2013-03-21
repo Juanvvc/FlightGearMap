@@ -2,7 +2,6 @@ package com.juanvvc.flightgear.instruments;
 
 import com.juanvvc.flightgear.MyBitmap;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 

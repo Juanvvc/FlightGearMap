@@ -1,7 +1,6 @@
 package com.juanvvc.flightgear;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,17 +8,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.juanvvc.flightgear.panels.InstrumentPanel;
@@ -67,13 +62,11 @@ public class PanelList extends Activity implements OnItemClickListener{
 			break;
 		case 2: // Cessna 172
 			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
-			bundle.putBoolean("onlymap", false);
 			bundle.putInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
 			intent.putExtras(bundle);
 			break;
 		case 3: // Seneca II
 			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
-			bundle.putBoolean("onlymap", false);
 			bundle.putInt("distribution", PanelView.Distribution.SENECAII_PANEL);
 			intent.putExtras(bundle);
 			break;			
@@ -81,6 +74,11 @@ public class PanelList extends Activity implements OnItemClickListener{
 			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
 			bundle.putBoolean("onlymap", false);
 			bundle.putBoolean("liquid", true);
+			intent.putExtras(bundle);
+			break;
+		case 5: // comms panel
+			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
+			bundle.putInt("distribution", PanelView.Distribution.COMM_PANEL);
 			intent.putExtras(bundle);
 		default:
 		}
@@ -129,7 +127,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 		}
 		
 		// List of thumbnails of the distributions
-		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_senecaii, R.drawable.dist_liquid, R.drawable.dist_onlymap};
+		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_senecaii, R.drawable.dist_liquid, R.drawable.dist_comms};
 		// List of labels
 		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_senecaii, R.string.dist_liquid, R.string.dist_comms};
 
