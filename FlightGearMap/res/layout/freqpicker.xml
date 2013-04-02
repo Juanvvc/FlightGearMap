@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+	<TextView
+	    android:id="@+id/label"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:text="COM1:" />
+
+    <RelativeLayout
+        android:id="@+id/freq1layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@drawable/white_border"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/freq1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff333333"
+            android:gravity="right"
+            android:text="Celda 1.1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/freq1"
+            android:text="@string/inuse"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </RelativeLayout>
+
+        <Button
+            android:id="@+id/swapfreq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/swap" />
+
+    <RelativeLayout
+		android:id="@+id/freq2layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@drawable/white_border"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/freq2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff333333"
+            android:gravity="right"
+            android:text="Celda 1.1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/freq2"
+            android:text="@string/standby"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+    </RelativeLayout>
+
+</LinearLayout>

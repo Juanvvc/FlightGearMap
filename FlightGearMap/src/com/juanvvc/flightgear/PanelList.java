@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.juanvvc.flightgear.panels.CommsPanel;
 import com.juanvvc.flightgear.panels.InstrumentPanel;
 import com.juanvvc.flightgear.panels.MapInstrumentPanel;
 import com.juanvvc.flightgear.panels.PanelView;
@@ -77,8 +78,8 @@ public class PanelList extends Activity implements OnItemClickListener{
 			intent.putExtras(bundle);
 			break;
 		case 5: // comms panel
-			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
-			bundle.putInt("distribution", PanelView.Distribution.COMM_PANEL);
+			//intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
+			intent = new Intent(this.getApplicationContext(), CommsPanel.class);
 			intent.putExtras(bundle);
 		default:
 		}

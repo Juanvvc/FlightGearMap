@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">FlightGearMap</string>
     <string name="network_not_detected">No wifi connection detected.</string>
     <string name="critical_error">The application can\'t continue. Please, restart.</string>
     <string name="run_fgfs_using">Run fgfs using</string>
     <string name="warning">Warning</string>
-	<string name="conn_established">Connection established.</string>
-	<string name="conn_timeout">Connection timeout.</string>
-	<string name="settings">Settings&#8230;</string>
-	<string name="quit">Quit</string>
-	<string name="wait">Please, wait 10 seconds and try again.</string>
-	<string name="update_andatlas">Did you update andatlas.xml in your PC?</string>
-	<string name="waiting_connection">Trying to connect to FlightGear</string>
-	<string name="dist_simplemap">Map and controls</string>
-	<string name="dist_onlymap">Only map</string>
-	<string name="dist_senecaii">Seneca II (two engines, 200kts, HSI)</string>
-	<string name="dist_c172">Cessna 172P (single engine, 120kts)</string>
-	<string name="dist_liquid">Liquid panel</string>
-	<string name="dist_comms">Comm panel</string>
-	<string name="changelog_title">Recent changes</string>
-	<string name="changelog_full_title">History</string>
-	<string name="changelog_ok_button">OK</string>
-	<string name="changelog_show_full">Show full history</string>
+    <string name="conn_established">Connection established.</string>
+    <string name="conn_timeout">Connection timeout.</string>
+    <string name="settings">Settings&#8230;</string>
+    <string name="quit">Quit</string>
+    <string name="wait">Please, wait 10 seconds and try again.</string>
+    <string name="update_andatlas">Did you update andatlas.xml in your PC?</string>
+    <string name="waiting_connection">Trying to connect to FlightGear</string>
+    <string name="dist_simplemap">Map and controls</string>
+    <string name="dist_onlymap">Only map</string>
+    <string name="dist_senecaii">Seneca II (two engines, 200kts, HSI)</string>
+    <string name="dist_c172">Cessna 172P (single engine, 120kts)</string>
+    <string name="dist_liquid">Liquid panel</string>
+    <string name="dist_comms">Comm panel</string>
+    <string name="changelog_title">Recent changes</string>
+    <string name="changelog_full_title">History</string>
+    <string name="changelog_ok_button">OK</string>
+    <string name="changelog_show_full">Show full history</string>
+    <string name="cancel">Cancel</string>
+    <string name="sel_freq">Enter a frequency</string>
+    <string name="inuse">In use</string>
+    <string name="standby">Standby</string>
+    <string name="swap">Swap</string>
+
 </resources>

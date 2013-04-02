@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/comm1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+	<com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/nav1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+	<com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/comm2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+	<com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/nav2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+	<com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/adf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+	<com.juanvvc.flightgear.instruments.FreqPicker
+        android:id="@+id/dme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+</LinearLayout>

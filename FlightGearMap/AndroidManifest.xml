@@ -36,5 +36,6 @@
         <activity android:name=".panels.MapInstrumentPanel" ></activity>
         <!--  Manages panels with only instruments. It improves performance -->
         <activity android:name=".panels.InstrumentPanel" ></activity>
+        <activity android:name=".panels.CommsPanel"></activity>
     </application>
 </manifest>

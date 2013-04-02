@@ -48,8 +48,6 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int SENECAII_PANEL = 5;
 		/** Show a Liquid panel. */
 		public static final int LIQUID_PANEL = 6;
-		/** Show a complete comm panel. */
-		public static final int COMM_PANEL = 7;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -173,11 +171,6 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 1;
 				rows = 2;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
-				break;
-			case Distribution.COMM_PANEL:
-				cols = 3;
-				rows = 3;
-				instruments = Comms.getInstrumentPanel(context);
 				break;
 			default:
 				MyLog.w(this, "No distribution configured for panel");
