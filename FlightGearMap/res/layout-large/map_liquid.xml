@@ -11,7 +11,7 @@
     <com.juanvvc.flightgear.panels.PanelView
 
         android:id="@+id/panel"
-        android:layout_weight="40"
+        android:layout_weight="35"
         android:layout_width="0dip"
         android:layout_height="fill_parent"
         custom:distribution="5"
@@ -21,6 +21,6 @@
         android:layout_width="0dip"
         android:layout_height="fill_parent"
         android:clickable="true"
-        android:layout_weight="60" />   
+        android:layout_weight="65" />   
 
 </LinearLayout>

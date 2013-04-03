@@ -48,7 +48,7 @@ public class InstrumentPanel extends Activity {
 	 */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
-	public static final int SOCKET_TIMEOUT = 10000;
+	private static final int SOCKET_TIMEOUT = 10000;
 	/** A reference to the currently displayed dialog. */
 	private AlertDialog currentDialog;
 	
@@ -196,7 +196,7 @@ public class InstrumentPanel extends Activity {
 				
 				try {
 					socket.receive(p);
-					
+
 					PlaneData pd = new PlaneData(null);
 					pd.parse(new String(p.getData()));
 					// new data is managed as a "progressUpdate" event of the AsyncTask

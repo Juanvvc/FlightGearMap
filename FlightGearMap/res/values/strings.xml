@@ -24,7 +24,7 @@
     <string name="changelog_ok_button">OK</string>
     <string name="changelog_show_full">Show full history</string>
     <string name="cancel">Cancel</string>
-    <string name="sel_freq">Enter a frequency</string>
+    <string name="radial">Radial</string>
     <string name="inuse">In use</string>
     <string name="standby">Standby</string>
     <string name="swap">Swap</string>

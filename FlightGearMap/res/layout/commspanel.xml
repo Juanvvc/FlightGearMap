@@ -1,43 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:keepScreenOn="true"
+    android:layout_height="wrap_content" >
 
-    <com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/comm1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-	<com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/nav1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-	<com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/comm2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-	<com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/nav2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-	<com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/adf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-	<com.juanvvc.flightgear.instruments.FreqPicker
-        android:id="@+id/dme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-</LinearLayout>
+	<TableRow>
+	    <TextView android:layout_column="1" android:text="@string/inuse" />
+	    <TextView android:layout_column="3" android:text="@string/standby" />
+        <TextView android:layout_column="3" android:text="@string/radial" />
+    </TableRow>
+    
+    <TableRow>
+        <TextView android:text="COM1:" />
+        <TextView android:id="@+id/com1" android:gravity="center_horizontal" />
+        <Button android:id="@+id/swapcom1" android:text="@string/swap" />
+        <EditText android:id="@+id/com1stb" android:ems="6" android:inputType="numberDecimal" />
+
+    </TableRow>
+
+    <TableRow>
+        <TextView android:text="COM2:" />
+        <TextView android:id="@+id/com2" android:gravity="center_horizontal" />
+        <Button android:id="@+id/swapcom2" android:text="@string/swap" />
+        <EditText android:id="@+id/com2stb" android:ems="6" android:inputType="numberDecimal" />
+    </TableRow>
+
+    <TableRow>
+        <TextView android:text="NAV1:" />
+        <TextView android:id="@+id/nav1" android:gravity="center_horizontal" />
+        <Button android:id="@+id/swapnav1" android:text="@string/swap" />
+        <EditText android:id="@+id/nav1stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/nav1rad" android:ems="3" android:inputType="number" />
+    </TableRow>
+    
+	<TableRow>
+        <TextView android:text="NAV2:"/>
+        <TextView android:id="@+id/nav2" android:gravity="center_horizontal" />
+        <Button android:id="@+id/swapnav2" android:text="@string/swap" />
+        <EditText android:id="@+id/nav2stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/nav2rad" android:ems="3" android:inputType="number" />
+    </TableRow>
+        
+	<TableRow>
+        <TextView android:text="ADF:" />
+        <TextView android:id="@+id/adf" android:gravity="center_horizontal" />
+        <Button android:id="@+id/swapadf" android:text="@string/swap" />
+        <EditText android:id="@+id/adfstb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/adfrad" android:ems="3" android:inputType="number" />
+    </TableRow>            
+
+    <TableRow>
+        <TextView android:text="DME:" android:gravity="center_horizontal" />
+        <EditText android:id="@+id/dme" android:ems="6" android:inputType="numberDecimal" />
+    </TableRow>
+
+</TableLayout>

@@ -48,6 +48,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int SENECAII_PANEL = 5;
 		/** Show a Liquid panel. */
 		public static final int LIQUID_PANEL = 6;
+		/** Show instruments to assist IFR */
+		public static final int COMM_PANEL = 7;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -171,6 +173,16 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 1;
 				rows = 2;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
+				break;
+			case Distribution.COMM_PANEL:
+				cols = 3;
+				rows = 2;
+				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 0, 1));
+				instruments.add(SenecaII.createInstrument(InstrumentType.NAV2, context, 1, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 2, 1));
 				break;
 			default:
 				MyLog.w(this, "No distribution configured for panel");
