@@ -189,10 +189,14 @@ public class FGFSConnection
   * @return The property value as an int.
   * @see #get(String)
   */
- public int getInt (String name)
+ public int getInt (String name, int def)
 	throws IOException
  {
+	 try{
 	return Integer.parseInt(get(name));
+	 } catch (NumberFormatException e) {
+		 return def;
+	 }
  }
 
 
@@ -203,10 +207,14 @@ public class FGFSConnection
   * @return The property value as a long.
   * @see #get(String)
   */
- public long getLong (String name)
+ public long getLong (String name, long def)
 	throws IOException
  {
+	 try {
 	return Long.parseLong(get(name));
+	 } catch (NumberFormatException e) {
+		 return def;
+	 }
  }
 
 
@@ -214,13 +222,18 @@ public class FGFSConnection
   * Get a property value as a float.
   *
   * @param name The property name to look up.
+  * @param def The default value if the number cannot be converted.
   * @return The property value as a float.
   * @see #get(String)
   */
- public float getFloat (String name)
+ public float getFloat (String name, float def)
 	throws IOException
  {
-	return Float.parseFloat(get(name));
+	 try {
+		 return Float.parseFloat(get(name));
+	 } catch (NumberFormatException e) {
+		 return def;
+	 }
  }
 
 
@@ -231,10 +244,14 @@ public class FGFSConnection
   * @return The property value as a double.
   * @see #get(String)
   */
- public double getDouble (String name)
+ public double getDouble (String name, double def)
 	throws IOException
  {
+	 try{
 	return Double.parseDouble(get(name));
+	 } catch (NumberFormatException e) {
+		 return def;
+	 }
  }
 
 

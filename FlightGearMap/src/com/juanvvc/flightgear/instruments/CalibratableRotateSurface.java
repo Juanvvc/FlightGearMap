@@ -211,7 +211,7 @@ public class CalibratableRotateSurface extends Surface {
 		// if our value is not dirty, read from the remote fgfs
 		if (!dirtyValue || firstRead) {
 			try {
-				value = conn.getFloat(prop);
+				value = conn.getFloat(prop, 0f);
 				firstRead = false;
 			} catch (NumberFormatException e) {
 				MyLog.e(this, prop + ": " + e.toString());

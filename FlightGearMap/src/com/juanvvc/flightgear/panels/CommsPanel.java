@@ -238,7 +238,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		case R.id.dme:
 			if (this.selectedEditText > 0) {
 				// deselect currently selected edittext
-				this.findViewById(this.selectedEditText).setBackgroundColor(Color.GRAY);
+				this.findViewById(this.selectedEditText).setBackgroundColor(Color.TRANSPARENT);
 			}
 			// select the new one
 			this.selectedEditText = v.getId();
@@ -265,7 +265,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				et = (TextView) this.findViewById(this.selectedEditText);
 				et.setText(et.getText().toString() + ((Button) v).getText().toString());
 				synchronized(this.changedfreqs) {
-					changedfreqs.add(v.getId());
+					changedfreqs.add(this.selectedEditText);
 				}
 			} // if button pressed but no selected edittext, do nothing
 			break;
@@ -331,21 +331,21 @@ public class CommsPanel extends Activity implements OnClickListener {
 			firstMessage = true;
 			// call a progress update to show the first message
 			try{
-				freqs[0] = conn.getFloat("/instrumentation/comm/frequencies/selected-mhz");
-				freqs[1] = conn.getFloat("/instrumentation/comm[1]/frequencies/selected-mhz");
-				freqs[2] = conn.getFloat("/instrumentation/nav/frequencies/selected-mhz");
-				freqs[3] = conn.getFloat("/instrumentation/nav[1]/frequencies/selected-mhz");
-				freqs[4] = conn.getFloat("/instrumentation/adf/frequencies/selected-khz");
-				freqs[5] = conn.getFloat("/instrumentation/dme/frequencies/selected-mhz");
-				freqs[6] = conn.getFloat("/instrumentation/comm/frequencies/standby-mhz");
-				freqs[7] = conn.getFloat("/instrumentation/comm[1]/frequencies/standby-mhz");
-				freqs[8] = conn.getFloat("/instrumentation/nav/frequencies/standby-mhz");
-				freqs[9] = conn.getFloat("/instrumentation/nav[1]/frequencies/standby-mhz");
-				freqs[10] = conn.getFloat("/instrumentation/adf/frequencies/standby-khz");
-				freqs[11] = conn.getFloat("/instrumentation/nav/radials/selected-deg");
-				freqs[12] = conn.getFloat("/instrumentation/nav[1]/radials/selected-deg");
-				freqs[13] = conn.getFloat("/instrumentation/adf/rotation-deg");
-				freqs[14] = conn.getFloat("/instrumentation/adf/rotation-deg"); // TODO
+				freqs[0] = conn.getFloat("/instrumentation/comm/frequencies/selected-mhz", 0f);
+				freqs[1] = conn.getFloat("/instrumentation/comm[1]/frequencies/selected-mhz", 0f);
+				freqs[2] = conn.getFloat("/instrumentation/nav/frequencies/selected-mhz", 0f);
+				freqs[3] = conn.getFloat("/instrumentation/nav[1]/frequencies/selected-mhz", 0f);
+				freqs[4] = conn.getFloat("/instrumentation/adf/frequencies/selected-khz", 0f);
+				freqs[5] = conn.getFloat("/instrumentation/dme/frequencies/selected-mhz", 0f);
+				freqs[6] = conn.getFloat("/instrumentation/comm/frequencies/standby-mhz", 0f);
+				freqs[7] = conn.getFloat("/instrumentation/comm[1]/frequencies/standby-mhz", 0f);
+				freqs[8] = conn.getFloat("/instrumentation/nav/frequencies/standby-mhz", 0f);
+				freqs[9] = conn.getFloat("/instrumentation/nav[1]/frequencies/standby-mhz", 0f);
+				freqs[10] = conn.getFloat("/instrumentation/adf/frequencies/standby-khz", 0f);
+				freqs[11] = conn.getFloat("/instrumentation/nav/radials/selected-deg", 0f);
+				freqs[12] = conn.getFloat("/instrumentation/nav[1]/radials/selected-deg", 0f);
+				freqs[13] = conn.getFloat("/instrumentation/adf/rotation-deg", 0f);
+				freqs[14] = conn.getInt("/instrumentation/transponder/id-code", 7500); // 7500==hijack!
 				this.publishProgress((PlaneData)null);
 			} catch (IOException e) {
 				return "Couldn't read frequencies";
@@ -394,27 +394,27 @@ public class CommsPanel extends Activity implements OnClickListener {
 								break;
 							case R.id.dme:
 								prop = "/instrumentation/dme/frequencies/selected-mhz";
-								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.dme)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.dme)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.nav1rad:
 								prop = "/instrumentation/nav/radials/selected-deg";
-								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.nav1rad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav1rad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.nav2rad:
 								prop = "/instrumentation/nav[1]/radials/selected-deg";
-								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.nav2rad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav2rad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.adfrad:
 								prop = "/instrumentation/adf/rotation-deg";
-								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.adfrad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.adfrad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.ssr:
-								prop = "/instrumentation/adf/rotation-deg"; // TODO
-								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.ssr)).getText().toString());
+								prop = "/instrumentation/transponder/id-code";
+								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.ssr)).getText().toString());
 								prop2 = null;
 								break;
 							default:
@@ -463,22 +463,22 @@ public class CommsPanel extends Activity implements OnClickListener {
 			if (firstMessage && conn!= null) {
 				Toast.makeText(CommsPanel.this,	getString(R.string.conn_established), Toast.LENGTH_LONG).show();
 				firstMessage = false;
-				//Update messages
+				//Update messages (remember: an EditText is a TextView also!)
 				((TextView) findViewById(R.id.com1)).setText(Float.toString(freqs[0]));
 				((TextView) findViewById(R.id.com2)).setText(Float.toString(freqs[1]));
 				((TextView) findViewById(R.id.nav1)).setText(Float.toString(freqs[2]));
 				((TextView) findViewById(R.id.nav2)).setText(Float.toString(freqs[3]));
 				((TextView) findViewById(R.id.adf)).setText(Float.toString(freqs[4]));
-				((EditText) findViewById(R.id.dme)).setText(Float.toString(freqs[5]));
+				((TextView) findViewById(R.id.dme)).setText(Float.toString(freqs[5]));
 				((TextView) findViewById(R.id.com1stb)).setText(Float.toString(freqs[6]));
 				((TextView) findViewById(R.id.com2stb)).setText(Float.toString(freqs[7]));
 				((TextView) findViewById(R.id.nav1stb)).setText(Float.toString(freqs[8]));
 				((TextView) findViewById(R.id.nav2stb)).setText(Float.toString(freqs[9]));
 				((TextView) findViewById(R.id.adfstb)).setText(Float.toString(freqs[10]));
-				((EditText) findViewById(R.id.nav1rad)).setText(Float.toString(freqs[11]));
-				((EditText) findViewById(R.id.nav2rad)).setText(Float.toString(freqs[12]));
-				((EditText) findViewById(R.id.adfrad)).setText(Float.toString(freqs[13]));
-				((EditText) findViewById(R.id.ssr)).setText(Float.toString(freqs[14]));
+				((TextView) findViewById(R.id.nav1rad)).setText(Float.toString(freqs[11]));
+				((TextView) findViewById(R.id.nav2rad)).setText(Float.toString(freqs[12]));
+				((TextView) findViewById(R.id.adfrad)).setText(Float.toString(freqs[13]));
+				((TextView) findViewById(R.id.ssr)).setText(Float.toString(freqs[14]));
 				
 				// freqs array is not used any more
 				freqs = null;

@@ -17,51 +17,51 @@
     
     <TableRow>
         <TextView android:text="COM1:" />
-        <TextView android:id="@+id/com1" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/com1" android:gravity="center_horizontal" android:ems="7" />
         <Button android:id="@+id/swapcom1" android:text="@string/swap" />
-        <TextView android:id="@+id/com1stb" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/com1stb" android:gravity="center_horizontal" android:ems="7" />
 
     </TableRow>
 
     <TableRow>
         <TextView android:text="COM2:" />
-        <TextView android:id="@+id/com2" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/com2" android:gravity="center_horizontal" android:ems="7" />
         <Button android:id="@+id/swapcom2" android:text="@string/swap" />
-        <TextView android:id="@+id/com2stb" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/com2stb" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>
 
     <TableRow>
         <TextView android:text="NAV1:" />
-        <TextView android:id="@+id/nav1" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/nav1" android:gravity="center_horizontal" android:ems="7" />
         <Button android:id="@+id/swapnav1" android:text="@string/swap" />
-        <TextView android:id="@+id/nav1stb" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/nav1rad" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/nav1stb" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav1rad" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>
     
 	<TableRow>
         <TextView android:text="NAV2:"/>
-        <TextView android:id="@+id/nav2" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/nav2" android:gravity="center_horizontal" android:ems="7" />
         <Button android:id="@+id/swapnav2" android:text="@string/swap" />
-        <TextView android:id="@+id/nav2stb" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/nav2rad" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/nav2stb" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav2rad" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>
         
 	<TableRow>
         <TextView android:text="ADF:" />
-        <TextView android:id="@+id/adf" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/adf" android:gravity="center_horizontal" android:ems="7" />
         <Button android:id="@+id/swapadf" android:text="@string/swap" />
-        <TextView android:id="@+id/adfstb" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/adfrad" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/adfstb" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/adfrad" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>            
 
     <TableRow>
         <TextView android:text="DME:" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/dme" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/dme" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>
     
     <TableRow>
         <TextView android:text="SSR:" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/ssr" android:gravity="center_horizontal" />
+        <TextView android:id="@+id/ssr" android:gravity="center_horizontal" android:ems="7" />
     </TableRow>
 
 </TableLayout>
