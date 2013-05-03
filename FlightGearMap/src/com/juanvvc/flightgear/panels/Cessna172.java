@@ -29,7 +29,7 @@ public class Cessna172 {
 		MyBitmap hand3 = new MyBitmap("misc2.png", 4, 200, 140, 24); // used in small instruments
 		MyBitmap hand5 = new MyBitmap("nav4.png", 496, 258, 16, 244); // NAV1 and NAV2
 		MyBitmap headings = new MyBitmap("nav2.png", -1, -1, -1, -1);
-		MyBitmap fromto = new MyBitmap("nav6.png", -1, -1, -1, -1);
+		MyBitmap fromto = new MyBitmap("nav4.png", 0, 70, 100, 50);
 		MyBitmap switches = new MyBitmap("switches.png", -1, -1, -1, -1);
 		
 		switch (type) {
@@ -121,8 +121,8 @@ public class Cessna172 {
 		case TRIMFLAPS:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("trimflaps.png", -1, -1, -1, -1), 65, 10),
-					new SlippingSurface(hand3, 0, PlaneData.ELEV_TRIM, -1, 260, 394, 1, 260, 26),
-					new SlippingSurface(hand3, 180, PlaneData.FLAPS, 0, 220, 66, 1, 220, 434)
+					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 220, 394, 1, 220, 26),
+					new SlippingSurface(hand3, 0, PlaneData.FLAPS, 0, 260, 66, 1, 260, 434)
 				});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {

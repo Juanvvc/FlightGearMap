@@ -54,5 +54,10 @@
         <TextView android:text="DME:" android:gravity="center_horizontal" />
         <EditText android:id="@+id/dme" android:ems="6" android:inputType="numberDecimal" />
     </TableRow>
+    
+    <TableRow>
+        <TextView android:text="SSR:" android:gravity="center_horizontal" />
+        <EditText android:id="@+id/ssr" android:ems="6" android:inputType="numberDecimal" />
+    </TableRow>
 
 </TableLayout>

@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -17,7 +18,6 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -25,7 +25,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.juanvvc.flightgear.FGFSConnection;
@@ -35,6 +34,8 @@ import com.juanvvc.flightgear.R;
 
 public class CommsPanel extends Activity implements OnClickListener {
 	private ConnTask connTask;
+	private int selectedEditText = -1;
+	
 	/**
 	 * Add identifiers of views to this array to mark them as
 	 * "changed, send to fgfs"
@@ -61,19 +62,6 @@ public class CommsPanel extends Activity implements OnClickListener {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		this.setContentView(R.layout.commspanel);
-		// FreqPicker fp;
-		// fp = ((FreqPicker) this.findViewById(R.id.comm1));
-		// fp.setLabel("COM1:"); fp.setSelectedFreq(123.45, 123.45);
-		// fp = ((FreqPicker) this.findViewById(R.id.comm2));
-		// fp.setLabel("COM2:"); fp.setSelectedFreq(123.45, 123.45);
-		// fp = ((FreqPicker) this.findViewById(R.id.nav1));
-		// fp.setLabel("NAV1:"); fp.setSelectedFreq(123.45, 123.45);
-		// fp = ((FreqPicker) this.findViewById(R.id.nav2));
-		// fp.setLabel("NAV2:"); fp.setSelectedFreq(123.45, 123.45);
-		// fp = ((FreqPicker) this.findViewById(R.id.adf)); fp.setLabel("ADF:");
-		// fp.setSelectedFreq(400, 400);
-		// fp = ((FreqPicker) this.findViewById(R.id.dme)); fp.setLabel("DME:");
-		// fp.setSelectedFreq(400, 400); fp.showSelected(false);
 
 		changedfreqs = new ArrayList<Integer>();
 
@@ -88,17 +76,55 @@ public class CommsPanel extends Activity implements OnClickListener {
 		b.setOnClickListener(this);
 		b = (Button) this.findViewById(R.id.swapadf);
 		b.setOnClickListener(this);
+		this.findViewById(R.id.swapcom1).setOnClickListener(this);
+		this.findViewById(R.id.swapcom2).setOnClickListener(this);
+		this.findViewById(R.id.swapnav1).setOnClickListener(this);
+		this.findViewById(R.id.swapnav2).setOnClickListener(this);
+		this.findViewById(R.id.swapadf).setOnClickListener(this);
 		
-		EditText et;
-		et = (EditText) this.findViewById(R.id.dme);
-		et.addTextChangedListener(new MyTextWatcher(R.id.dme));
-		et = (EditText) this.findViewById(R.id.adfrad);
-		et.addTextChangedListener(new MyTextWatcher(R.id.adfrad));
-		et = (EditText) this.findViewById(R.id.nav1rad);
-		et.addTextChangedListener(new MyTextWatcher(R.id.nav1rad));
-		et = (EditText) this.findViewById(R.id.nav2rad);
-		et.addTextChangedListener(new MyTextWatcher(R.id.nav2rad));
-
+		if (this.findViewById(R.id.keyboard) == null) {
+			// if no keyboard in the layout (i.e, small screens)
+			// then manage the EditTexts with the standard keyboard
+			EditText et;
+			et = (EditText) this.findViewById(R.id.dme);
+			et.addTextChangedListener(new MyTextWatcher(R.id.dme));
+			et = (EditText) this.findViewById(R.id.adfrad);
+			et.addTextChangedListener(new MyTextWatcher(R.id.adfrad));
+			et = (EditText) this.findViewById(R.id.nav1rad);
+			et.addTextChangedListener(new MyTextWatcher(R.id.nav1rad));
+			et = (EditText) this.findViewById(R.id.nav2rad);
+			et.addTextChangedListener(new MyTextWatcher(R.id.nav2rad));
+			et = (EditText) this.findViewById(R.id.ssr);
+			et.addTextChangedListener(new MyTextWatcher(R.id.ssr));
+		} else {
+			// Large screens: use our keyboard
+			
+			this.findViewById(R.id.com1stb).setOnClickListener(this);
+			this.findViewById(R.id.com2stb).setOnClickListener(this);
+			this.findViewById(R.id.nav1stb).setOnClickListener(this);
+			this.findViewById(R.id.nav2stb).setOnClickListener(this);
+			this.findViewById(R.id.nav1rad).setOnClickListener(this);
+			this.findViewById(R.id.nav2rad).setOnClickListener(this);
+			this.findViewById(R.id.dme).setOnClickListener(this);
+			this.findViewById(R.id.adfrad).setOnClickListener(this);
+			this.findViewById(R.id.adfstb).setOnClickListener(this);
+			this.findViewById(R.id.ssr).setOnClickListener(this);
+			
+			this.findViewById(R.id.key0).setOnClickListener(this);
+			this.findViewById(R.id.key1).setOnClickListener(this);
+			this.findViewById(R.id.key2).setOnClickListener(this);
+			this.findViewById(R.id.key3).setOnClickListener(this);
+			this.findViewById(R.id.key4).setOnClickListener(this);
+			this.findViewById(R.id.key5).setOnClickListener(this);
+			this.findViewById(R.id.key6).setOnClickListener(this);
+			this.findViewById(R.id.key7).setOnClickListener(this);
+			this.findViewById(R.id.key8).setOnClickListener(this);
+			this.findViewById(R.id.key9).setOnClickListener(this);
+			this.findViewById(R.id.keyDot).setOnClickListener(this);
+			this.findViewById(R.id.keyClear).setOnClickListener(this);
+			
+			selectedEditText = -1;
+		}
 	}
 	
 	/** This textwatcher monitors changes in an EditText. */
@@ -110,7 +136,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		}
 		@Override
 		public void afterTextChanged(Editable s) {
-			// after a change, add the indentifier of the view to changedfreqs
+			// after a change, add the identifier of the view to the array of changed frequencies
 			synchronized(CommsPanel.this.changedfreqs) {
 				changedfreqs.add(id);
 			}
@@ -172,10 +198,11 @@ public class CommsPanel extends Activity implements OnClickListener {
 
 	private void swapFrequencies(final int id1, final int id2) {
 		TextView tv = (TextView) this.findViewById(id1);
-		EditText et = (EditText) this.findViewById(id2);
+		// An EditText is a TextView, also
+		TextView stb = (TextView) this.findViewById(id2);
 		CharSequence cs = tv.getText();
-		tv.setText(et.getText());
-		et.setText(cs);
+		tv.setText(stb.getText());
+		stb.setText(cs);
 		synchronized(changedfreqs) {
 			this.changedfreqs.add(Integer.valueOf(id1));
 		}
@@ -183,6 +210,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		TextView et;
 		switch (v.getId()) {
 		case R.id.swapcom1:
 			this.swapFrequencies(R.id.com1, R.id.com1stb);
@@ -199,6 +227,48 @@ public class CommsPanel extends Activity implements OnClickListener {
 		case R.id.swapadf:
 			this.swapFrequencies(R.id.adf, R.id.adfstb);
 			break;
+		case R.id.com1stb:
+		case R.id.com2stb:
+		case R.id.nav1stb:
+		case R.id.nav2stb:
+		case R.id.adfstb:
+		case R.id.nav1rad:
+		case R.id.nav2rad:
+		case R.id.ssr:
+		case R.id.dme:
+			if (this.selectedEditText > 0) {
+				// deselect currently selected edittext
+				this.findViewById(this.selectedEditText).setBackgroundColor(Color.GRAY);
+			}
+			// select the new one
+			this.selectedEditText = v.getId();
+			v.setBackgroundColor(Color.GRAY);
+			break;
+		case R.id.keyClear:
+			if (this.selectedEditText > 0) {
+				((TextView) this.findViewById(this.selectedEditText)).setText("");
+			}
+			break;
+		case R.id.key1:
+		case R.id.key2:
+		case R.id.key3:
+		case R.id.key4:
+		case R.id.key5:
+		case R.id.key6:
+		case R.id.key7:
+		case R.id.key8:
+		case R.id.key9:
+		case R.id.key0:
+		case R.id.keyDot:
+			// if v is a Button, it must be the keyboard: append the value
+			if (this.selectedEditText > 0) {
+				et = (TextView) this.findViewById(this.selectedEditText);
+				et.setText(et.getText().toString() + ((Button) v).getText().toString());
+				synchronized(this.changedfreqs) {
+					changedfreqs.add(v.getId());
+				}
+			} // if button pressed but no selected edittext, do nothing
+			break;
 		}
 	}
 	
@@ -214,7 +284,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		// we use this array as a temporal storage for the frequencies.
 		// You should check the indexes in the code, but they should go like this:
 		// com1, com2, nav1, nav2, adf, dme, com1stb, com2stb...
-		private float[] freqs = new float[14];
+		private float[] freqs = new float[15];
 
 		@Override
 		protected String doInBackground(Object... params) {
@@ -259,7 +329,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 			}
 			
 			firstMessage = true;
-			// call a progress update to show the firstmessage
+			// call a progress update to show the first message
 			try{
 				freqs[0] = conn.getFloat("/instrumentation/comm/frequencies/selected-mhz");
 				freqs[1] = conn.getFloat("/instrumentation/comm[1]/frequencies/selected-mhz");
@@ -275,6 +345,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				freqs[11] = conn.getFloat("/instrumentation/nav/radials/selected-deg");
 				freqs[12] = conn.getFloat("/instrumentation/nav[1]/radials/selected-deg");
 				freqs[13] = conn.getFloat("/instrumentation/adf/rotation-deg");
+				freqs[14] = conn.getFloat("/instrumentation/adf/rotation-deg"); // TODO
 				this.publishProgress((PlaneData)null);
 			} catch (IOException e) {
 				return "Couldn't read frequencies";
@@ -340,6 +411,14 @@ public class CommsPanel extends Activity implements OnClickListener {
 								prop = "/instrumentation/adf/rotation-deg";
 								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.adfrad)).getText().toString());
 								prop2 = null;
+								break;
+							case R.id.ssr:
+								prop = "/instrumentation/adf/rotation-deg"; // TODO
+								value = Float.parseFloat(((EditText) CommsPanel.this.findViewById(R.id.ssr)).getText().toString());
+								prop2 = null;
+								break;
+							default:
+								// does nothing. For example, nav1stb was changed
 							}
 							if (prop != null) {
 								conn.setFloat(prop, value);
@@ -399,6 +478,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				((EditText) findViewById(R.id.nav1rad)).setText(Float.toString(freqs[11]));
 				((EditText) findViewById(R.id.nav2rad)).setText(Float.toString(freqs[12]));
 				((EditText) findViewById(R.id.adfrad)).setText(Float.toString(freqs[13]));
+				((EditText) findViewById(R.id.ssr)).setText(Float.toString(freqs[14]));
 				
 				// freqs array is not used any more
 				freqs = null;
@@ -448,7 +528,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				}
 
 				if (ipAddress == 0) {
-					// if no IP in the wifi network.
+					// if no IP in the WiFi network.
 					currentDialog = new AlertDialog.Builder(CommsPanel.this)
 							.setIcon(R.drawable.ic_launcher)
 							.setTitle(getString(R.string.warning))

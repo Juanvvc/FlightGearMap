@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
-import com.juanvvc.flightgear.PlaneData;
 
 /** A surface that is rotated according to the telnet connection, and can be calibrated. */
 public class CalibratableRotateSurface extends Surface {

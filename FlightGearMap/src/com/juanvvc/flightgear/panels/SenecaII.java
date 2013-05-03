@@ -92,7 +92,6 @@ class HSINeedle extends RotateSurface {
 	}
 }
 class HSINeedleDeflection extends HSINeedle {
-	private int pdIdx3;
 	public HSINeedleDeflection(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, int pdIdx3, float roffset) {
 		super(bitmap, x, y, pdIdx, pdIdx2, roffset);
 	}
