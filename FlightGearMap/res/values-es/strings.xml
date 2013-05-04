@@ -17,6 +17,7 @@
     <string name="dist_onlymap">Solo mapa</string>
     <string name="dist_senecaii">Seneca II (dos motores, 200kts, HSI)</string>
     <string name="dist_c172">Cessna 172P (un motor, 120kts)</string>
+    <string name="dist_c337">Cessna 337 Skymaster (dos motores, 200kts)</string>
     <string name="dist_liquid">Pantalla avanzada</string>
     <string name="dist_comms">Panel comms</string>
     <string name="changelog_title">Cambios recientes</string>

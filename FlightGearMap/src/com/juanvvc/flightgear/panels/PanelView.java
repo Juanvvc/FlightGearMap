@@ -48,8 +48,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int SENECAII_PANEL = 5;
 		/** Show a Liquid panel. */
 		public static final int LIQUID_PANEL = 6;
-		/** Show instruments to assist IFR */
+		/** Show communication instruments */
 		public static final int COMM_PANEL = 7;
+		/** Show a Cessna 337 Skymaster panel */
+		public static final int C337_INSTRUMENTS = 8;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -168,6 +170,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 5;
 				rows = 3;
 				instruments = SenecaII.getInstrumentPanel(context);
+				break;
+			case Distribution.C337_INSTRUMENTS:
+				cols = 5;
+				rows = 3;
+				instruments = Cessna337.getInstrumentPanel(context);
 				break;
 			case Distribution.LIQUID_PANEL:
 				cols = 1;

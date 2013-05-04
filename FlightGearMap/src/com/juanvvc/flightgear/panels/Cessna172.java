@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
@@ -49,7 +52,7 @@ public class Cessna172 {
 			return new Instrument(col, row, context, new Surface[] {
 					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/altimeter/setting-inhg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
 					new StaticSurface(new MyBitmap("alt1.png", -1, -1, -1, -1), 0, 0),
-					new RotateSurface(hand2, 236, 56, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
+					new RotateSurface(hand2, 236, 100, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface(hand1, 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
 				});
 		case NAV1:
@@ -126,13 +129,17 @@ public class Cessna172 {
 				});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {
-					new SwitchSurface(switches, 0, 152, "/controls/anti-ice/pitot-heat", "PTO"),
-					new SwitchSurface(switches, 128, 152, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface(switches, 0, 0, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface(switches, 128, 0, "/controls/lighting/beacon", "BCN"),
 					new SwitchSurface(switches, 256, 0, "/controls/lighting/taxi-light", "TAX"),
-					new SwitchSurface(switches, 256, 152, "/controls/lighting/beacon", "BCN"),
 					new SwitchSurface(switches, 384, 0, "/controls/lighting/landing-lights", "LNG"),
-					new SwitchSurface(switches, 384, 152, "/controls/lighting/strobe", "DTR"),
 				});
+		case DME:
+			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("dme.png", 0, 0, 512, 216), 0, 0),
+					new DMENumber(new MyBitmap("dme.png", 0, 312, 512, 64), 208, 120, PlaneData.DME, face)
+			});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
 			return null;
@@ -159,6 +166,8 @@ public class Cessna172 {
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.SWITCHES, context, 2, 2));
 		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.DME, context, 2, 2.5f));
+
 		return instruments;
 	}
 }
@@ -303,6 +312,87 @@ class C172FromToGSSurface extends Surface {
 				c.drawBitmap(b, rectGs, rectPos, null);
 			}
 		}
+	}
+}
+
+class DMENumber extends StaticSurface {
+	private int idxDME;
+//	private Rect[] numbers;
+//	private Rect[] positions;
+	private Typeface face;
+	private Paint font;
+	
+	public DMENumber(MyBitmap bitmap, float x, float y, int idxDME, Typeface face) {
+		super(bitmap, x, y);
+		this.idxDME = idxDME;
+		this.face = face;
+	}
+	
+	@Override
+	public void onBitmapChanged() {
+		
+//		// calculate source Rect inside the Bitmap for each number. Order is 0, 1, 2...9
+//		final Bitmap b = this.bitmap.getScaledBitmap();
+//		numbers = new Rect[10];
+//		for (int i=0; i<10; i++) {
+//			numbers[i] = new Rect(i * b.getWidth() / 10, 0, i * b.getWidth() / 10 + b.getWidth() / 10, b.getHeight());
+//		}
+//		
+//		final float col = parent.getCol();
+//		final float row = parent.getRow();
+//		final float realscale = parent.getScale() * parent.getGridSize();
+//		final int left = (int) ((col + relx) * realscale);
+//		final int top = (int) ((row + rely) * realscale);
+//		
+//		// calculate destination Rect of numbers. order is hundreds, tens, units and first decimal
+//		positions = new Rect[4];
+//		positions[0] = new Rect((int)(left + 208 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
+//		positions[1] = new Rect((int)(left + 256 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
+//		positions[2] = new Rect((int)(left + 304 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
+//		positions[3] = new Rect((int)(left + 368 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
+		
+		font = new Paint();
+		font.setColor(Color.RED);
+		font.setTypeface(this.face);
+		font.setTextSize(bitmap.getScaledBitmap().getHeight());
+	}
+	
+	public void onDraw(Canvas c) {
+		if (planeData == null || bitmap == null || bitmap.getScaledBitmap() == null) {
+			return;
+		}
+		
+		float distance = planeData.getFloat(this.idxDME);
+		
+		int hundreds = (int)((distance / 100 ) % 100);
+		int tens =  (int)((distance / 10 ) % 10);
+		int units = (int)(distance % 10);
+		int firstdecimal = (int)((distance * 10) % 10);
+		
+//		Bitmap b = this.getBitmap().getScaledBitmap();
+//		
+//		// draw always first decimal and units
+//		c.drawBitmap(b, numbers[firstdecimal], positions[3], null);
+//		c.drawBitmap(b, numbers[units], positions[2], null);
+//		// draw tens and hundreds only if they are not zero
+//		if (tens > 0) {
+//			c.drawBitmap(b, numbers[tens], positions[1], null);
+//			if (hundreds > 0) {
+//				c.drawBitmap(b, numbers[tens], positions[0], null);
+//			}
+//		}
+		
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final int left = (int) ((this.getParent().getCol() + relx) * realscale);
+		final int top = (int) ((this.getParent().getRow() + rely) * realscale);
+		
+		// draw always first decimal and units
+		StringBuffer sb = new StringBuffer();
+		if (hundreds > 0) sb.append(hundreds); else sb.append(" ");
+		if (tens > 0) sb.append(tens); else sb.append(" ");
+		sb.append(units).append(".").append(firstdecimal);
+		c.drawText(sb.toString(), left, top, font);
+		
 	}
 }
 

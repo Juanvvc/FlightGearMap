@@ -30,7 +30,7 @@ public class PlaneData {
 		// check that we have the desired number of parameters
 		// just read the last data. If throws IndexOutOfBounds, the
 		// other extreme is sending wrong data
-		getFloat(GS1_INRANGE);
+		getFloat(ALTITUDE_AGL);
 	}
 	
 	public static final int SPEED = 0; // speed, in knots
@@ -65,6 +65,15 @@ public class PlaneData {
 	public static final int FLAPS = 29;
 	public static final int GS1_DEFLECTION = 30; // normalized needle deflection (only NAV1)
 	public static final int GS1_INRANGE = 31; // true if GS in range (only NAV1)
+	public static final int DME = 32;
+	public static final int RPM2 = 33;
+	public static final int MANIFOLD = 34;
+	public static final int MANIFOLD2 = 35;
+	public static final int CHT1_TEMP = 36;
+	public static final int CHT2_TEMP = 37;
+	public static final int OIL2_PRESS = 38;
+	public static final int OIL2_TEMP = 39;
+	public static final int ALTITUDE_AGL = 40;
 	
 
 	

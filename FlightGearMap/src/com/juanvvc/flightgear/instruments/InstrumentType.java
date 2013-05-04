@@ -21,5 +21,10 @@ public enum InstrumentType {
 	BELTS,
 	COMM1,
 	COMM2,
-	COMMADF
+	COMMADF,
+	MANIFOLD,
+	RADAR,
+	DME,
+	OIL_PRESS,
+	CYL_TEMP
 }

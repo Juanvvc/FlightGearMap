@@ -21,12 +21,12 @@
   <body>
 $ 2.0
   % Version 2.0
-  _ 2013-03-19
+  _ 2013-04-04
     ! <b>YOU MUST UPDATE ANDATLAS.XML TO THE LAST VERSION</b>
     * Show changelog dialog (this message)
     * New panel: Liquid panel
-    * New panel: Seneca II, with HSI
-    * New panel: Comms panel using kx165 and kt50
+    * New panel: Cessna 337 Skymaster
+    * New panel: Comms panel
     * Cessna 172: VOR1 now has a DME
     * Speed improvements on all surfaces
 $ 1.5
