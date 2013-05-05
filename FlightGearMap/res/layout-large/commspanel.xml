@@ -2,12 +2,14 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal"
-	android:layout_height="wrap_content"
+	android:layout_height="fill_parent"
 	android:layout_width="fill_parent" >
 <TableLayout
     android:layout_width="wrap_content"
     android:keepScreenOn="true"
-    android:layout_height="wrap_content" >
+    android:layout_weight="0.5"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center_horizontal|center" >
 
 	<TableRow>
 	    <TextView android:layout_column="1" android:text="@string/inuse" />
@@ -17,58 +19,59 @@
     
     <TableRow>
         <TextView android:text="COM1:" />
-        <TextView android:id="@+id/com1" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/com1" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium"/>
         <Button android:id="@+id/swapcom1" android:text="@string/swap" />
-        <TextView android:id="@+id/com1stb" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/com1stb" android:gravity="center_horizontal" android:ems="7"  android:textAppearance="?android:textAppearanceMedium"/>
 
     </TableRow>
 
     <TableRow>
         <TextView android:text="COM2:" />
-        <TextView android:id="@+id/com2" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/com2" android:gravity="center_horizontal" android:ems="7"  android:textAppearance="?android:textAppearanceMedium"/>
         <Button android:id="@+id/swapcom2" android:text="@string/swap" />
-        <TextView android:id="@+id/com2stb" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/com2stb" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>
 
     <TableRow>
         <TextView android:text="NAV1:" />
-        <TextView android:id="@+id/nav1" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav1" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
         <Button android:id="@+id/swapnav1" android:text="@string/swap" />
-        <TextView android:id="@+id/nav1stb" android:gravity="center_horizontal" android:ems="7" />
-        <TextView android:id="@+id/nav1rad" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav1stb" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
+        <TextView android:id="@+id/nav1rad" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>
     
 	<TableRow>
         <TextView android:text="NAV2:"/>
-        <TextView android:id="@+id/nav2" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav2" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
         <Button android:id="@+id/swapnav2" android:text="@string/swap" />
-        <TextView android:id="@+id/nav2stb" android:gravity="center_horizontal" android:ems="7" />
-        <TextView android:id="@+id/nav2rad" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/nav2stb" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
+        <TextView android:id="@+id/nav2rad" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>
         
 	<TableRow>
         <TextView android:text="ADF:" />
-        <TextView android:id="@+id/adf" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/adf" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
         <Button android:id="@+id/swapadf" android:text="@string/swap" />
-        <TextView android:id="@+id/adfstb" android:gravity="center_horizontal" android:ems="7" />
-        <TextView android:id="@+id/adfrad" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/adfstb" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
+        <TextView android:id="@+id/adfrad" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>            
 
     <TableRow>
         <TextView android:text="DME:" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/dme" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/dme" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>
     
     <TableRow>
         <TextView android:text="SSR:" android:gravity="center_horizontal" />
-        <TextView android:id="@+id/ssr" android:gravity="center_horizontal" android:ems="7" />
+        <TextView android:id="@+id/ssr" android:gravity="center_horizontal" android:ems="7" android:textAppearance="?android:textAppearanceMedium" />
     </TableRow>
 
 </TableLayout>
 
 <TableLayout
     android:id="@+id/keyboard"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
+    android:layout_weight="0.5"
     android:layout_height="fill_parent"
     android:gravity="center_vertical|center_horizontal|center" >
 
@@ -79,16 +82,19 @@
             android:id="@+id/key7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="7" />
 		<Button
             android:id="@+id/key8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="8" />
 		<Button
             android:id="@+id/key9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="9" />
     </TableRow>
     
@@ -99,16 +105,19 @@
             android:id="@+id/key4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="4" />
 		<Button
             android:id="@+id/key5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="5" />
 		<Button
             android:id="@+id/key6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="6" />
     </TableRow>
     
@@ -119,16 +128,19 @@
             android:id="@+id/key1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="1" />
 		<Button
             android:id="@+id/key2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="2" />
 		<Button
             android:id="@+id/key3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="3" />
     </TableRow>
     
@@ -139,16 +151,19 @@
             android:id="@+id/keyDot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="." />
 		<Button
             android:id="@+id/key0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="0" />
 		<Button
             android:id="@+id/keyClear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceLarge"
             android:text="C" />
     </TableRow>
 </TableLayout>

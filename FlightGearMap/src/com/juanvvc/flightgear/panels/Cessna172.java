@@ -372,6 +372,11 @@ class DMENumber extends StaticSurface {
 		
 		float distance = planeData.getFloat(this.idxDME);
 		
+		// do not show anything if distance < 0.1
+		if (distance < 0.1) {
+			return;
+		}
+		
 		int hundreds = (int)((distance / 100 ) % 100);
 		int tens =  (int)((distance / 10 ) % 10);
 		int units = (int)(distance % 10);

@@ -55,7 +55,7 @@ public class Cessna337 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
 					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
-					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", true, -1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
 					new StaticSurface(new MyBitmap("nav5.png", -1, -1, -1, -1), 0, 0),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
 				});
@@ -162,7 +162,7 @@ class C337RadarSurface extends RotateSurface {
 		} else if(v < 2000) { // from 1500 to 2000, angles from 200 to 220
 			return 200 + 20f * (v - 1500) / 500;
 		} else if(v < 2500) { // from 2000 to 2500, angles from 220 to 240
-			return 200 + 20f * (v - 2000) / 500;
+			return 220 + 20f * (v - 2000) / 500;
 		} else { // other values: saturated
 			return 240;
 		}
