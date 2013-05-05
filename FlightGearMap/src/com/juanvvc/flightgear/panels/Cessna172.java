@@ -109,7 +109,7 @@ public class Cessna172 {
 					new RotateSurface(hand3, 0, 218, PlaneData.FUEL1, 1, 0, 230, 0, 60, 26, -60),
 					new RotateSurface(hand3, 288, 218, PlaneData.FUEL2, 1, 288, 230, 0, -240, 26, -120)
 				});
-		case OIL:
+		case OIL_TEMP:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("oil1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand3, 0, 218, PlaneData.OIL_TEMP, 1, 0, 230, 75, 60, 250, -60),
@@ -124,15 +124,19 @@ public class Cessna172 {
 		case TRIMFLAPS:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("trimflaps.png", -1, -1, -1, -1), 65, 10),
-					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 220, 430, 1, 220, 65),
-					new SlippingSurface(hand3, 0, PlaneData.FLAPS, 0, 230, 30, 1, 230, 400)
+					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 220, 215, 1, 220, 33),
+					new SlippingSurface(hand3, 0, PlaneData.FLAPS, 0, 230, 15, 1, 230, 200)
 				});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {
-					new SwitchSurface(switches, 0, 0, "/controls/lighting/nav-lights", "NAV"),
-					new SwitchSurface(switches, 128, 0, "/controls/lighting/beacon", "BCN"),
-					new SwitchSurface(switches, 256, 0, "/controls/lighting/taxi-light", "TAX"),
-					new SwitchSurface(switches, 384, 0, "/controls/lighting/landing-lights", "LNG"),
+					new SwitchSurface(switches, 0, 0, "/controls/engines/engine[0]/master-bat", "BATT"),
+					new SwitchSurface(switches, 128, 0, "/controls/engines/engine[0]/master-alt", "ALT"),
+					new SwitchSurface(switches, 256, 0, "/controls/switches/master-avionics", "AVI"),
+
+					new SwitchSurface(switches, 512+0, 0, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface(switches, 512+128, 0, "/controls/lighting/beacon", "BCN"),
+					new SwitchSurface(switches, 512+256, 0, "/controls/lighting/taxi-light", "TAX"),
+					new SwitchSurface(switches, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
 				});
 		case DME:
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
@@ -161,11 +165,11 @@ public class Cessna172 {
 		instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 4, 2));
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
-		instruments.add(Cessna172.createInstrument(InstrumentType.OIL, context, 0.2f, 1));
+		instruments.add(Cessna172.createInstrument(InstrumentType.OIL_TEMP, context, 0.2f, 1));
 		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.SWITCHES, context, 2, 2));
-		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2.5f));
 		instruments.add(Cessna172.createInstrument(InstrumentType.DME, context, 2, 2.5f));
 
 		return instruments;
@@ -244,17 +248,21 @@ class C172AtiSurface extends Surface {
 		float row = parent.getRow();
 		float gridSize = parent.getGridSize();
 		float scale = parent.getScale();
-		// translate 23 /  pixels each 5 degrees
+		// translate 22 /  pixels each 5 degrees
 		float roll = planeData.getFloat(PlaneData.ROLL);
 		if (roll > 60) {
 			roll = 60;
+		} else if (roll < -60) {
+			roll = -60;
 		}
 		float pitch = planeData.getFloat(PlaneData.PITCH);
-		if (pitch > 45) {
-			pitch = 45;
+		if (pitch > 30) {
+			pitch = 30;
+		} else if (pitch < -30) {
+			pitch = -30;
 		}
 		Bitmap b = bitmap.getScaledBitmap();
-		matrix.postTranslate(((0.5f + col) * gridSize) * scale - b.getWidth() / 2, ((0.5f + row) * gridSize + pitch * (23 * gridSize/ 512) / 5) * scale - b.getHeight() / 2);
+		matrix.postTranslate(((0.5f + col) * gridSize) * scale - b.getWidth() / 2, ((0.5f + row) * gridSize + pitch * (22 * gridSize/ 512) / 5) * scale - b.getHeight() / 2);
 		matrix.postRotate(-roll, ((0.5f + col) * gridSize) * scale, ((0.5f + row) * gridSize) * scale);
 		c.drawBitmap(b, matrix, null);
 	}

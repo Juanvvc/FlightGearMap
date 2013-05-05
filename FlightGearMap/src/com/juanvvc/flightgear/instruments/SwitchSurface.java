@@ -66,7 +66,7 @@ public class SwitchSurface extends Surface {
 	
 	@Override
 	public void onBitmapChanged() {
-		final float realscale = parent.getScale() + parent.getGridSize();
+		final float realscale = parent.getScale() * parent.getGridSize();
 		final float scale = parent.getScale();
 		final float col = parent.getCol();
 		final float row = parent.getRow();
@@ -78,7 +78,7 @@ public class SwitchSurface extends Surface {
 		rectOff = new Rect(0, b.getHeight() / 2, b.getWidth(), b.getHeight());
 		rectPos = new Rect(left, top, (int)(left + b.getWidth() * scale), (int)(top + b.getHeight() / 2 * scale));
 		textX = left + b.getWidth() / 5 * scale;
-		textY = top + b.getHeight() / 2 * scale;
+		textY = top + 200 * realscale / 512;
 	}
 	
 	@Override

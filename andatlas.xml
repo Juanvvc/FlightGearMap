@@ -223,7 +223,69 @@
 	   <type>bool</type>
 	   <node>/instrumentation/nav/gs-in-range</node>
    </chunk>
- 
+
+   <chunk>
+	   <name>DME</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/dme/indicated-distance-nm</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 rpm</name>
+	    <format>%d</format>
+	    <node>/engines/engine[1]/rpm</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 0 manifold pressure</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[0]/mp-inhg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 manifold pressure</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[1]/mp-inhg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 0 cht temp</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[0]/cht-degf</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 cht temp</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[1]/cht-degf</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Press</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine[1]/oil-pressure-psi</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Temp F</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine[1]/oil-temperature-degf</node>
+   </chunk>
+
+   <chunk>
+	    <name>Altitude in feet</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/position/altitude-agl-ft</node>
+   </chunk>
+
  </output>
 
  </generic>

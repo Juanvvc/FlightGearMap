@@ -8,7 +8,7 @@ public enum InstrumentType {
 	CLIMB_RATE,
 	TURN_RATE,
 	RPM,
-	OIL,
+	OIL_TEMP,
 	ELECTRIC,
 	FUEL,
 	NAV1,
