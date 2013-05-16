@@ -17,7 +17,7 @@ public class CalibratableRotateSurface extends Surface {
 	/** If true, the value is wrapped (after max, it is min again) */
 	private boolean wrapped = false;
 	/** The property to read from PlaneData, if positive. */
-	private int propIdx;
+	protected int propIdx;
 	/** ration center */
 	private float rcx;
 	private float rcy;
@@ -47,6 +47,8 @@ public class CalibratableRotateSurface extends Surface {
 	 * @param x Horizontal position of the surface inside the instrument
 	 * @param y Horizontal position of the surface inside the instrument
 	 * @param prop The path to the property to read from the remote FGFSConnetion
+	 * @param wrap Wrap the value at the end of the range, or keep it inside limits
+	 * @param propIdx A property index to follow (if any. If not, set to -1)
 	 * @param rscale Scale of the data (usually 1: do not modify the data)
 	 * @param rcx Rotation center (inside the instrument)
 	 * @param rcy Rotation center (inside the instrument)
@@ -109,7 +111,6 @@ public class CalibratableRotateSurface extends Surface {
 		}
 		
 		m.reset();
-		m.reset();
 		m.setTranslate(finalx, finaly);
 		m.postRotate(getRotationAngle(value), finalrx, finalry);
 		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
@@ -151,17 +152,6 @@ public class CalibratableRotateSurface extends Surface {
 			if (end) {
 				moving = false;
 			}
-			
-//			// set rotationAngle in (0, 360)
-//			while (rotateAngle < 0) {
-//				rotateAngle += 360;
-//			}
-//			while (rotateAngle > 360) {
-//				rotateAngle -= 360;
-//			}
-//			
-//			value = rotateAngle; //(rotateAngle - amin) * (max - min) / (amax - amin) + min;
-//			myLog.i(this, "Setting " + rotateAngle + ": " + value);
 			
 			value += rotateAngle * ROTATION_SCALE * (this.max - this.min) / 360;
 			

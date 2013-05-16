@@ -35,7 +35,8 @@ public class Cessna337 {
 		case SPEED:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("speed2.png", -1, -1, -1, -1), 0, 0),
-					new RotateSurface(hand1, 236, 56, PlaneData.SPEED, 1, 256, 256, 0, 0, 200, 350)
+					new RotateSurface(hand1, 236, 56, PlaneData.SPEED, 1, 256, 256, 0, 0, 200, 350),
+					new CalibratableRotateSurface(new MyBitmap("speed4.png", -1, -1, -1, -1), 256-228, 256-228, null, true, -1, 256, 256, 0, 0, 360, -360),
 				});
 		case RPM:
 			return new Instrument(col, row, context, new Surface[] {
@@ -55,7 +56,9 @@ public class Cessna337 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
 					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
-					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
+					new RotateSurface(headings, 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+					new CalibratableRotateSurface(new MyBitmap("misc2.png", 242, 290, 44, 44), 256-22, 36, null, true, -1, 256, 256, 0, 0, 360, -360),
+
 					new StaticSurface(new MyBitmap("nav5.png", -1, -1, -1, -1), 0, 0),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
 				});

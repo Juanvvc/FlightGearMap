@@ -66,14 +66,16 @@ public class PlaneData {
 	public static final int GS1_DEFLECTION = 30; // normalized needle deflection (only NAV1)
 	public static final int GS1_INRANGE = 31; // true if GS in range (only NAV1)
 	public static final int DME = 32;
-	public static final int RPM2 = 33;
-	public static final int MANIFOLD = 34;
-	public static final int MANIFOLD2 = 35;
-	public static final int CHT1_TEMP = 36;
-	public static final int CHT2_TEMP = 37;
-	public static final int OIL2_PRESS = 38;
-	public static final int OIL2_TEMP = 39;
-	public static final int ALTITUDE_AGL = 40;
+	public static final int DME_SPEED = 33;
+	public static final int RPM2 = 34;
+	public static final int MANIFOLD = 35;
+	public static final int MANIFOLD2 = 36;
+	public static final int CHT1_TEMP = 37;
+	public static final int CHT2_TEMP = 38;
+	public static final int OIL2_PRESS = 39;
+	public static final int OIL2_TEMP = 40;
+	public static final int HEADING_BUG = 41;
+	public static final int ALTITUDE_AGL = 42;
 	
 
 	

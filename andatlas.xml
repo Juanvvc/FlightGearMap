@@ -230,6 +230,12 @@
 	   <format>%f</format>
 	   <node>/instrumentation/dme/indicated-distance-nm</node>
    </chunk>
+   <chunk>
+	   <name>DME Speed</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/dme/indicated-ground-speed-kt</node>
+   </chunk>
 
    <chunk>
 	    <name>Engine 1 rpm</name>
@@ -277,6 +283,13 @@
 	   <type>float</type>
 	   <format>%f</format>
 	   <node>/engines/engine[1]/oil-temperature-degf</node>
+   </chunk>
+
+   <chunk>
+	    <name>heading bug</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/instrumentation/heading-indicator/heading-bug-error-deg</node>
    </chunk>
 
    <chunk>

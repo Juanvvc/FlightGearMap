@@ -1,5 +1,6 @@
 package com.juanvvc.flightgear.panels;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
+import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
@@ -83,7 +85,8 @@ public class Cessna172 {
 				});
 		case HEADING:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("hdg1.png", -1, -1, -1, -1), 0, 0, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 256, 0, 0, 360, -360),
+					new RotateSurface(new MyBitmap("hdg1.png", -1, -1, -1, -1), 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
+					new C172HIBug(new MyBitmap("misc2.png", 242, 290, 44, 44), 256-22, 36, "/autopilot/settings/heading-bug-deg", true, -1, 256, 256, -180, -180, 180, 180),
 					new StaticSurface(new MyBitmap("hdg2.png", -1, -1, -1, -1), 0, 0)
 				});
 		case TURN_RATE:
@@ -123,9 +126,9 @@ public class Cessna172 {
 				});
 		case TRIMFLAPS:
 			return new Instrument(col, row, context, new Surface[] {
-					new StaticSurface(new MyBitmap("trimflaps.png", -1, -1, -1, -1), 65, 10),
-					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 220, 215, 1, 220, 33),
-					new SlippingSurface(hand3, 0, PlaneData.FLAPS, 0, 230, 15, 1, 230, 200)
+					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 248, 218, 1, 248, 42),
+					new SlippingSurface(hand3, 0, PlaneData.FLAPS, 0, 258, 18, 1, 258, 203),
+					new StaticSurface(new MyBitmap("trimflaps.png", -1, -1, -1, -1), 93, 13),
 				});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {
@@ -142,7 +145,8 @@ public class Cessna172 {
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("dme.png", 0, 0, 512, 216), 0, 0),
-					new DMENumber(new MyBitmap("dme.png", 0, 312, 512, 64), 208, 120, PlaneData.DME, face)
+					new DMENumber(null, 58, 120, PlaneData.DME, face),
+					new DMENumber(null, 258, 120, PlaneData.DME_SPEED, face)
 			});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
@@ -206,6 +210,25 @@ class C172AirSpeedSurface extends RotateSurface {
 			return -0.0061147f * v * v + 3.3f * v - 104.5f;
 		}
 	}
+}
+
+class C172HIBug extends CalibratableRotateSurface {
+
+	public C172HIBug(MyBitmap bitmap, float x, float y, String prop,
+			boolean wrap, int propIdx, int rcx, int rcy, float min, float amin,
+			float max, float amax) {
+		super(bitmap, x, y, prop, wrap, propIdx, rcx, rcy, min, amin, max, amax);
+	}
+
+	/**
+	 * @param v value angle
+	 * @return The angle to rotate the drawable to match that value
+	 */
+	protected float getRotationAngle(float v) {
+		float vparent = super.getRotationAngle(v);
+		return vparent - planeData.getFloat(PlaneData.HEADING);
+	}
+
 }
 
 /** The long hand of the altimeter shows the modulus of the altitude.
@@ -330,6 +353,7 @@ class DMENumber extends StaticSurface {
 	private Typeface face;
 	private Paint font;
 	
+	// Bitmap is not currently used
 	public DMENumber(MyBitmap bitmap, float x, float y, int idxDME, Typeface face) {
 		super(bitmap, x, y);
 		this.idxDME = idxDME;
@@ -362,11 +386,11 @@ class DMENumber extends StaticSurface {
 		font = new Paint();
 		font.setColor(Color.RED);
 		font.setTypeface(this.face);
-		font.setTextSize(bitmap.getScaledBitmap().getHeight());
+		font.setTextSize((parent.getScale() * parent.getGridSize()) / 8); //bitmap.getScaledBitmap().getHeight());
 	}
 	
 	public void onDraw(Canvas c) {
-		if (planeData == null || bitmap == null || bitmap.getScaledBitmap() == null) {
+		if (planeData == null) { // || bitmap == null || bitmap.getScaledBitmap() == null) {
 			return;
 		}
 		
