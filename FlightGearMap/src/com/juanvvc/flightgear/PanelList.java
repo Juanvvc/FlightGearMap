@@ -9,14 +9,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.juanvvc.flightgear.panels.CommsPanel;
 import com.juanvvc.flightgear.panels.InstrumentPanel;
 import com.juanvvc.flightgear.panels.MapInstrumentPanel;
@@ -25,6 +31,19 @@ import com.juanvvc.flightgear.panels.PanelView;
 /** This activity shows a list of the available panel distributions. */
 public class PanelList extends Activity implements OnItemClickListener{
 	
+	/** Set this to true if this is the donate version.
+	 * The donate version does not show adds and it makes sure that the debug options are not set.
+	 * Currently, these are the only differences.
+	 * If you change this option, remember changing the icon as well and Android Tools->Rename application package
+	 */
+	private static final boolean DONATE_VERSION = false;
+	
+	// List of thumbnails of the distributions
+	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms};
+	// List of labels
+	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms};
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,15 +51,46 @@ public class PanelList extends Activity implements OnItemClickListener{
 		setContentView(R.layout.panellist);
 		
 		GridView gridview = (GridView) this.findViewById(R.id.gridview);
-		
-		gridview.setAdapter(new DistributionAdapter());
-		gridview.setOnItemClickListener(this);
+		if (gridview != null) {
+			// the layout has a gridview: it is a large screen
+			gridview.setAdapter(new DistributionAdapter());
+			gridview.setOnItemClickListener(this);
+		} else {
+			// the layout does not have a gridview: small screen. Use a simple list
+			ListView listview = (ListView) this.findViewById(R.id.listview);
+			String[] labels = new String[THUMBS_LABELS.length];
+			for (int i=0; i<labels.length; i++) {
+				labels[i] = this.getResources().getString(THUMBS_LABELS[i]);
+			}
+			listview.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, labels));
+			listview.setOnItemClickListener(this);
+		}
 
 		// if it is the first run of this version, show the changelog.txt
 		ChangeLog cl = new ChangeLog(this);
-        if (cl.firstRun())
+        if (cl.firstRun() || MyLog.isDebug()) {
             cl.getLogDialog().show();
-
+        }
+        
+        // Create the ads
+        if (!DONATE_VERSION) {
+        	TextView tv = new TextView(this);
+        	tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        	tv.setText(R.string.consider_donating);
+        	
+	        AdView adView = new AdView(this, AdSize.BANNER, "a15196dbbc3193b");
+	        LinearLayout layout = (LinearLayout)findViewById(R.id.panelviewLayout);
+	        layout.addView(adView);
+	        AdRequest adRequest = new AdRequest();
+	        if (MyLog.isDebug()) {
+	        	adRequest.addTestDevice("874C587B68F6782F0CD99504C02613A8"); // Tablet
+	        	adRequest.addTestDevice("DD57E9E77A859C5F4EE8C1F52334557B"); // HTC Phone
+	        }
+	        adView.loadAd(adRequest);
+        } else {
+        	// if we are in the donate version, make sure the debug options are not set. Useful for debugging.
+        	MyLog.setDebug(false);
+        }
 	}
 
 	@Override
@@ -134,11 +184,6 @@ public class PanelList extends Activity implements OnItemClickListener{
 			return 0;
 		}
 		
-		// List of thumbnails of the distributions
-		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms};
-		// List of labels
-		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms};
-
 		/** Creates a thumbnail and label of a distribution */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {

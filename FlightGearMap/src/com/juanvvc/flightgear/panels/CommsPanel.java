@@ -183,7 +183,7 @@ public class CommsPanel extends Activity implements OnClickListener {
     	if (connTask == null) {
     		connTask = (ConnTask) new ConnTask().execute();
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {

@@ -109,7 +109,7 @@ public class InstrumentPanel extends Activity {
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {
@@ -241,7 +241,7 @@ public class InstrumentPanel extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(InstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
+				Toast.makeText(InstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_SHORT).show();
 				firstMessage = false;
 			}
 			

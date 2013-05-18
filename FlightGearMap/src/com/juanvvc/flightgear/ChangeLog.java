@@ -236,6 +236,7 @@ public class ChangeLog {
 					// begin of a version section
 					this.closeList();
 					String version = line.substring(1).trim();
+					MyLog.w(this,"Parsing version: --"+version+"-- Last version: --"+lastVersion+"--");
 					// stop output?
 					if (!full) {
 						if (this.lastVersion.equals(version)) {

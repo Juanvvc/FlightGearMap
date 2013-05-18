@@ -11,38 +11,45 @@ import android.util.Log;
  * @author juanvi
  */
 public class MyLog{
-	private static final boolean debug=true;
+	private static boolean DEBUG=true;
+	
+	public static void setDebug(boolean d) {
+		MyLog.DEBUG = d;
+	}
+	public static boolean isDebug() {
+		return MyLog.DEBUG;
+	}
 	
 	public static void i(Object o, String msg){
-		if(debug) Log.i(o.getClass().getSimpleName(), msg);
+		if(DEBUG) Log.i(o.getClass().getSimpleName(), msg);
 	}
 	public static void d(Object o, String msg){
-		if(debug) Log.d(o.getClass().getSimpleName(), msg);
+		if(DEBUG) Log.d(o.getClass().getSimpleName(), msg);
 	}
 	public static void v(Object o, String msg){
-		if(debug) Log.v(o.getClass().getSimpleName(), msg);
+		if(DEBUG) Log.v(o.getClass().getSimpleName(), msg);
 	}
 	public static void e(Object o, String msg){
-		if(debug) Log.e(o.getClass().getSimpleName(), msg);
+		if(DEBUG) Log.e(o.getClass().getSimpleName(), msg);
 	}
 	public static void w(Object o, String msg){
-		if(debug) Log.e(o.getClass().getSimpleName(), msg);
+		if(DEBUG) Log.e(o.getClass().getSimpleName(), msg);
 	}
 	
 	public static void i(String t, String msg){
-		if(debug) Log.i(t, msg);
+		if(DEBUG) Log.i(t, msg);
 	}
 	public static void d(String t, String msg){
-		if(debug) Log.d(t, msg);
+		if(DEBUG) Log.d(t, msg);
 	}
 	public static void v(String t, String msg){
-		if(debug) Log.v(t, msg);
+		if(DEBUG) Log.v(t, msg);
 	}
 	public static void e(String t, String msg){
-		if(debug) Log.e(t, msg);
+		if(DEBUG) Log.e(t, msg);
 	}
 	public static void w(String t, String msg){
-		if(debug) Log.e(t, msg);
+		if(DEBUG) Log.e(t, msg);
 	}
 	
 	public static String stackToString(Exception e) {

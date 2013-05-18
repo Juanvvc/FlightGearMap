@@ -190,7 +190,7 @@ public class MapInstrumentPanel extends Activity {
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
     	
 
     	if (USE_WAKELOCK) {
@@ -303,7 +303,7 @@ public class MapInstrumentPanel extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(MapInstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_LONG).show();
+				Toast.makeText(MapInstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_SHORT).show();
 				firstMessage = false;
 			}
 			

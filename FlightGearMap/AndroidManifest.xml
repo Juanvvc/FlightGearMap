@@ -37,5 +37,8 @@
         <!--  Manages panels with only instruments. It improves performance -->
         <activity android:name=".panels.InstrumentPanel" ></activity>
         <activity android:name=".panels.CommsPanel"></activity>
+        <!-- AdMob -->
+        <activity android:name="com.google.ads.AdActivity"
+           android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 </manifest>
