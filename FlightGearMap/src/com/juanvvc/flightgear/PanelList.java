@@ -3,6 +3,7 @@ package com.juanvvc.flightgear;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,6 +80,7 @@ public class PanelList extends Activity implements OnItemClickListener{
         	TextView tv = new TextView(this);
         	tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         	tv.setText(R.string.consider_donating);
+        	tv.setMovementMethod(LinkMovementMethod.getInstance());
         	layout.addView(tv);
         	
 	        AdView adView = new AdView(this, AdSize.BANNER, "a15196dbbc3193b");

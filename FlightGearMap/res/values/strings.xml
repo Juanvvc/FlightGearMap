@@ -29,6 +29,6 @@
     <string name="inuse">In use</string>
     <string name="standby">Standby</string>
     <string name="swap">Swap</string>
-    <string name="consider_donating">If you find this app useful, consider buying the donate version.</string>
+    <string name="consider_donating">If you find this app useful, .<a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">consider buying the donate version</a></string>
 
 </resources>
