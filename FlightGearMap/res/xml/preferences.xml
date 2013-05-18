@@ -24,6 +24,40 @@
         />
         
     </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="Single engine panel"
+        android:key="singleengine"
+        >
+
+        <ListPreference 
+            android:key="asi_type"
+            android:title="Never exceed speed in the ASI"
+            android:summary="Select the type of airspeed indicator"
+            android:defaultValue="asi160" 
+            android:entries="@array/ASITypes"
+            android:entryValues="@array/ASIValues"
+        />
+        
+        <ListPreference 
+            android:key="hi_type"
+            android:title="Heading indicator type"
+            android:summary="Define the type of heading indicator. RMI and HSI are attached to NAV1. Warning: currently, the HSI doesn't show the from/to/gs flags!"
+            android:defaultValue="HI" 
+            android:entries="@array/HITypes"
+            android:entryValues="@array/HIValues"
+        />
+        
+		<ListPreference 
+            android:key="additional_instrument"
+            android:title="Additional instrument"
+            android:summary="If you select a RMI or a HSI instead of a heading indicator, you can use this additional instrument."
+            android:defaultValue="manifold" 
+            android:entries="@array/AdditionalInstrumentTypes"
+            android:entryValues="@array/AdditionalInstrumentValues"
+        />
+        
+    </PreferenceCategory>
 
     <PreferenceCategory 
         android:title="Communications"

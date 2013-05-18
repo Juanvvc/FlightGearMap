@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -30,6 +31,9 @@ import com.juanvvc.flightgear.instruments.Surface;
  * 
  */
 public class PanelView extends SurfaceView implements OnTouchListener {
+	
+	/** If set, instruments are centered */
+	private static final boolean CENTER_INSTRUMENTS = true;
 
 	/** Specifies the distribution type. */
 	// Note: this cannot be an enum since the XML needs an integer to refer to a distribution type.
@@ -59,9 +63,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/** The available instruments. */
 	private ArrayList<Instrument> instruments;
 	/** Number of columns in the panel. */
-	private int cols;
+	private float cols;
 	/** Number of rows in the panel. */
-	private int rows;
+	private float rows;
 	/** identifier of the current distribution. */
 	private int distribution;
 	
@@ -69,6 +73,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	
 	/** The surface that the user is currently moving, if any */
 	private Surface movingSurface = null;
+	
+	/** The bitmap to draw instruments */
+	private Bitmap buffer = null;
 
 	/* Constructors */
 	public PanelView(Context context) {
@@ -135,7 +142,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 1));
-				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 1, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.HSI1, context, 1, 1));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 0, 2));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
 	
@@ -147,7 +154,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 2, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 1));
-				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 1, 1));
+				instruments.add(Cessna172.createInstrument(InstrumentType.HSI1, context, 1, 1));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 1));
 	
 				break;
@@ -157,7 +164,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 2, 0));
-				instruments.add(SenecaII.createInstrument(InstrumentType.HSI1, context, 3, 0));
+				instruments.add(Cessna172.createInstrument(InstrumentType.HSI1, context, 3, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 4, 0));
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 5, 0));
 				break;
@@ -168,7 +175,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				break;
 			case Distribution.SENECAII_PANEL:
 				cols = 5;
-				rows = 3;
+				rows = 3.5f;
 				instruments = SenecaII.getInstrumentPanel(context);
 				break;
 			case Distribution.C337_INSTRUMENTS:
@@ -181,16 +188,16 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				rows = 2;
 				instruments = LiquidDisplay.getInstrumentPanel(context);
 				break;
-			case Distribution.COMM_PANEL:
-				cols = 3;
-				rows = 2;
-				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 0));
-				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
-				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 0));
-				instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 0, 1));
-				instruments.add(SenecaII.createInstrument(InstrumentType.NAV2, context, 1, 1));
-				instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 2, 1));
-				break;
+//			case Distribution.COMM_PANEL:
+//				cols = 3;
+//				rows = 2;
+//				instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 0, 0));
+//				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 1, 0));
+//				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 2, 0));
+//				instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 0, 1));
+//				instruments.add(SenecaII.createInstrument(InstrumentType.NAV2, context, 1, 1));
+//				instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 2, 1));
+//				break;
 			default:
 				MyLog.w(this, "No distribution configured for panel");
 			}
@@ -254,6 +261,17 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 					scale = scale / 2;
 				}
 			}
+			
+			// create the buffer
+			if (CENTER_INSTRUMENTS) {
+				if (buffer != null) {
+					buffer.recycle();
+				}
+				buffer = Bitmap.createBitmap(
+						(int)(scale * cols * instruments.get(0).getGridSize()),
+						(int)(scale * rows * instruments.get(0).getGridSize()),
+						Bitmap.Config.RGB_565);
+			}
 		}
 	}
 	
@@ -299,7 +317,6 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	 */
 	public void postPlaneData(PlaneData pd) {
 		synchronized(instruments) {
-			// TODO: if we do not synchronize this method, flickering appears
 			for(int j = 0; j < instruments.size(); j++) {
 				Instrument ins = instruments.get(j);
 				if (ins != null) {
@@ -315,9 +332,19 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				return;
 			}
 			
-			Canvas c = surfaceHolder.lockCanvas();
-			if (c == null) {
-				return;
+			// prepare the canvas. If CENTER_INSTRUMENTS is set, use the buffer.
+			// if not set, draw directly on the screen
+			Canvas c = null;
+			if (CENTER_INSTRUMENTS) {
+				if (buffer == null) {
+					return;
+				}
+				c = new Canvas(buffer);
+			} else {
+				c = surfaceHolder.lockCanvas();
+				if (c == null) {
+					return;
+				}
 			}
 			c.drawColor(Color.DKGRAY);
 	
@@ -343,7 +370,17 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				// TODO: I'm ignoring this exception, but I'm sure that it means an error in the program
 			}
 			
-			surfaceHolder.unlockCanvasAndPost(c);
+			// If CENTER_INSTRUMENTS is set, draw the buffer on the canvas
+			// if not set, assume that we were drawing directly on the screen
+			if (CENTER_INSTRUMENTS) {
+				if (buffer != null) {
+					c = surfaceHolder.lockCanvas();
+					c.drawBitmap(buffer, (getWidth() - buffer.getWidth()) / 2, (getHeight() - buffer.getHeight()) / 2, null);
+					surfaceHolder.unlockCanvasAndPost(c);
+				}
+			} else {
+				surfaceHolder.unlockCanvasAndPost(c);
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ public enum InstrumentType {
 	CLIMB_RATE,
 	TURN_RATE,
 	RPM,
+	RPM2,
 	OIL_TEMP,
 	ELECTRIC,
 	FUEL,
@@ -26,5 +27,7 @@ public enum InstrumentType {
 	RADAR,
 	DME,
 	OIL_PRESS,
-	CYL_TEMP
+	CYL_TEMP,
+//	EGT,
+	MAGNETS_STARTER
 }

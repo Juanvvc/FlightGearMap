@@ -19,8 +19,8 @@ public class CalibratableRotateSurface extends Surface {
 	/** The property to read from PlaneData, if positive. */
 	protected int propIdx;
 	/** ration center */
-	private float rcx;
-	private float rcy;
+	protected float rcx;
+	protected float rcy;
 	/** min value, and its angle. */
 	private float min, amin;
 	/** max value, and its angle. */

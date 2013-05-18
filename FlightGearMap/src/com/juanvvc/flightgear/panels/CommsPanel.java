@@ -56,10 +56,9 @@ public class CommsPanel extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		this.setContentView(R.layout.commspanel);
 
@@ -279,6 +278,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 	 */
 	private class ConnTask extends AsyncTask<Object, PlaneData, String> {
 		private String udpport;
+		private int telnetPort;
 		private boolean firstMessage;
 		FGFSConnection conn = null;
 		// we use this array as a temporal storage for the frequencies.
@@ -293,7 +293,6 @@ public class CommsPanel extends Activity implements OnClickListener {
 
 			boolean cancelled = false;
 			int waitPeriod = 5000;
-			int port = 9000;
 			String fgfsIP = "192.168.1.2";
 
 			// read preferences
@@ -306,21 +305,21 @@ public class CommsPanel extends Activity implements OnClickListener {
 				waitPeriod = 5000;
 			}
 			try {
-				port = Integer.parseInt(sp.getString("telnet_port", "9000"));
+				telnetPort = Integer.parseInt(sp.getString("telnet_port", "9000"));
 				// check limits
-				port = Math.max(port, 1);
+				telnetPort = Math.max(telnetPort, 1);
 			} catch (ClassCastException e) {
 				MyLog.w(this, "Config error: wrong port=" + sp.getString("telnet_port", "default"));
-				port = 9000;
+				telnetPort = 9000;
 			}
 			fgfsIP = sp.getString("fgfs_ip", "192.168.1.2");
 			udpport = sp.getString("udp_port", "5501");
 
-			MyLog.i(this, "Telnet: " + fgfsIP + ":" + port + " " + waitPeriod + "ms");
+			MyLog.i(this, "Telnet: " + fgfsIP + ":" + telnetPort + " " + waitPeriod + "ms");
 
 			try {
-				MyLog.e(this, "Trying telnet connection to " + fgfsIP + ":"	+ port);
-				conn = new FGFSConnection(fgfsIP, port, CommsPanel.SOCKET_TIMEOUT);
+				MyLog.e(this, "Trying telnet connection to " + fgfsIP + ":"	+ telnetPort);
+				conn = new FGFSConnection(fgfsIP, telnetPort, CommsPanel.SOCKET_TIMEOUT);
 				MyLog.d(this, "Upwards connection ready");
 			} catch (IOException e) {
 				MyLog.w(this, e.toString());
@@ -345,7 +344,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				freqs[11] = conn.getFloat("/instrumentation/nav/radials/selected-deg", 0f);
 				freqs[12] = conn.getFloat("/instrumentation/nav[1]/radials/selected-deg", 0f);
 				freqs[13] = conn.getFloat("/instrumentation/adf/rotation-deg", 0f);
-				freqs[14] = conn.getInt("/instrumentation/transponder/id-code", 7500); // 7500==hijack!
+				freqs[14] = conn.getInt("/instrumentation/transponder/id-code", 7000); // 7000==not controlled
 				this.publishProgress((PlaneData)null);
 			} catch (IOException e) {
 				return "Couldn't read frequencies";
@@ -553,9 +552,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 							(ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
 
 					// add information about fgfs+++
-					txt = txt + getString(R.string.run_fgfs_using)
-							+ " --generic=socket,out,10," + readableIP + ","
-							+ udpport + ",udp,andatlas --telnet=9000";
+					txt = txt + getString(R.string.run_fgfs_using) + " --telnet=" + telnetPort;
 
 					// show the dialog on screen
 					currentDialog = new AlertDialog.Builder(CommsPanel.this)

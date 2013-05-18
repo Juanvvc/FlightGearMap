@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:keepScreenOn="true"
+    android:layout_height="fill_parent"
+    android:fillViewport="true" >
+
+<HorizontalScrollView
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content" >
+
+<TableLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:stretchColumns="2,4,5">
 
 	<TableRow>
 	    <TextView android:layout_column="1" android:text="@string/inuse" />
@@ -15,7 +25,7 @@
         <TextView android:text="COM1:" />
         <TextView android:id="@+id/com1" android:gravity="center_horizontal" />
         <Button android:id="@+id/swapcom1" android:text="@string/swap" />
-        <EditText android:id="@+id/com1stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/com1stb" android:ems="5" android:inputType="numberDecimal" />
 
     </TableRow>
 
@@ -23,14 +33,14 @@
         <TextView android:text="COM2:" />
         <TextView android:id="@+id/com2" android:gravity="center_horizontal" />
         <Button android:id="@+id/swapcom2" android:text="@string/swap" />
-        <EditText android:id="@+id/com2stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/com2stb" android:ems="5" android:inputType="numberDecimal" />
     </TableRow>
 
     <TableRow>
         <TextView android:text="NAV1:" />
         <TextView android:id="@+id/nav1" android:gravity="center_horizontal" />
         <Button android:id="@+id/swapnav1" android:text="@string/swap" />
-        <EditText android:id="@+id/nav1stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/nav1stb" android:ems="5" android:inputType="numberDecimal" />
         <EditText android:id="@+id/nav1rad" android:ems="3" android:inputType="number" />
     </TableRow>
     
@@ -38,7 +48,7 @@
         <TextView android:text="NAV2:"/>
         <TextView android:id="@+id/nav2" android:gravity="center_horizontal" />
         <Button android:id="@+id/swapnav2" android:text="@string/swap" />
-        <EditText android:id="@+id/nav2stb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/nav2stb" android:ems="5" android:inputType="numberDecimal" />
         <EditText android:id="@+id/nav2rad" android:ems="3" android:inputType="number" />
     </TableRow>
         
@@ -46,18 +56,21 @@
         <TextView android:text="ADF:" />
         <TextView android:id="@+id/adf" android:gravity="center_horizontal" />
         <Button android:id="@+id/swapadf" android:text="@string/swap" />
-        <EditText android:id="@+id/adfstb" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/adfstb" android:ems="5" android:inputType="numberDecimal" />
         <EditText android:id="@+id/adfrad" android:ems="3" android:inputType="number" />
     </TableRow>            
 
     <TableRow>
         <TextView android:text="DME:" android:gravity="center_horizontal" />
-        <EditText android:id="@+id/dme" android:ems="6" android:inputType="numberDecimal" />
+        <EditText android:id="@+id/dme" android:ems="5" android:inputType="numberDecimal" />
     </TableRow>
-    
+
     <TableRow>
-        <TextView android:text="SSR:" android:gravity="center_horizontal" />
-        <EditText android:id="@+id/ssr" android:ems="6" android:inputType="numberDecimal" />
+        <TextView android:gravity="center_horizontal" android:text="SSR:" />
+        <EditText android:id="@+id/ssr" android:ems="5" android:inputType="numberDecimal" />
     </TableRow>
 
 </TableLayout>
+
+</HorizontalScrollView>
+</ScrollView>

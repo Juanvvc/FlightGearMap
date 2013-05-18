@@ -6,10 +6,10 @@
 	android:layout_width="fill_parent" >
 <TableLayout
     android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:keepScreenOn="true"
     android:layout_weight="0.5"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical|center_horizontal|center" >
+    android:stretchColumns="2,4,5" >
 
 	<TableRow>
 	    <TextView android:layout_column="1" android:text="@string/inuse" />
@@ -73,96 +73,97 @@
     android:layout_width="wrap_content"
     android:layout_weight="0.5"
     android:layout_height="fill_parent"
-    android:gravity="center_vertical|center_horizontal|center" >
+    android:stretchColumns="*" >
+
 
     <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_weight="1"
+        android:gravity="center">
         <Button
             android:id="@+id/key7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="7" />
 		<Button
             android:id="@+id/key8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="8" />
 		<Button
             android:id="@+id/key9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="9" />
     </TableRow>
     
     <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_weight="1"
+        android:gravity="center">
         <Button
             android:id="@+id/key4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="4" />
 		<Button
             android:id="@+id/key5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="5" />
 		<Button
             android:id="@+id/key6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="6" />
     </TableRow>
     
     <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_weight="1"
+        android:gravity="center">
         <Button
             android:id="@+id/key1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="1" />
 		<Button
             android:id="@+id/key2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="2" />
 		<Button
             android:id="@+id/key3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="3" />
     </TableRow>
     
     <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_weight="1"
+        android:gravity="center">
         <Button
             android:id="@+id/keyDot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="." />
 		<Button
             android:id="@+id/key0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="0" />
 		<Button
             android:id="@+id/keyClear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="C" />
     </TableRow>

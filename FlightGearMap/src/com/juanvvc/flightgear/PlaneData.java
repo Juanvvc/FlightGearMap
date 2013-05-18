@@ -55,7 +55,7 @@ public class PlaneData {
 	public static final int NAV1_TO = 19; // true if the to flag is set in NAV1
 	public static final int NAV1_FROM = 20; // true if the from flag is set in NAV1
 	public static final int NAV1_DEFLECTION = 21; // needle deflection in NAV1
-	public static final int NAV1_SEL_RADIAL = 22; // selected radial in NAV2
+	public static final int NAV1_SEL_RADIAL = 22; // selected radial in NAV1
 	public static final int NAV2_TO = 23; // true if the to flag is set in NAV2
 	public static final int NAV2_FROM = 24; // true if the from flag is set in NAV2
 	public static final int NAV2_DEFLECTION = 25; // needle deflection in NAV2
@@ -75,7 +75,8 @@ public class PlaneData {
 	public static final int OIL2_PRESS = 39;
 	public static final int OIL2_TEMP = 40;
 	public static final int HEADING_BUG = 41;
-	public static final int ALTITUDE_AGL = 42;
+	public static final int NAV1_HEADING = 42; // heading to the NAV station
+	public static final int ALTITUDE_AGL = 43;
 	
 
 	

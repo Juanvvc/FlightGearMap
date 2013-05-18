@@ -16,8 +16,8 @@
     <string name="dist_simplemap">Map and controls</string>
     <string name="dist_onlymap">Only map</string>
     <string name="dist_senecaii">Seneca II (two engines, 200kts, HSI)</string>
-    <string name="dist_c172">Cessna 172P (single engine, 120kts)</string>
-    <string name="dist_c337">Cessna 337 Skymaster (two engines, 200kts)</string>    
+    <string name="dist_c172">Single engine panel (configurable)</string>
+    <string name="dist_c337">Cessna 337 Skymaster</string>    
     <string name="dist_liquid">Liquid panel</string>
     <string name="dist_comms">Comm panel</string>
     <string name="changelog_title">Recent changes</string>

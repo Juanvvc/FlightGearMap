@@ -59,7 +59,7 @@ public abstract class Surface {
 	}
 	
 	/** @param pd The last PlaneData object */
-	public void postPlaneData(PlaneData pd) {
+	public void postPlaneData(final PlaneData pd) {
 		this.planeData = pd;
 	}
 	
@@ -74,7 +74,7 @@ public abstract class Surface {
 	 * this method returns always false ("we do not manage movements"). Override to do
 	 * something useful. 
 	 */
-	public boolean youControl(float x, float y) {
+	public boolean youControl(final float x, final float y) {
 		return false;
 	}
 	
@@ -86,7 +86,7 @@ public abstract class Surface {
 	 * @param y The y position of an event from the user inside the instrument, in 512 scale
 	 * @param end If true, the movement has ended. It is up to the class to detect starting movements.
 	 */
-	public void onMove(float x, float y, boolean end) {
+	public void onMove(final float x, final float y, final boolean end) {
 		// Does nothing
 	}
 	
@@ -96,7 +96,7 @@ public abstract class Surface {
 	 * @param pd The current PlaneData object. */
 	public abstract void onDraw(final Canvas c);
 	
-	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
+	public void postCalibratableSurfaceManager(final CalibratableSurfaceManager cs) {
 		// Does nothing
 	}
 	
@@ -104,7 +104,7 @@ public abstract class Surface {
 		return false;
 	}
 	
-	public void update(FGFSConnection conn) throws IOException {
+	public void update(final FGFSConnection conn) throws IOException {
 		
 	}
 }

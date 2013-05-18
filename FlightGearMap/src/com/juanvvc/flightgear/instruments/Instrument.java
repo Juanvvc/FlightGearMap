@@ -126,7 +126,7 @@ public class Instrument {
 	 * @return The X position of this x, as an inner, 512 scale point
 	 */
 	public float getXtoInnerX(float x) {
-		return 512f * (x / (this.gridSize * this.scale) - this.col);
+		return Surface.DEFAULT_SURFACE_SIZE * (x / (this.gridSize * this.scale) - this.col);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class Instrument {
 	 * @return The y position of this x, as an inner, 512 scale point
 	 */
 	public float getYtoInnerY(float y) {
-		return 512f * (y / (this.gridSize * this.scale) - this.row);
+		return Surface.DEFAULT_SURFACE_SIZE * (y / (this.gridSize * this.scale) - this.row);
 	}
 	
 	/** Sets the scale and loads the scaled images into the inner array. */

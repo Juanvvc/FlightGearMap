@@ -31,5 +31,39 @@
         <item name="plane4">plane4</item>
         <item name="plane5">plane5</item>
     </string-array>
+    
+    <string-array name="HITypes">
+        <item name="hi">Only heading</item>
+        <item name="rmi">RMI</item>
+        <item name="hsi">HSI</item>
+    </string-array>
+
+    <string-array name="HIValues">
+        <item name="hi">HI</item>
+        <item name="rmi">RMI</item>
+        <item name="hsi">HSI</item>
+    </string-array>
+    
+    <string-array name="ASITypes">
+        <item name="asi160">Vne=160</item>
+        <item name="asi200">Vne=200</item>
+    </string-array>
+
+    <string-array name="ASIValues">
+        <item name="asi160">asi160</item>
+        <item name="asi200">asi200</item>
+    </string-array>
+    
+    <string-array name="AdditionalInstrumentTypes">
+        <item name="none">None</item>
+        <item name="radar">Altitude radar</item>
+        <item name="manifold">Manifold pressure</item>
+    </string-array>
+
+    <string-array name="AdditionalInstrumentValues">
+        <item name="none">none</item>
+        <item name="radar">radar</item>
+        <item name="manifold">manifold</item>
+    </string-array>
 
 </resources>

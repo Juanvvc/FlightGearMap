@@ -161,7 +161,7 @@
 	   <name>Nav1 selected radial </name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/instrumentation/nav/selected-deg</node>
+	   <node>/instrumentation/nav/radials/selected-deg</node>
    </chunk>
 
    <chunk>
@@ -187,7 +187,7 @@
 	   <name>Nav2 selected radial </name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/instrumentation/nav[1]/selected-deg</node>
+	   <node>/instrumentation/nav[1]/radials/selected-deg</node>
    </chunk>
 
    <chunk>
@@ -290,6 +290,13 @@
 	   <type>float</type>
 	    <format>%f</format>
 	    <node>/instrumentation/heading-indicator/heading-bug-error-deg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Position of the nav station</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/instrumentation/nav/heading-deg</node>
    </chunk>
 
    <chunk>

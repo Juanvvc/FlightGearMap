@@ -71,18 +71,20 @@ public class PanelList extends Activity implements OnItemClickListener{
 			bundle.putInt("distribution", PanelView.Distribution.C337_INSTRUMENTS);
 			intent.putExtras(bundle);
 			break;
-//		case 3: // Seneca II
+// TODO: the SenecaII can not be chosen because currently is very similar to the Cessna337.
+//		case 4: // Seneca II
 //			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 //			bundle.putInt("distribution", PanelView.Distribution.SENECAII_PANEL);
 //			intent.putExtras(bundle);
 //			break;			
-		case 4: // generic glass panel
-			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
-			bundle.putBoolean("onlymap", false);
-			bundle.putBoolean("liquid", true);
-			intent.putExtras(bundle);
-			break;
-		case 5: // comms panel
+// TODO: I don't have enough knowledge to develop a working glass cockpit
+//		case 4: // generic glass panel
+//			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
+//			bundle.putBoolean("onlymap", false);
+//			bundle.putBoolean("liquid", true);
+//			intent.putExtras(bundle);
+//			break;
+		case 4: // comms panel
 			//intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 			intent = new Intent(this.getApplicationContext(), CommsPanel.class);
 			intent.putExtras(bundle);			
@@ -133,9 +135,9 @@ public class PanelList extends Activity implements OnItemClickListener{
 		}
 		
 		// List of thumbnails of the distributions
-		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_liquid, R.drawable.dist_comms};
+		private int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms};
 		// List of labels
-		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_liquid, R.string.dist_comms};
+		private int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms};
 
 		/** Creates a thumbnail and label of a distribution */
 		@Override

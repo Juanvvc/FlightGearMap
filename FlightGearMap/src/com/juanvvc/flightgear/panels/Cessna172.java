@@ -1,9 +1,9 @@
 package com.juanvvc.flightgear.panels;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,14 +11,15 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 
-import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
+import com.juanvvc.flightgear.instruments.MagnetosStarterSurface;
 import com.juanvvc.flightgear.instruments.RotateSurface;
 import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
@@ -35,7 +36,9 @@ public class Cessna172 {
 		MyBitmap hand5 = new MyBitmap("nav4.png", 496, 258, 16, 244); // NAV1 and NAV2
 		MyBitmap headings = new MyBitmap("nav2.png", -1, -1, -1, -1);
 		MyBitmap fromto = new MyBitmap("nav4.png", 0, 58, 183, 64);
-		MyBitmap switches = new MyBitmap("switches.png", -1, -1, -1, -1);
+		MyBitmap switches1 = new MyBitmap("switches.png", 0, 0, 128, 368);
+		MyBitmap switches2 = new MyBitmap("switches.png", 128, 0, 128, 368);
+		MyBitmap switches3 = new MyBitmap("switches.png", 258, 0, 122, 306);
 		
 		switch (type) {
 
@@ -52,7 +55,7 @@ public class Cessna172 {
 				});
 		case ALTIMETER:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/altimeter/setting-inhg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
+					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/nav/radials/selected-deg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
 					new StaticSurface(new MyBitmap("alt1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand2, 236, 100, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface(hand1, 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
@@ -106,6 +109,11 @@ public class Cessna172 {
 					new StaticSurface(new MyBitmap("rpm1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand1, 236, 56, PlaneData.RPM, 1, 256, 256, 0, -125, 3500, 125)
 				});
+		case RPM2:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("rpm1.png", -1, -1, -1, -1), 0, 0),
+					new RotateSurface(hand1, 236, 56, PlaneData.RPM2, 1, 256, 256, 0, -125, 3500, 125)
+				});
 		case FUEL:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("fuel1.png", -1, -1, -1, -1), 0, 0),
@@ -124,6 +132,17 @@ public class Cessna172 {
 					new RotateSurface(hand3, 0, 218, PlaneData.AMP, 1, 0, 230, -40, 55, 40, -55),
 					new RotateSurface(hand3, 288, 218, PlaneData.VOLT, 1, 288, 230, 0, -235, 40, -125)
 				});
+//		case EGT:
+//			return new Instrument(col, row, context, new Surface[] {
+//					new StaticSurface(new MyBitmap("egt1.png", -1, -1, -1, -1), 0, 0),
+//					new RotateSurface(hand3, 0, 218, PlaneData.AMP, 1, 0, 230, -40, 55, 40, -55),
+//					new RotateSurface(hand3, 288, 218, PlaneData.VOLT, 1, 288, 230, 0, -235, 40, -125)
+//				});
+		case MANIFOLD:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("manifold1.png", -1, -1, -1, -1), 0, 0),
+					new RotateSurface(hand1, 236, 56, PlaneData.MANIFOLD, 1, 256, 256, 0, -117, 5000, 117)
+				});
 		case TRIMFLAPS:
 			return new Instrument(col, row, context, new Surface[] {
 					new SlippingSurface(hand3, 180, PlaneData.ELEV_TRIM, -1, 248, 218, 1, 248, 42),
@@ -132,14 +151,15 @@ public class Cessna172 {
 				});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {
-					new SwitchSurface(switches, 0, 0, "/controls/engines/engine[0]/master-bat", "BATT"),
-					new SwitchSurface(switches, 128, 0, "/controls/engines/engine[0]/master-alt", "ALT"),
-					new SwitchSurface(switches, 256, 0, "/controls/switches/master-avionics", "AVI"),
-
-					new SwitchSurface(switches, 512+0, 0, "/controls/lighting/nav-lights", "NAV"),
-					new SwitchSurface(switches, 512+128, 0, "/controls/lighting/beacon", "BCN"),
-					new SwitchSurface(switches, 512+256, 0, "/controls/lighting/taxi-light", "TAX"),
-					new SwitchSurface(switches, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
+//					new SwitchSurface(switches2, 0, 0, "/controls/engines/engine[0]/master-bat", "BATT."),
+//					new SwitchSurface(switches2, 128, 0, "/controls/engines/engine[0]/master-alt", "ALT."),
+//					new SwitchSurface(switches1, 256, 0, "/controls/switches/master-avionics", "AVION."),
+					new SwitchSurface(switches3, 256, 0, "/controls/anti-ice/pitot-heat", "P. HEAT"),
+					new SwitchSurface(switches3, 384, 0, "/controls/lighting/strobe", "STRO."),
+					new SwitchSurface(switches3, 512+0, 0, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface(switches3, 512+128, 0, "/controls/lighting/beacon", "BCN"),
+					new SwitchSurface(switches3, 512+256, 0, "/controls/lighting/taxi-light", "TAX"),
+					new SwitchSurface(switches3, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
 				});
 		case DME:
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
@@ -148,6 +168,33 @@ public class Cessna172 {
 					new DMENumber(null, 58, 120, PlaneData.DME, face),
 					new DMENumber(null, 258, 120, PlaneData.DME_SPEED, face)
 			});
+		// TODO: Magnets are working, but starter is NOT:I have to find a way to send a continous event to fgfs
+		case MAGNETS_STARTER:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("magnetos.png", -1, -1, -1, -1), 256-128, 128-128),
+					new MagnetosStarterSurface(new MyBitmap("magnetos.png", 92, 96, 82, 84), 256-128+92, 128-128+96, 259, 136, null, "/controls/engines/engine/magnetos", "/controls/switches/starter"),
+					
+					new SwitchSurface(switches2, 0, 256, "/controls/engines/engine[0]/master-bat", "BATT."),
+					new SwitchSurface(switches2, 128, 256, "/controls/engines/engine[0]/master-alt", "ALT."),
+					new SwitchSurface(switches1, 256, 256, "/controls/switches/master-avionics", "AVION."),
+					new SwitchSurface(switches1, 384, 256, "/controls/switches/fuel-pump", "F.PUMP"),
+			});
+		case HSI1:
+			// The center of the instrument is (256, 274)
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
+					new RotateSurface(new MyBitmap("hsi3.png", 0, 0, 328, 328), 256-164, 274-164, PlaneData.HEADING, 1, 256, 274, 0, 0, 360, -360),
+					new C172HIBug(null, 256-22, 100, "/instrumentation/nav/radials/selected-deg", true, -1, 256, 274, 0, 0, 360, 360), // I'm using this to select the radial. Notice the null bitmap
+					new StaticSurface(new MyBitmap("hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
+					new SlippingSurface(new MyBitmap("hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
+					new SlippingSurface(new MyBitmap("hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
+					new HSINeedle(new MyBitmap("hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, head
+					new HSINeedle(new MyBitmap("hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, tail
+					new HSINeedle(new MyBitmap("hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 0), // CDI, scale
+					new HSINeedleDeflection(new MyBitmap("hsi2.png", 418, 172, 16, 148), 256-8, 274-74, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
+					new HSIInRange(new MyBitmap("hsi2.png", 408, 64, 100, 52), 100, 128, PlaneData.NAV1_FROM, PlaneData.NAV1_TO),
+					new StaticSurface(new MyBitmap("hsi1.png", -1, -1, -1, -1), 0, 0)
+				});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
 			return null;
@@ -155,26 +202,62 @@ public class Cessna172 {
 	}
 	
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
+		
+    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+    	String hiType = sp.getString("hi_type", "HI");
+    	String alternateIns = sp.getString("additional_instrument", "manifold");
+    	String asiType = sp.getString("asi_type", "asi160");
+		
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
-		instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 1, 0));
+		if (asiType.equals("asi160")) {
+			instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 1, 0));
+		} else {
+			instruments.add(Cessna337.createInstrument(InstrumentType.SPEED, context, 1, 0));
+		}
 		instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 2, 0));
 		instruments.add(Cessna172.createInstrument(InstrumentType.ALTIMETER, context, 3, 0));
-		instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 4, 0));
+		if ( hiType.equals("HSI")) {
+			if (alternateIns.equals("radar")) {
+				instruments.add(Cessna337.createInstrument(InstrumentType.RADAR, context, 4, 0));
+			} else if (alternateIns.equals("manifold")) {
+				instruments.add(Cessna172.createInstrument(InstrumentType.MANIFOLD, context, 4, 0));
+			}
+		} else {
+			instruments.add(Cessna172.createInstrument(InstrumentType.NAV1, context, 4, 0));
+		}
 		instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 1));
-		instruments.add(Cessna172.createInstrument(InstrumentType.HEADING, context, 2, 1));
+		if (hiType.equals("HSI")) {
+			instruments.add(Cessna172.createInstrument(InstrumentType.HSI1, context, 2, 1));
+		} else if (hiType.equals("RMI")) {
+			instruments.add(Cessna337.createInstrument(InstrumentType.HEADING, context, 2, 1));
+		} else {
+			instruments.add(Cessna172.createInstrument(InstrumentType.HEADING, context, 2, 1));
+		}
 		instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 3, 1));
 		instruments.add(Cessna172.createInstrument(InstrumentType.NAV2, context, 4, 1));
 
 		instruments.add(Cessna172.createInstrument(InstrumentType.RPM, context, 1, 2));
-		instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 4, 2));
+		if ( hiType.equals("RMI")) {
+			if (alternateIns.equals("radar")) {
+				instruments.add(Cessna337.createInstrument(InstrumentType.RADAR, context, 4, 2));
+			} else if (alternateIns.equals("manifold")) {
+				instruments.add(Cessna172.createInstrument(InstrumentType.MANIFOLD, context, 4, 2));
+			}
+		} else {
+			instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 4, 2));
+		}
 		
-		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
-		instruments.add(Cessna172.createInstrument(InstrumentType.OIL_TEMP, context, 0.2f, 1));
-		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.OIL_TEMP, context, 0.2f, 0));
+		instruments.add(Cessna172.createInstrument(InstrumentType.FUEL, context, 0.2f, 1));
+//		instruments.add(Cessna172.createInstrument(InstrumentType.EGT, context, 0.5f, 0));
+//		instruments.add(Cessna172.createInstrument(InstrumentType.BATT, context, 0.2f, 0));
+
 		
 		instruments.add(Cessna172.createInstrument(InstrumentType.SWITCHES, context, 2, 2));
 		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2.5f));
 		instruments.add(Cessna172.createInstrument(InstrumentType.DME, context, 2, 2.5f));
+		
+		instruments.add(Cessna172.createInstrument(InstrumentType.MAGNETS_STARTER, context, 0, 2));
 
 		return instruments;
 	}
@@ -228,7 +311,69 @@ class C172HIBug extends CalibratableRotateSurface {
 		float vparent = super.getRotationAngle(v);
 		return vparent - planeData.getFloat(PlaneData.HEADING);
 	}
+}
 
+
+class HSINeedle extends RotateSurface {
+	private int pdIdx2;
+	private float roffset;
+	
+	public HSINeedle(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, float roffset) {
+		super(bitmap, x, y, pdIdx, 1, 256, 274, 0, 0, 360, 360);
+		this.pdIdx2 = pdIdx2;
+		this.roffset = roffset;
+	}
+	
+	protected float getRotationAngle(PlaneData pd) {
+		float v = super.getRotationAngle(pd);
+		return v - pd.getFloat(this.pdIdx2)+ roffset;
+	}
+}
+class HSINeedleDeflection extends HSINeedle {
+	private int pdIdx3;
+	
+	public HSINeedleDeflection(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, int pdIdx3, float roffset) {
+		super(bitmap, x, y, pdIdx, pdIdx2, roffset);
+		this.pdIdx3 = pdIdx3;
+	}
+	
+	@Override
+	public void onDraw(Canvas c) {
+		if (planeData == null || !planeData.hasData() || bitmap == null || bitmap.getScaledBitmap() == null) {
+			return;
+		}
+		
+		m.reset();
+		final float realscale = parent.getScale() * parent.getGridSize();
+		final float col = parent.getCol();
+		final float row = parent.getRow();
+		// max deflexion is 10, and it is a translation of 80 pixels
+		m.setTranslate(
+				(col + relx + planeData.getFloat(this.pdIdx3) * 8 / DEFAULT_SURFACE_SIZE) * realscale,
+				(row + rely ) * realscale);
+		m.postRotate(
+				getRotationAngle(this.planeData),
+				(col + rcx / DEFAULT_SURFACE_SIZE ) * realscale,
+				(row + rcy / DEFAULT_SURFACE_SIZE ) * realscale);
+		c.drawBitmap(bitmap.getScaledBitmap(), m, null);
+	}
+}
+class HSIInRange extends StaticSurface {
+	private int indexTo, indexFrom;
+
+	public HSIInRange(MyBitmap bitmap, float x, float y, final int indexTo, final int indexFrom) {
+		super(bitmap, x, y);
+		this.indexFrom = indexFrom;
+		this.indexTo = indexTo;
+	}
+	
+	@Override
+	public void onDraw(Canvas c) {
+		// draw only if the to/flag are not set
+		if (planeData != null && !(planeData.getBool(this.indexTo) || planeData.getBool(this.indexFrom))) {
+			super.onDraw(c);
+		}
+	}
 }
 
 /** The long hand of the altimeter shows the modulus of the altitude.

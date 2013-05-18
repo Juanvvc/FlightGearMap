@@ -75,7 +75,8 @@ public class BitmapProvider {
 		if (!bitmaps.containsKey(imgName)) {
 			AssetManager mng = context.getAssets();
 			try {
-				bitmaps.put(imgName, BitmapFactory.decodeStream(mng.open(dir + File.separator + imgName)));
+				Bitmap l = BitmapFactory.decodeStream(mng.open(dir + File.separator + imgName));
+				bitmaps.put(imgName, l);
 			} catch (IOException e) {
 				return null;
 			}

@@ -21,13 +21,13 @@
   <body>
 $ 2.0
   % Version 2.0
-  _ 2013-04-04
+  _ 2013-05-18
     ! <b>YOU MUST UPDATE ANDATLAS.XML TO THE LAST VERSION</b>
-    * Show changelog dialog (this message)
-    * New panel: Liquid panel
+    * Show changelog dialog (this message!)
+    * New instruments: altitude radar, HSI, RMI, magnetos and starter.
     * New panel: Cessna 337 Skymaster
     * New panel: Comms panel
-    * Cessna 172: VOR1 now has a DME
+    * Single engine panel: you can configure some of the instruments
     * Speed improvements on all surfaces
 $ 1.5
   % Version 1.5

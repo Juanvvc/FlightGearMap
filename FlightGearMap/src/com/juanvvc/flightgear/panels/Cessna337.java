@@ -28,7 +28,9 @@ public class Cessna337 {
 		MyBitmap hand3 = new MyBitmap("misc2.png", 4, 200, 140, 24); // used in small instruments
 		MyBitmap hand4 = new MyBitmap("misc2.png", 40, 200, 100, 24); // used in even smaller instruments
 		MyBitmap headings = new MyBitmap("nav2.png", -1, -1, -1, -1);
-		MyBitmap switches = new MyBitmap("switches.png", -1, -1, -1, -1);
+		MyBitmap switches1 = new MyBitmap("switches.png", 0, 0, 128, 368);
+		MyBitmap switches2 = new MyBitmap("switches.png", 128, 0, 128, 368);
+		MyBitmap switches3 = new MyBitmap("switches.png", 258, 0, 122, 306);
 
 		
 		switch (type) {
@@ -52,12 +54,13 @@ public class Cessna337 {
 				new RotateSurface(hand3, 276, 244, PlaneData.MANIFOLD2, 1, 256, 256, 5, 70, 32, -60),
 				new StaticSurface(new MyBitmap("misc4.png", 160, 0, 160, 160), 256-80, 256-80)
 			});
-		case HEADING: // includes ADF (but it is not a RMI since it does not include VOR)
+		case HEADING: // Actually, it is a RMI
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
-					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
+					new RotateSurface(new MyBitmap("nav4.png", 398, 50, 54, 324), 256-27, 256-162, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
+					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.NAV1_HEADING, 1, 256, 256, 0, 0, 360, 360),
 					new RotateSurface(headings, 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
-					new CalibratableRotateSurface(new MyBitmap("misc2.png", 242, 290, 44, 44), 256-22, 36, null, true, -1, 256, 256, 0, 0, 360, -360),
+					new C172HIBug(new MyBitmap("misc2.png", 242, 290, 44, 44), 256-22, 36, "/autopilot/settings/heading-bug-deg", true, -1, 256, 256, -180, -180, 180, 180),
 
 					new StaticSurface(new MyBitmap("nav5.png", -1, -1, -1, -1), 0, 0),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
@@ -95,16 +98,16 @@ public class Cessna337 {
 			});
 		case SWITCHES:
 			return new Instrument(col, row, context, new Surface[] {
-					new SwitchSurface(switches, 0, 0, "/controls/engines/engine[0]/master-bat", "BATT"),
-					new SwitchSurface(switches, 128, 0, "/controls/engines/engine[0]/master-alt", "ALT1"),
-					new SwitchSurface(switches, 256, 0, "/controls/engines/engine[1]/master-alt", "ALT2"),
-					new SwitchSurface(switches, 384, 0, "/controls/switches/master-avionics", "AVI"),
+					new SwitchSurface(switches2, 0, 0, "/controls/engines/engine[0]/master-bat", "BATT"),
+					new SwitchSurface(switches2, 128, 0, "/controls/engines/engine[0]/master-alt", "ALT1"),
+					new SwitchSurface(switches2, 256, 0, "/controls/engines/engine[1]/master-alt", "ALT2"),
+					new SwitchSurface(switches1, 384, 0, "/controls/switches/master-avionics", "AVI"),
 					
 
-					new SwitchSurface(switches, 512+0, 0, "/controls/lighting/nav-lights", "NAV"),
-					new SwitchSurface(switches, 512+128, 0, "/controls/lighting/beacon", "BCN"),
-					new SwitchSurface(switches, 512+256, 0, "/controls/lighting/taxi-light", "TAX"),
-					new SwitchSurface(switches, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
+					new SwitchSurface(switches3, 512+0, 0, "/controls/lighting/nav-lights", "NAV"),
+					new SwitchSurface(switches3, 512+128, 0, "/controls/lighting/beacon", "BCN"),
+					new SwitchSurface(switches3, 512+256, 0, "/controls/lighting/taxi-light", "TAX"),
+					new SwitchSurface(switches3, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
 				});
 
 		default:

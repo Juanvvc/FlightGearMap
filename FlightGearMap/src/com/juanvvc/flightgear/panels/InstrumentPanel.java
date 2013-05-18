@@ -35,6 +35,8 @@ public class InstrumentPanel extends Activity {
 	private PanelView panelView = null;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
+	/** The port for Telnet communications. */
+	private int telnetPort = 9000;
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** Reference to the Telnet Thread. */
@@ -78,14 +80,23 @@ public class InstrumentPanel extends Activity {
     /** Load preferences. */
     public void loadPreferences() {
     	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-  		String port = sp.getString("udp_port", "5501");
-	
+
   		// select the UDP port
+    	String port = sp.getString("udp_port", "5501");
   		try {
   			udpPort = Integer.valueOf(port);
   		} catch (Exception e) {
   			udpPort = 5501;
   		}
+  		
+  		// select the telnet port
+    	port = sp.getString("telnet_port", "9000");
+  		try {
+  			telnetPort = Integer.valueOf(port);
+  		} catch (Exception e) {
+  			telnetPort = 9000;
+  		}
+
     }
     
     @Override
@@ -296,7 +307,7 @@ public class InstrumentPanel extends Activity {
 			        		(ipAddress >> 24 & 0xff));
 			        
 			        // add information about fgfs+++
-			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=9000";
+			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=" + telnetPort;
 			        
 			        // show the dialog on screen
 					currentDialog = new AlertDialog.Builder(InstrumentPanel.this).setIcon(R.drawable.ic_launcher)
