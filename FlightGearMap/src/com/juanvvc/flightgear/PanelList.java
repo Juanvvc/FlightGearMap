@@ -29,6 +29,35 @@ import com.juanvvc.flightgear.panels.InstrumentPanel;
 import com.juanvvc.flightgear.panels.MapInstrumentPanel;
 import com.juanvvc.flightgear.panels.PanelView;
 
+/* ////////////////////////////////////////
+  check list: before uploading a new version to Google Play:
+  
+  1.- Create the normal version:
+  - Commit the version to git and set a new flag:
+      git commit -a -m blahblahblah
+      git tag v2.0
+      git push --tags github
+      git push --tags linsertel
+  - Set DEBUG to false in MyLog.java
+  - Export the project to FligthGear.apk
+  - Signature: myjuanvvc.keystore
+  
+  2.- Create the donate version:
+  - Set DONATE_VERSION to true in this file
+  - Change the icon in the manifest to ic_launcherplus
+  - RMB on the project name->Android tools->rename application package to com.juanvvc.flightgeardonate
+  - Export the project to FlightGearDonate.apk
+  - Signature: myjuanvvc.keystore
+  
+  3.- Back to development version:
+  - Undo all changes. Easy way:
+      Exit Eclipse
+      git --hard reset
+  - Open Eclipse again, ok to the warning message
+  - Change the version number in the manifest.
+      
+///////////////////////////////////////// */
+
 /** This activity shows a list of the available panel distributions. */
 public class PanelList extends Activity implements OnItemClickListener{
 	
