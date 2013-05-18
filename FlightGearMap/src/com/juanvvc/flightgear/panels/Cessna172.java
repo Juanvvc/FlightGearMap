@@ -55,7 +55,7 @@ public class Cessna172 {
 				});
 		case ALTIMETER:
 			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/nav/radials/selected-deg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
+					new CalibratableRotateSurface(new MyBitmap("alt3.png", -1, -1, -1, -1), 0, 0, "/instrumentation/altimeter/setting-inhg", true, -1, 256, 256, 27.9f, 210, 31.5f, -150),
 					new StaticSurface(new MyBitmap("alt1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand2, 236, 100, PlaneData.ALTITUDE, 0.001f, 256, 256, 0, 0, 30, 3 * 360),
 					new C172AltimeterLongHandSurface(hand1, 236, 56, PlaneData.ALTITUDE, 1, 256, 256, 0, 0, 10, 360)
@@ -83,7 +83,7 @@ public class Cessna172 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
 					new CalibratableRotateSurface(headings, 0, 0, "/instrumentation/adf/rotation-deg", true, -1, 256, 256, 0, 0, 360, -360),
-					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 360, 360),
+					new RotateSurface(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 720, 720), // for some reason, the ADF instrument shows headings from 0 to 720
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
 				});
 		case HEADING:
@@ -188,10 +188,10 @@ public class Cessna172 {
 					new StaticSurface(new MyBitmap("hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
 					new SlippingSurface(new MyBitmap("hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
 					new SlippingSurface(new MyBitmap("hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
-					new HSINeedle(new MyBitmap("hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, head
-					new HSINeedle(new MyBitmap("hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, tail
-					new HSINeedle(new MyBitmap("hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 0), // CDI, scale
-					new HSINeedleDeflection(new MyBitmap("hsi2.png", 418, 172, 16, 148), 256-8, 274-74, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
+					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 180), // CDI, head
+					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 180), // CDI, tail
+					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 0), // CDI, scale
+					new HSINeedleDeflection(new MyBitmap("hsi2.png", 418, 172, 16, 148), 256-8, 274-74, PlaneData.NAV1_SEL_RADIAL, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
 					new HSIInRange(new MyBitmap("hsi2.png", 408, 64, 100, 52), 100, 128, PlaneData.NAV1_FROM, PlaneData.NAV1_TO),
 					new StaticSurface(new MyBitmap("hsi1.png", -1, -1, -1, -1), 0, 0)
 				});
@@ -295,6 +295,26 @@ class C172AirSpeedSurface extends RotateSurface {
 	}
 }
 
+// a rotate surface that rotates in addition to the angle that it needs, the current heading and a offset
+// Used in the HSI of the NAV heading
+class RelativeToHeadingRotateSurface extends RotateSurface {
+	private float roffset;
+	
+	public RelativeToHeadingRotateSurface(MyBitmap bitmap, float x, float y,
+			int pdIdx, float rscale, int rcx, int rcy, float min, float amin,
+			float max, float amax, float roffset) {
+		super(bitmap, x, y, pdIdx, rscale, rcx, rcy, min, amin, max, amax);
+		this.roffset = roffset;
+	}
+	
+	@Override
+	protected float getRotationAngle(PlaneData pd) {
+		float vparent = super.getRotationAngle(pd);
+		return vparent - planeData.getFloat(PlaneData.HEADING) + roffset;
+	}	
+}
+
+
 class C172HIBug extends CalibratableRotateSurface {
 
 	public C172HIBug(MyBitmap bitmap, float x, float y, String prop,
@@ -314,27 +334,27 @@ class C172HIBug extends CalibratableRotateSurface {
 }
 
 
-class HSINeedle extends RotateSurface {
+//class HSINeedle extends RotateSurface {
+//	private int pdIdx2;
+//	private float roffset;
+//	
+//	public HSINeedle(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, float roffset) {
+//		super(bitmap, x, y, pdIdx, 1, 256, 274, 0, 0, 360, 360);
+//		this.pdIdx2 = pdIdx2;
+//		this.roffset = roffset;
+//	}
+//	
+//	protected float getRotationAngle(PlaneData pd) {
+//		float v = super.getRotationAngle(pd);
+//		return v - pd.getFloat(this.pdIdx2)+ roffset;
+//	}
+//}
+class HSINeedleDeflection extends RelativeToHeadingRotateSurface {
 	private int pdIdx2;
-	private float roffset;
 	
-	public HSINeedle(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, float roffset) {
-		super(bitmap, x, y, pdIdx, 1, 256, 274, 0, 0, 360, 360);
+	public HSINeedleDeflection(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, float roffset) {
+		super(bitmap, x, y, pdIdx, 1, 256, 274, 0, 0, 360, 360, roffset);
 		this.pdIdx2 = pdIdx2;
-		this.roffset = roffset;
-	}
-	
-	protected float getRotationAngle(PlaneData pd) {
-		float v = super.getRotationAngle(pd);
-		return v - pd.getFloat(this.pdIdx2)+ roffset;
-	}
-}
-class HSINeedleDeflection extends HSINeedle {
-	private int pdIdx3;
-	
-	public HSINeedleDeflection(MyBitmap bitmap, float x, float y, int pdIdx, int pdIdx2, int pdIdx3, float roffset) {
-		super(bitmap, x, y, pdIdx, pdIdx2, roffset);
-		this.pdIdx3 = pdIdx3;
 	}
 	
 	@Override
@@ -349,7 +369,7 @@ class HSINeedleDeflection extends HSINeedle {
 		final float row = parent.getRow();
 		// max deflexion is 10, and it is a translation of 80 pixels
 		m.setTranslate(
-				(col + relx + planeData.getFloat(this.pdIdx3) * 8 / DEFAULT_SURFACE_SIZE) * realscale,
+				(col + relx + planeData.getFloat(this.pdIdx2) * 8 / DEFAULT_SURFACE_SIZE) * realscale,
 				(row + rely ) * realscale);
 		m.postRotate(
 				getRotationAngle(this.planeData),

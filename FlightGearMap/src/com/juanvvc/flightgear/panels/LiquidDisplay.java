@@ -24,7 +24,8 @@ import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 
-/** Distributes instruments in a liquid display */
+/** Distributes instruments in a liquid display.
+ * TODO: this class is not working (and probably never will) */
 public class LiquidDisplay {
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
 		switch(type) {
@@ -34,19 +35,19 @@ public class LiquidDisplay {
 					new RotateSurface(new MyBitmap("ai.roll.ref.png", -1, -1, -1, -1), 0, 0, PlaneData.ROLL, 1, 256, 256, -180, 180, 180, -180),
 					new StaticSurface(new MyBitmap("ai.ref.png", -1, -1, -1, -1), -256, -162)
 				});
-		case HSI1:
-			// The center of the instrument is (256, 274)
-			return new Instrument(col, row, context, new Surface[] {
-					new CalibratableRotateSurface(new MyBitmap("liquid.hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
-					new StaticSurface(new MyBitmap("liquid.hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
-					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
-					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
-					new HSINeedle(new MyBitmap("liquid.hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, head
-					new HSINeedle(new MyBitmap("liquid.hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, tail
-					new HSINeedle(new MyBitmap("liquid.hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 0), // CDI, scale
-					new HSINeedleDeflection(new MyBitmap("liquid.hsi2.png", 412, 172, 16, 152), 256-8, 274-76, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
-					new StaticSurface(new MyBitmap("liquid.hsi1.png", -1, -1, -1, -1), 0, 0)
-				});
+//		case HSI1:
+//			// The center of the instrument is (256, 274)
+//			return new Instrument(col, row, context, new Surface[] {
+//					new CalibratableRotateSurface(new MyBitmap("liquid.hsi3.png", 0, 0, 328, 328), 256-164, 274-164, "/instrumentation/heading-indicator/indicated-heading-deg", true, PlaneData.HEADING, 256, 274, 0, 0, 360, -360),
+//					new StaticSurface(new MyBitmap("liquid.hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
+//					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
+//					new SlippingSurface(new MyBitmap("liquid.hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
+//					new HSINeedle(new MyBitmap("liquid.hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, head
+//					new HSINeedle(new MyBitmap("liquid.hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 180), // CDI, tail
+//					new HSINeedle(new MyBitmap("liquid.hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, 0), // CDI, scale
+//					new HSINeedleDeflection(new MyBitmap("liquid.hsi2.png", 412, 172, 16, 152), 256-8, 274-76, PlaneData.NAV1_SEL_RADIAL, PlaneData.HEADING, PlaneData.NAV1_DEFLECTION, 0), // CDI, deflection
+//					new StaticSurface(new MyBitmap("liquid.hsi1.png", -1, -1, -1, -1), 0, 0)
+//				});
 		case BELTS:
 			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {

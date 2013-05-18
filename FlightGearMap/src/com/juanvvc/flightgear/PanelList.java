@@ -74,13 +74,15 @@ public class PanelList extends Activity implements OnItemClickListener{
         
         // Create the ads
         if (!DONATE_VERSION) {
+        	LinearLayout layout = (LinearLayout)findViewById(R.id.panelviewLayout);
+	        
         	TextView tv = new TextView(this);
         	tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         	tv.setText(R.string.consider_donating);
+        	layout.addView(tv);
         	
 	        AdView adView = new AdView(this, AdSize.BANNER, "a15196dbbc3193b");
-	        LinearLayout layout = (LinearLayout)findViewById(R.id.panelviewLayout);
-	        layout.addView(adView);
+	        layout.addView(adView);	        
 	        AdRequest adRequest = new AdRequest();
 	        if (MyLog.isDebug()) {
 	        	adRequest.addTestDevice("874C587B68F6782F0CD99504C02613A8"); // Tablet

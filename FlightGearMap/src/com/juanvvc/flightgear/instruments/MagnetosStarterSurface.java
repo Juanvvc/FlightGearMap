@@ -16,7 +16,7 @@ import com.juanvvc.flightgear.MyLog;
 public class MagnetosStarterSurface extends Surface {
 	private String propMagnetos;
 	private String propStarter;
-	private static final int SWITCH_SIZE = 200;
+	private static final int SWITCH_SIZE = 120;
 	int value; // 0=none, 1=right magnet, 2=left magnet, 3=both, 4=start
 	private String label;
 	private float textX, textY;
