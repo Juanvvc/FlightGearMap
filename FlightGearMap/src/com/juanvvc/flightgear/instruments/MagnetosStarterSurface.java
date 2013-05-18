@@ -48,6 +48,9 @@ public class MagnetosStarterSurface extends Surface {
 			textPaint = new Paint();
 			textPaint.setColor(0xffffffff);
 		}
+		
+		firstRead = true;
+		dirty = false;
 	}
 	
 	@Override
@@ -131,8 +134,18 @@ public class MagnetosStarterSurface extends Surface {
 		if (conn == null || conn.isClosed()) {
 			return;
 		}
-		// if not moving, just read from the remote connection
-		if (dirty) {
+
+		if (!dirty || firstRead) {
+			if (conn.getBoolean(this.propStarter)) {
+				value = 4;
+			} else {
+				value = conn.getInt(this.propMagnetos, 0);
+			}
+			// TODO: reading the state from the remote fgfs is SLOW.
+			// We only read once after creating the switch.
+			// So, if the user changes the state in the remote fgfs, we will never find out.
+			firstRead = false;
+		} else {
 			// if dirty, post the state of the switch
 			if (value < 4) {
 				conn.setInt(this.propMagnetos, value);
@@ -143,16 +156,6 @@ public class MagnetosStarterSurface extends Surface {
 				MyLog.d(this, "Starter");
 			}
 			dirty = false;
-		} else {
-			if (conn.getBoolean(this.propStarter)) {
-				value = 4;
-			} else {
-				value = conn.getInt(this.propMagnetos, 0);
-			}
-			// TODO: reading the state from the remote fgfs is SLOW.
-			// We only read once after creating the switch.
-			// So, if the user changes the state in the remote fgfs, we will never find out.
-			firstRead = false;
 		}
 	}
 }

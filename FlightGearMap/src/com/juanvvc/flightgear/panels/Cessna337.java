@@ -43,16 +43,16 @@ public class Cessna337 {
 		case RPM:
 			return new Instrument(col, row, context, new Surface[] {
 				new StaticSurface(new MyBitmap("rpm2.png", -1, -1, -1, -1), 0, 0),
-				new RotateSurface(hand3, 266, 244, PlaneData.RPM, 1, 256, 256, 500, 180-63, 3000, 180+63),
-				new RotateSurface(hand3, 266, 244, PlaneData.RPM2, 1, 256, 256, 500, 63, 3000, -63),
-				new StaticSurface(new MyBitmap("misc4.png", 0, 0, 160, 160), 256-80, 256-80)
+				new RotateSurface(hand1, 276-20, 56, PlaneData.RPM, 1, 276, 256, 500, 270-60, 3000, 270+60),
+				new RotateSurface(hand1, 236-20, 56, PlaneData.RPM2, 1, 236, 256, 500, 90+60, 3000, 90-60),
+				new StaticSurface(new MyBitmap("misc4.png", 160, 0, 160, 160), 256-80, 256-80)
 			});
 		case MANIFOLD:
 			return new Instrument(col, row, context, new Surface[] {
-				new StaticSurface(new MyBitmap("mp.png", -1, -1, -1, -1), 0, 0),
-				new RotateSurface(hand3, 276, 244, PlaneData.MANIFOLD, 1, 256, 256, 5, 180-70, 32, 180+60),
-				new RotateSurface(hand3, 276, 244, PlaneData.MANIFOLD2, 1, 256, 256, 5, 70, 32, -60),
-				new StaticSurface(new MyBitmap("misc4.png", 160, 0, 160, 160), 256-80, 256-80)
+				new StaticSurface(new MyBitmap("manifold2.png", -1, -1, -1, -1), 0, 0),
+				new RotateSurface(hand3, 276, 244, PlaneData.MANIFOLD, 1, 256, 256, 10, 180-70, 32, 180+60),
+				new RotateSurface(hand3, 276, 244, PlaneData.MANIFOLD2, 1, 256, 256, 10, 70, 32, -60),
+				new StaticSurface(new MyBitmap("misc4.png", 0, 0, 160, 160), 256-80, 256-80)
 			});
 		case HEADING: // Actually, it is a RMI
 			return new Instrument(col, row, context, new Surface[] {
