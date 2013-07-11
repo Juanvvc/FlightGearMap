@@ -33,6 +33,7 @@ import com.juanvvc.flightgear.panels.PanelView;
   check list: before uploading a new version to Google Play:
   
   1.- Create the normal version:
+  - List the changes and date in res/raw/changelog.txt
   - Commit the version to git and set a new flag:
       git commit -a -m blahblahblah
       git tag v2.0
@@ -40,14 +41,14 @@ import com.juanvvc.flightgear.panels.PanelView;
       git push --tags linsertel
   - Set DEBUG to false in MyLog.java
   - Export the project to FligthGear.apk
-  - Signature: myjuanvvc.keystore
+  - Signature: ~/.android/myjuanvvc.keystore
   
   2.- Create the donate version:
   - Set DONATE_VERSION to true in this file
   - Change the icon in the manifest to ic_launcherplus
   - RMB on the project name->Android tools->rename application package to com.juanvvc.flightgeardonate
   - Export the project to FlightGearDonate.apk
-  - Signature: myjuanvvc.keystore
+  - Signature: ~/.android/myjuanvvc.keystore
   
   3.- Back to development version:
   - Undo all changes. Easy way:
@@ -99,7 +100,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 		// if it is the first run of this version, show the changelog.txt
 		ChangeLog cl = new ChangeLog(this);
         if (cl.firstRun() || MyLog.isDebug()) {
-            cl.getLogDialog().show();
+            cl.getFullLogDialog().show();
         }
         
         // Create the ads

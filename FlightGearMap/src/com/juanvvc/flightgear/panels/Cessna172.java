@@ -124,7 +124,7 @@ public class Cessna172 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("oil1.png", -1, -1, -1, -1), 0, 0),
 					new RotateSurface(hand3, 0, 218, PlaneData.OIL_TEMP, 1, 0, 230, 75, 60, 250, -60),
-					new RotateSurface(hand3, 288, 218, PlaneData.OIL_PRESS, 1, 288, 230, 0, -250, 115, -210)
+					new RotateSurface(hand3, 288, 218, PlaneData.OIL_PRESS, 1, 288, 230, 0, -240, 115, -120)
 				});
 		case BATT:
 			return new Instrument(col, row, context, new Surface[] {

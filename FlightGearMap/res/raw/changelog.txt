@@ -19,6 +19,11 @@
     </style>
   </head>
   <body>
+$ 2.1
+  % Version 2.1
+  _ 2013-07-15
+    * The bug indicator in the C337 panel is movable
+    * The oil pressure in the single engine panel is now correct 
 $ 2.0
   % Version 2.0
   _ 2013-05-18

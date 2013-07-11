@@ -58,10 +58,9 @@ public class Cessna337 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("nav3.png", 0, 190, 320, 320), 256-160, 256-160),
 					new RotateSurface(new MyBitmap("nav4.png", 398, 50, 54, 324), 256-27, 256-162, PlaneData.ADF_DEFLECTION, 1, 256, 256, 0, 0, 720, 720),  // for some reason, the ADF instrument shows headings from 0 to 720
-					new C172HIBug(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, null, false, PlaneData.NAV1_HEADING, 256, 256, 0, 0, 360, 360),
 					new RotateSurface(headings, 0, 0, PlaneData.HEADING, 1, 256, 256, 0, 0, 360, -360),
 					new C172HIBug(new MyBitmap("misc2.png", 242, 290, 44, 44), 256-22, 36, "/autopilot/settings/heading-bug-deg", true, -1, 256, 256, -180, -180, 180, 180),
-
+					new C172HIBug(new MyBitmap("nav4.png", 248, 200, 32, 300), 236, 100, null, false, PlaneData.NAV1_HEADING, 256, 256, 0, 0, 360, 360),
 					new StaticSurface(new MyBitmap("nav5.png", -1, -1, -1, -1), 0, 0),
 					new StaticSurface(new MyBitmap("nav1.png", -1, -1, -1, -1), 0, 0)
 				});

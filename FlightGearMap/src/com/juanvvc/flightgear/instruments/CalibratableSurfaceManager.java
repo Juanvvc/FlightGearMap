@@ -90,6 +90,7 @@ public class CalibratableSurfaceManager extends Thread {
 		}
 		
 		try {
+			MyLog.d(this, "Closing telnet connection");
 			conn.close();
 		} catch (IOException e) {
 			MyLog.w(this, "Error closing connection: " + e.toString());
