@@ -76,6 +76,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	
 	/** The bitmap to draw instruments */
 	private Bitmap buffer = null;
+	/** THe X position of the buffer (centered on screen, or on the left side) */
+	private int bufferX = 0;
+	/** The Y position of the buffer (centered on screen, or on the top) */
+	private int bufferY = 0;
 
 	/* Constructors */
 	public PanelView(Context context) {
@@ -271,11 +275,20 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 						(int)(scale * cols * instruments.get(0).getGridSize()),
 						(int)(scale * rows * instruments.get(0).getGridSize()),
 						Bitmap.Config.RGB_565);
+				bufferX = (this.getWidth() - buffer.getWidth()) / 2;
+				bufferY = (this.getHeight() - buffer.getHeight()) / 2;
+			} else {
+				if (buffer != null) {
+					buffer.recycle();
+				}
+				buffer = null;
+				bufferX = 0;
+				bufferY = 0;
 			}
 		}
 	}
 	
-	/** Reload and rescale images inside the instruments.
+	/** Reload and re-scale images inside the instruments.
 	 * Call this method when the view is created or its size changes.
 	 * TODO: This method could be run on a different thread, but
 	 * on my devices loading does not takes long and can be
@@ -375,7 +388,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			if (CENTER_INSTRUMENTS) {
 				if (buffer != null) {
 					c = surfaceHolder.lockCanvas();
-					c.drawBitmap(buffer, (getWidth() - buffer.getWidth()) / 2, (getHeight() - buffer.getHeight()) / 2, null);
+					c.drawBitmap(buffer, bufferX, bufferY, null);
 					surfaceHolder.unlockCanvasAndPost(c);
 				}
 			} else {
@@ -387,20 +400,22 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		switch(event.getAction()) {
+		// remember: instruments may be drawing on a buffer, with an offset of (bufferX, bufferY)
+		// if no buffer is used, then it is mandatory that bufferX=bufferY=0
 		case MotionEvent.ACTION_DOWN:
 			if (this.movingSurface != null) {
 				this.movingSurface.onMove(-1, -1, true);
 			}
 			for(Instrument i: this.instruments) {
-				movingSurface = i.getControlingSurface(event.getX(), event.getY());
+				movingSurface = i.getControlingSurface(event.getX() - bufferX, event.getY() - bufferY);
 				if (movingSurface != null) {
 					break;
 				}
 			}
 			if (movingSurface != null) {
 				movingSurface.onMove(
-						movingSurface.getParent().getXtoInnerX(event.getX()),
-						movingSurface.getParent().getYtoInnerY(event.getY()),
+						movingSurface.getParent().getXtoInnerX(event.getX() - bufferX),
+						movingSurface.getParent().getYtoInnerY(event.getY() - bufferY),
 						false);
 			} else {
 				MyLog.d(this, "Event down and no surface controls the movement");
@@ -409,8 +424,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		case MotionEvent.ACTION_UP:
 			if (this.movingSurface != null) {
 				movingSurface.onMove(
-						movingSurface.getParent().getXtoInnerX(event.getX()),
-						movingSurface.getParent().getYtoInnerY(event.getY()),
+						movingSurface.getParent().getXtoInnerX(event.getX() - bufferX),
+						movingSurface.getParent().getYtoInnerY(event.getY() - bufferY),
 						true);
 				movingSurface = null;
 			} else {
@@ -421,8 +436,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		default:
 			if (this.movingSurface != null) {
 				movingSurface.onMove(
-						movingSurface.getParent().getXtoInnerX(event.getX()),
-						movingSurface.getParent().getYtoInnerY(event.getY()),
+						movingSurface.getParent().getXtoInnerX(event.getX() - bufferX),
+						movingSurface.getParent().getYtoInnerY(event.getY() - bufferY),
 						false);
 			} else {
 				MyLog.d(this, "Event move and no surface controls the movement");

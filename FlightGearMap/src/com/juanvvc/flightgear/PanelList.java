@@ -34,6 +34,7 @@ import com.juanvvc.flightgear.panels.PanelView;
   
   1.- Create the normal version:
   - List the changes and date in res/raw/changelog.txt
+  - Check the version number in the manifiest: it should be higher than the one in Google Play
   - Commit the version to git and set a new flag:
       git commit -a -m blahblahblah
       git tag v2.0
@@ -55,7 +56,7 @@ import com.juanvvc.flightgear.panels.PanelView;
       Exit Eclipse
       git --hard reset
   - Open Eclipse again, ok to the warning message
-  - Change the version number in the manifest.
+  - Start a new iteration by updating the version number in the manifest: one higher
       
 ///////////////////////////////////////// */
 
