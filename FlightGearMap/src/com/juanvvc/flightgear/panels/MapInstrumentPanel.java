@@ -190,7 +190,7 @@ public class MapInstrumentPanel extends Activity {
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
+    	showToast(getString(R.string.waiting_connection), Toast.LENGTH_LONG);
     	
 
     	if (USE_WAKELOCK) {
@@ -240,6 +240,16 @@ public class MapInstrumentPanel extends Activity {
     		wakeLock.release();
     	}
     }
+    
+	private Toast myToast=null;
+	/** Shows a toast on the screen */
+	private void showToast(String msg, int duration) {
+		if(myToast != null) {
+			myToast.cancel();
+		}
+		myToast = Toast.makeText(this, msg, duration);
+		myToast.show();
+	}
 
 
 	/** An AsyncTask to receive data from a remote UDP server.
@@ -303,7 +313,7 @@ public class MapInstrumentPanel extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(MapInstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_SHORT).show();
+				showToast(getString(R.string.conn_established), Toast.LENGTH_SHORT);
 				firstMessage = false;
 			}
 			
@@ -409,7 +419,7 @@ public class MapInstrumentPanel extends Activity {
 						.show();
 		        }
 	        } catch (Exception e) {
-	        	Toast.makeText(MapInstrumentPanel.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
+	        	showToast(e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG);
 	        }
 		}
 	}

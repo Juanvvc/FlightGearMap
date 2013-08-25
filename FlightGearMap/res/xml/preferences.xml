@@ -56,6 +56,13 @@
             android:entries="@array/AdditionalInstrumentTypes"
             android:entryValues="@array/AdditionalInstrumentValues"
         />
+		
+		<CheckBoxPreference
+            android:key="starter_property"
+            android:title="Use default starter"
+            android:summary="Switch on for most aircrafts. If the starter is not working (such as on the Zivko 540), switch off to try an alternative starter"
+            android:defaultValue="true"
+        />
         
     </PreferenceCategory>
 

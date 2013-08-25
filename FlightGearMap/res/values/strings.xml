@@ -12,7 +12,7 @@
     <string name="quit">Quit</string>
     <string name="wait">Please, wait 10 seconds and try again.</string>
     <string name="update_andatlas">Did you update andatlas.xml in your PC?</string>
-    <string name="waiting_connection">Trying to connect to FlightGear</string>
+    <string name="waiting_connection">Connecting to remote FlightGear (timeout: 10s)</string>
     <string name="dist_simplemap">Map and controls</string>
     <string name="dist_onlymap">Only map</string>
     <string name="dist_senecaii">Seneca II (two engines, 200kts, HSI)</string>

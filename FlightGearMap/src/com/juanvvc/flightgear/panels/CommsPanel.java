@@ -183,7 +183,7 @@ public class CommsPanel extends Activity implements OnClickListener {
     	if (connTask == null) {
     		connTask = (ConnTask) new ConnTask().execute();
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
+    	showToast(getString(R.string.waiting_connection), Toast.LENGTH_LONG);
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {
@@ -270,8 +270,17 @@ public class CommsPanel extends Activity implements OnClickListener {
 			break;
 		}
 	}
-	
 
+	private Toast myToast=null;
+	/** Shows a toast on the screen */
+	private void showToast(String msg, int duration) {
+		if(myToast != null) {
+			myToast.cancel();
+		}
+		myToast = Toast.makeText(this, msg, duration);
+		myToast.show();
+	}
+	
 	/**
 	 * An AsyncTask to receive data from a remote UDP server and manage
 	 * connections. When new data is received, frequencies are updated.
@@ -460,7 +469,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage && conn!= null) {
-				Toast.makeText(CommsPanel.this,	getString(R.string.conn_established), Toast.LENGTH_LONG).show();
+				showToast(getString(R.string.conn_established), Toast.LENGTH_LONG);
 				firstMessage = false;
 				//Update messages (remember: an EditText is a TextView also!)
 				((TextView) findViewById(R.id.com1)).setText(Float.toString(freqs[0]));
@@ -584,10 +593,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 									}).show();
 				}
 			} catch (Exception e) {
-				Toast.makeText(
-						CommsPanel.this,
-						e.toString() + " " + getString(R.string.critical_error),
-						Toast.LENGTH_LONG).show();
+				showToast(e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG);
 			}
 		}
 	}

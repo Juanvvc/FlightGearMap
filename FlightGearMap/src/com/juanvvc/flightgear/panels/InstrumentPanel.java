@@ -109,7 +109,7 @@ public class InstrumentPanel extends Activity {
     	if (udpReceiver == null) {
     		udpReceiver = (UDPReceiver) new UDPReceiver().execute(udpPort);
     	}
-    	Toast.makeText(this, getString(R.string.waiting_connection), Toast.LENGTH_SHORT).show();
+    	showToast(getString(R.string.waiting_connection), Toast.LENGTH_LONG);
 
     	if (USE_WAKELOCK) {
 	        if (wakeLock != null && wakeLock.isHeld()) {
@@ -158,6 +158,16 @@ public class InstrumentPanel extends Activity {
 //    		wakeLock.release();
 //    	}
     }
+    
+	private Toast myToast=null;
+	/** Shows a toast on the screen */
+	private void showToast(String msg, int duration) {
+		if(myToast != null) {
+			myToast.cancel();
+		}
+		myToast = Toast.makeText(this, msg, duration);
+		myToast.show();
+	}
 
 	/** Sets a distribution of instruments on screen.
 	 * 
@@ -241,7 +251,7 @@ public class InstrumentPanel extends Activity {
 		@Override
 		protected void onProgressUpdate(PlaneData... values) {
 			if (firstMessage) {
-				Toast.makeText(InstrumentPanel.this, getString(R.string.conn_established), Toast.LENGTH_SHORT).show();
+				showToast(getString(R.string.conn_established), Toast.LENGTH_SHORT);
 				firstMessage = false;
 			}
 			
@@ -333,7 +343,7 @@ public class InstrumentPanel extends Activity {
 						.show();
 		        }
 	        } catch (Exception e) {
-	        	Toast.makeText(InstrumentPanel.this, e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG).show();
+	        	showToast(e.toString() + " " + getString(R.string.critical_error), Toast.LENGTH_LONG);
 	        }
 		}
 	}

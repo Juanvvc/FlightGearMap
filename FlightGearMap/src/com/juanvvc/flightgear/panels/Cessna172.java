@@ -141,7 +141,7 @@ public class Cessna172 {
 		case MANIFOLD:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("manifold1.png", -1, -1, -1, -1), 0, 0),
-					new RotateSurface(hand1, 236, 56, PlaneData.MANIFOLD, 1, 256, 256, 0, -117, 5000, 117)
+					new RotateSurface(hand1, 236, 56, PlaneData.MANIFOLD, 1, 256, 256, 10, -110, 50, 110)
 				});
 		case TRIMFLAPS:
 			return new Instrument(col, row, context, new Surface[] {
@@ -168,11 +168,10 @@ public class Cessna172 {
 					new DMENumber(null, 58, 120, PlaneData.DME, face),
 					new DMENumber(null, 258, 120, PlaneData.DME_SPEED, face)
 			});
-		// TODO: Magnets are working, but starter is NOT:I have to find a way to send a continous event to fgfs
 		case MAGNETS_STARTER:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("magnetos.png", -1, -1, -1, -1), 256-128, 128-128),
-					new MagnetosStarterSurface(new MyBitmap("magnetos.png", 92, 96, 82, 84), 256-128+92, 128-128+96, 259, 136, null, "/controls/engines/engine/magnetos", "/controls/switches/starter"),
+					new MagnetosStarterSurface(new MyBitmap("magnetos.png", 92, 96, 82, 84), 256-128+92, 128-128+96, 259, 136, null, "/controls/engines/engine/magnetos", starter),
 					
 					new SwitchSurface(switches2, 0, 256, "/controls/engines/engine[0]/master-bat", "BATT."),
 					new SwitchSurface(switches2, 128, 256, "/controls/engines/engine[0]/master-alt", "ALT."),
@@ -201,12 +200,17 @@ public class Cessna172 {
 		}
 	}
 	
+	private static String starter = "/controls/switches/starter";
+	
 	public static ArrayList<Instrument> getInstrumentPanel(Context context) {
 		
     	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
     	String hiType = sp.getString("hi_type", "HI");
     	String alternateIns = sp.getString("additional_instrument", "manifold");
     	String asiType = sp.getString("asi_type", "asi160");
+    	
+    	// select the property for the starter, depending on the options
+    	starter = (sp.getBoolean("starter_property", true)?"/controls/switches/starter":"/controls/engines/engine/starter");
 		
 		final ArrayList<Instrument> instruments = new ArrayList<Instrument>();
 		if (asiType.equals("asi160")) {
