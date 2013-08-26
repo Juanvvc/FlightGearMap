@@ -2,6 +2,7 @@ package com.juanvvc.flightgear;
 
 import android.graphics.Bitmap;
 
+/** A wrap over a Bitmap to manage images before loading them */
 public class MyBitmap {
 	private int width;
 	private int height;

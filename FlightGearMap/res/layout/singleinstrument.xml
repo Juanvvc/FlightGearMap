@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.juanvvc.flightgear"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:keepScreenOn="true"
+    android:id="@+id/rootSimple" >
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        >
+        <Button
+            android:id="@+id/prev_instrument"
+            android:text="@string/prev_instrument"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />        
+        <Button
+            android:id="@+id/next_instrument"
+            android:text="@string/next_instrument"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <com.juanvvc.flightgear.panels.PanelView
+        android:id="@+id/panel"
+        android:layout_weight="30"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        custom:distribution="9"
+        />
+</LinearLayout>
+<!--         android:background="@drawable/panel_back" -->

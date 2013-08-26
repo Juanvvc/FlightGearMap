@@ -10,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -24,9 +23,6 @@ import android.widget.TextView;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
-import com.juanvvc.flightgear.panels.CommsPanel;
-import com.juanvvc.flightgear.panels.InstrumentPanel;
-import com.juanvvc.flightgear.panels.MapInstrumentPanel;
 import com.juanvvc.flightgear.panels.PanelView;
 
 /* ////////////////////////////////////////
@@ -61,7 +57,7 @@ import com.juanvvc.flightgear.panels.PanelView;
 ///////////////////////////////////////// */
 
 /** This activity shows a list of the available panel distributions. */
-public class PanelList extends Activity implements OnItemClickListener{
+public class PanelListActivity extends Activity implements OnItemClickListener{
 	
 	/** Set this to true if this is the donate version.
 	 * The donate version does not show adds and it makes sure that the debug options are not set.
@@ -71,9 +67,9 @@ public class PanelList extends Activity implements OnItemClickListener{
 	private static final boolean DONATE_VERSION = false;
 	
 	// List of thumbnails of the distributions
-	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms};
+	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single};
 	// List of labels
-	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms};
+	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms, R.string.single_instrument};
 
 	
 	@Override
@@ -120,6 +116,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 	        if (MyLog.isDebug()) {
 	        	adRequest.addTestDevice("874C587B68F6782F0CD99504C02613A8"); // Tablet
 	        	adRequest.addTestDevice("DD57E9E77A859C5F4EE8C1F52334557B"); // HTC Phone
+	        	adRequest.addTestDevice("6BBDE7DC8D834F4C186AB2A8A4B64D9B"); //CHUWI
 	        }
 	        adView.loadAd(adRequest);
         } else {
@@ -137,22 +134,23 @@ public class PanelList extends Activity implements OnItemClickListener{
 		// We will start a MapInstrumentPanel or a InstrumentPanel depending on the choose
 		switch(position) {
 		case 0: // map and simple controls
-			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			bundle.putBoolean("showmap", true);
 			bundle.putBoolean("onlymap", false);
 			intent.putExtras(bundle);
 			break;
 		case 1: // only map
-			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putBoolean("onlymap", true);
 			intent.putExtras(bundle);
 			break;
 		case 2: // Cessna 172
-			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
 			intent.putExtras(bundle);
 			break;
 		case 3: // Cessna 337
-			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C337_INSTRUMENTS);
 			intent.putExtras(bundle);
 			break;
@@ -164,15 +162,19 @@ public class PanelList extends Activity implements OnItemClickListener{
 //			break;			
 // TODO: I don't have enough knowledge to develop a working glass cockpit
 //		case 4: // generic glass panel
-//			intent = new Intent(this.getApplicationContext(), MapInstrumentPanel.class);
+//			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 //			bundle.putBoolean("onlymap", false);
 //			bundle.putBoolean("liquid", true);
 //			intent.putExtras(bundle);
 //			break;
 		case 4: // comms panel
 			//intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
-			intent = new Intent(this.getApplicationContext(), CommsPanel.class);
-			intent.putExtras(bundle);			
+			intent = new Intent(this.getApplicationContext(), CommsActivity.class);
+			intent.putExtras(bundle);
+		case 5: // single instrument panel
+			intent = new Intent(this.getApplicationContext(), SingleInstrumentActivity.class);
+			intent.putExtras(bundle);
+			break;
 		default:
 		}
 		
@@ -227,7 +229,7 @@ public class PanelList extends Activity implements OnItemClickListener{
 	        ImageView imageView;
 	        TextView label;
 	        if (convertView == null) {  // if it's not recycled, initialize some attributes
-				viewGroup = (ViewGroup) LayoutInflater.from(PanelList.this).inflate(R.layout.distthumb, null);
+				viewGroup = (ViewGroup) LayoutInflater.from(PanelListActivity.this).inflate(R.layout.distthumb, null);
 				imageView = (ImageView) viewGroup.findViewById(R.id.thumb);
 	            imageView.setLayoutParams(new LinearLayout.LayoutParams(320, 240));
 	            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

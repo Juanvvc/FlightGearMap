@@ -1,9 +1,13 @@
-package com.juanvvc.flightgear.panels;
+package com.juanvvc.flightgear;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,17 +26,19 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.juanvvc.flightgear.MyLog;
-import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.R;
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
+import com.juanvvc.flightgear.panels.PanelView;
 
 /** Shows a panel with only instruments.
  * @author juanvi
  */
-public class InstrumentPanel extends Activity {
+public class InstrumentActivity extends Activity {
+	/** Reference to the map view. */
+	MapView mapView = null;
 	/** Reference to the panel view. */
-	private PanelView panelView = null;
+	PanelView panelView = null;
+	/** Reference to the available overlays. */
+	PlaneOverlay planeOverlay;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
 	/** The port for Telnet communications. */
@@ -40,7 +46,7 @@ public class InstrumentPanel extends Activity {
 	/** Reference to the UDP Thread. */
 	private UDPReceiver udpReceiver = null;
 	/** Reference to the Telnet Thread. */
-	private CalibratableSurfaceManager calibratableManager = null;
+	protected CalibratableSurfaceManager calibratableManager = null;
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
 	/** The identifier of the distribution. Must be an integer from PanelView.Distribution. */
@@ -50,39 +56,136 @@ public class InstrumentPanel extends Activity {
 	 */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
-	private static final int SOCKET_TIMEOUT = 10000;
+	public static final int SOCKET_TIMEOUT = 10000;
 	/** A reference to the currently displayed dialog. */
-	private AlertDialog currentDialog;
+	private AlertDialog currentDialog = null;
+	/** A reference to the currently displayed toast */
+	private Toast currentToast = null;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        if (this.planeOverlay != null) {
+        	// we use planeOverlay to check if the views have been started.
+        	// Activities that extend this view should initiate planeOverlay
+        	// and then call super.onCreate() to bypass this constructor
+        	return;
+        }
+        
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-        setContentView(R.layout.instruments);
+        planeOverlay = new PlaneOverlay(this);
         
-        // get the distribution from the intent
-        try{
-        	this.distribution = getIntent().getExtras().getInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
-        	// TODO: check savedInstanceState?
-        } catch(Exception e) {
-        	this.distribution = PanelView.Distribution.C172_INSTRUMENTS;
+        boolean onlymap = false;
+        boolean showmap = false;
+        boolean liquid = false;
+        if (this.getIntent() != null && this.getIntent().getExtras() != null) {
+        	onlymap = this.getIntent().getExtras().getBoolean("onlymap");
+        	liquid = this.getIntent().getExtras().getBoolean("liquid");
+        	showmap = this.getIntent().getExtras().getBoolean("showmap");
         }
         
-        panelView = (PanelView) this.findViewById(R.id.panel);
-        this.setDistribution();
+        if (onlymap) {
+        	this.setContentView(R.layout.only_map);
+        	this.panelView = null;
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        } else if (liquid) {
+           	this.setContentView(R.layout.map_liquid);
+        	this.panelView = (PanelView) findViewById(R.id.panel);
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        	
+        	panelView.setVisibility(View.VISIBLE);
+        	panelView.setDistribution(PanelView.Distribution.LIQUID_PANEL);
+        	panelView.invalidate();
+
+        	if (this.calibratableManager != null) {
+        		this.calibratableManager.empty();
+        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+        	} 		
+    	} else if (showmap) {
+        	this.setContentView(R.layout.map_simplepanel);
+        	this.panelView = (PanelView)this.findViewById(R.id.panel);
+        	this.mapView = (MapView)this.findViewById(R.id.mapview);
+        	
+        	// notice that the distribution of the panel does not change: use the one specified in the XML
+        	mapView.invalidate();
+        	panelView.invalidate();
+        	if (this.calibratableManager != null) {
+        		this.calibratableManager.empty();
+        		panelView.postCalibratableSurfaceManager(this.calibratableManager);
+        	}
+        } else {
+		
+    		setContentView(R.layout.instruments);
+            // get the distribution from the intent
+            try{
+            	this.distribution = getIntent().getExtras().getInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
+            	// TODO: check savedInstanceState?
+            } catch(Exception e) {
+            	this.distribution = PanelView.Distribution.C172_INSTRUMENTS;
+            }        
+            panelView = (PanelView) this.findViewById(R.id.panel);
+            mapView = null;
+            this.setDistribution();
+    	}
     }
     
     /** Load preferences. */
     public void loadPreferences() {
     	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-
+    	String mapType = sp.getString("map_type", null);
+    	String planeType = sp.getString("plane_type", null);
+  		String port = null;
+  		
+  		// select the plane
+  		try {
+  			if (planeType.equals("plane2")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane2);
+  			} else if (planeType.equals("plane3")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane3);
+  			} else if (planeType.equals("plane4")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane4);
+  			} else if (planeType.equals("plane5")) {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane5);
+  			} else {
+  				this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  			}
+  		} catch (Exception e) {
+  			this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  		}
+  		
+  		// select the map type
+		if (mapView != null) {
+	  		try {
+	  			if (mapType.equals("cycle")) {
+	  				mapView.setTileSource(TileSourceFactory.CYCLEMAP);
+	//  			} else if (mapType.equals("hills")) {
+	//  				mapView.setTileSource(TileSourceFactory.HILLS);
+	//  			} else if (mapType.equals("topo")) {
+	//  				mapView.setTileSource(TileSourceFactory.TOPO);
+	  			} else if (mapType.equals("public_transport")) {
+	  				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
+	  			} else if (mapType.equals("mapquest")) {
+	  				mapView.setTileSource(TileSourceFactory.MAPQUESTAERIAL);
+	  			} else {
+	  				mapView.setTileSource(TileSourceFactory.MAPNIK);
+	  			}
+	  		} catch (Exception e) {
+	  			mapView.setTileSource(TileSourceFactory.MAPNIK);
+	  		}
+	  		
+	        mapView.setBuiltInZoomControls(true);
+	        mapView.getController().setZoom(15);
+	       
+	        mapView.getOverlays().add(planeOverlay);
+		}
+  		
   		// select the UDP port
-    	String port = sp.getString("udp_port", "5501");
+    	port = sp.getString("udp_port", "5501");
   		try {
   			udpPort = Integer.valueOf(port);
   		} catch (Exception e) {
@@ -159,14 +262,13 @@ public class InstrumentPanel extends Activity {
 //    	}
     }
     
-	private Toast myToast=null;
 	/** Shows a toast on the screen */
 	private void showToast(String msg, int duration) {
-		if(myToast != null) {
-			myToast.cancel();
+		if(currentToast != null) {
+			currentToast.cancel();
 		}
-		myToast = Toast.makeText(this, msg, duration);
-		myToast.show();
+		currentToast = Toast.makeText(this, msg, duration);
+		currentToast.show();
 	}
 
 	/** Sets a distribution of instruments on screen.
@@ -220,13 +322,9 @@ public class InstrumentPanel extends Activity {
 
 					PlaneData pd = new PlaneData(null);
 					pd.parse(new String(p.getData()));
-					// new data is managed as a "progressUpdate" event of the AsyncTask
-					if (panelView != null) {
-						panelView.postPlaneData(pd);
-						this.publishProgress(pd);
-						if (panelView.getVisibility() == View.VISIBLE) {
-							panelView.redraw();
-						}
+					this.publishProgress(pd);
+					if (panelView != null && panelView.getVisibility() == View.VISIBLE) {
+						panelView.redraw();
 					}
 					
 					canceled = this.isCancelled();
@@ -254,14 +352,27 @@ public class InstrumentPanel extends Activity {
 				showToast(getString(R.string.conn_established), Toast.LENGTH_SHORT);
 				firstMessage = false;
 			}
+			// A new data arrived to the UDP listener
+			if (planeOverlay != null && mapView != null) {
+					GeoPoint p = new GeoPoint(
+							(int)(values[0].getFloat(PlaneData.LATITUDE) * 1E6),
+							(int)(values[0].getFloat(PlaneData.LONGITUDE) * 1E6));
+					mapView.getController().setCenter(p);
+					
+					// update the panel and overlay
+					planeOverlay.setPlaneData(values[0], p);
+			}
 			
-			// check if the calibratable manager is still running
-			if (calibratableManager == null || !calibratableManager.isAlive()) {
-		        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(InstrumentPanel.this));
-		        calibratableManager.start();
-		        if (panelView != null) {
-		        	panelView.postCalibratableSurfaceManager(calibratableManager);
-		        }
+			if (panelView != null) {
+				panelView.postPlaneData(values[0]);
+				// check if the calibratable manager is still running
+				if (calibratableManager == null || !calibratableManager.isAlive()) {
+			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(InstrumentActivity.this));
+			        calibratableManager.start();
+			        if (panelView != null) {
+			        	panelView.postCalibratableSurfaceManager(calibratableManager);
+			        }
+				}
 			}
 		}
 		
@@ -276,7 +387,7 @@ public class InstrumentPanel extends Activity {
 	    		currentDialog.dismiss();
 	    	}
 	    	
-	    	if(InstrumentPanel.this.isFinishing()) {
+	    	if(InstrumentActivity.this.isFinishing()) {
 	    		return;
 	    	}
 	        
@@ -298,7 +409,7 @@ public class InstrumentPanel extends Activity {
 		        
 		        if (ipAddress == 0) {
 		        	// if no IP in the wifi network.
-		        	currentDialog = new AlertDialog.Builder(InstrumentPanel.this).setIcon(R.drawable.ic_launcher)
+		        	currentDialog = new AlertDialog.Builder(InstrumentActivity.this).setIcon(R.drawable.ic_launcher)
 		        		.setTitle(getString(R.string.warning))
 						.setMessage(getString(R.string.network_not_detected) + " " + getString(R.string.critical_error))
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -320,7 +431,7 @@ public class InstrumentPanel extends Activity {
 			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=" + telnetPort;
 			        
 			        // show the dialog on screen
-					currentDialog = new AlertDialog.Builder(InstrumentPanel.this).setIcon(R.drawable.ic_launcher)
+					currentDialog = new AlertDialog.Builder(InstrumentActivity.this).setIcon(R.drawable.ic_launcher)
 						.setTitle(getString(R.string.warning))
 						.setMessage(txt)
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {

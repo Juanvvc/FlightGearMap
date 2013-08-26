@@ -23,10 +23,11 @@ $ 2.1
   % Version 2.1
   _ 2013-08-22
     * The heading bug in the C337 panel is movable
+    * New panel: single instrument
     * Bug fixing: The oil pressure in the single engine panel is now correct
     * Bug fixing: the manifold pressure in the single engine panel is now correct
     * Bug fixing: screens with a 4/3 aspect ratio are now correct.
-    * Allow alternative starter on some aircrafts
+    * Use alternative starter on some aircrafts
 $ 2.0
   % Version 2.0
   _ 2013-05-18

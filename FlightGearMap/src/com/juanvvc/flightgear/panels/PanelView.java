@@ -56,6 +56,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int COMM_PANEL = 7;
 		/** Show a Cessna 337 Skymaster panel */
 		public static final int C337_INSTRUMENTS = 8;
+		/** A single instrument */
+		public static final int SINGLE_INSTRUMENT = 9;
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -202,6 +204,10 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 //				instruments.add(SenecaII.createInstrument(InstrumentType.NAV2, context, 1, 1));
 //				instruments.add(Cessna172.createInstrument(InstrumentType.ADF, context, 2, 1));
 //				break;
+			case Distribution.SINGLE_INSTRUMENT:
+				cols = 1;
+				rows = 1;
+				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));
 			default:
 				MyLog.w(this, "No distribution configured for panel");
 			}
@@ -211,6 +217,17 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		
 			this.distribution = distribution;
 		}
+	}
+	
+	/** Loads a single instrument no the screen */
+	public void setInstrument(Instrument i) {
+		instruments.clear();
+		cols = 1;
+		rows = 1;
+		instruments.add(i);
+		this.reloadImages();
+		this.rescaleInstruments();
+		this.distribution = Distribution.SINGLE_INSTRUMENT;
 	}
 	
 	/** Sets the calibratable surface manager, and register any available calibratable surface. */
@@ -339,7 +356,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		}
 	}
 
-	protected void redraw() {
+	public void redraw() {
 		synchronized(instruments) {
 			if (!surfaceHolder.getSurface().isValid()) {
 				return;

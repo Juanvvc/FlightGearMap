@@ -1,4 +1,4 @@
-package com.juanvvc.flightgear.panels;
+package com.juanvvc.flightgear;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -27,12 +27,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.juanvvc.flightgear.FGFSConnection;
-import com.juanvvc.flightgear.MyLog;
-import com.juanvvc.flightgear.PlaneData;
 import com.juanvvc.flightgear.R;
 
-public class CommsPanel extends Activity implements OnClickListener {
+public class CommsActivity extends Activity implements OnClickListener {
 	private ConnTask connTask;
 	private int selectedEditText = -1;
 	
@@ -136,7 +133,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		@Override
 		public void afterTextChanged(Editable s) {
 			// after a change, add the identifier of the view to the array of changed frequencies
-			synchronized(CommsPanel.this.changedfreqs) {
+			synchronized(CommsActivity.this.changedfreqs) {
 				changedfreqs.add(id);
 			}
 		}
@@ -298,7 +295,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 		@Override
 		protected String doInBackground(Object... params) {
 
-			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CommsPanel.this);
+			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CommsActivity.this);
 
 			boolean cancelled = false;
 			int waitPeriod = 5000;
@@ -328,7 +325,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 
 			try {
 				MyLog.e(this, "Trying telnet connection to " + fgfsIP + ":"	+ telnetPort);
-				conn = new FGFSConnection(fgfsIP, telnetPort, CommsPanel.SOCKET_TIMEOUT);
+				conn = new FGFSConnection(fgfsIP, telnetPort, CommsActivity.SOCKET_TIMEOUT);
 				MyLog.d(this, "Upwards connection ready");
 			} catch (IOException e) {
 				MyLog.w(this, e.toString());
@@ -372,57 +369,57 @@ public class CommsPanel extends Activity implements OnClickListener {
 							switch (cs.intValue()) {
 							case R.id.com1:
 								prop = "/instrumentation/comm/frequencies/selected-mhz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.com1)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.com1)).getText().toString());
 								prop2 = "/instrumentation/comm/frequencies/standby-mhz";
-								value2 = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.com1stb)).getText().toString());
+								value2 = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.com1stb)).getText().toString());
 								break;
 							case R.id.com2:
 								prop = "/instrumentation/comm[1]/frequencies/selected-mhz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.com2)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.com2)).getText().toString());
 								prop2 = "/instrumentation/comm[1]/frequencies/standby-mhz";
-								value2 = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.com2stb)).getText().toString());
+								value2 = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.com2stb)).getText().toString());
 								break;
 							case R.id.nav1:
 								prop = "/instrumentation/nav/frequencies/selected-mhz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav1)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav1)).getText().toString());
 								prop2 = "/instrumentation/nav/frequencies/standby-mhz";
-								value2 = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav1stb)).getText().toString());
+								value2 = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav1stb)).getText().toString());
 								break;
 							case R.id.nav2:
 								prop = "/instrumentation/nav[1]/frequencies/selected-mhz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav2)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav2)).getText().toString());
 								prop2 = "/instrumentation/nav[1]/frequencies/standby-mhz";
-								value2 = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav2stb)).getText().toString());
+								value2 = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav2stb)).getText().toString());
 								break;
 							case R.id.adf:
 								prop = "/instrumentation/adf/frequencies/selected-khz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.adf)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.adf)).getText().toString());
 								prop2 = "/instrumentation/adf/frequencies/standby-khz";
-								value2 = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.adfstb)).getText().toString());
+								value2 = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.adfstb)).getText().toString());
 								break;
 							case R.id.dme:
 								prop = "/instrumentation/dme/frequencies/selected-mhz";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.dme)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.dme)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.nav1rad:
 								prop = "/instrumentation/nav/radials/selected-deg";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav1rad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav1rad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.nav2rad:
 								prop = "/instrumentation/nav[1]/radials/selected-deg";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.nav2rad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.nav2rad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.adfrad:
 								prop = "/instrumentation/adf/rotation-deg";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.adfrad)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.adfrad)).getText().toString());
 								prop2 = null;
 								break;
 							case R.id.ssr:
 								prop = "/instrumentation/transponder/id-code";
-								value = Float.parseFloat(((TextView) CommsPanel.this.findViewById(R.id.ssr)).getText().toString());
+								value = Float.parseFloat(((TextView) CommsActivity.this.findViewById(R.id.ssr)).getText().toString());
 								prop2 = null;
 								break;
 							default:
@@ -515,7 +512,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 				currentDialog.dismiss();
 			}
 
-			if (CommsPanel.this.isFinishing()) {
+			if (CommsActivity.this.isFinishing()) {
 				return;
 			}
 
@@ -537,7 +534,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 
 				if (ipAddress == 0) {
 					// if no IP in the WiFi network.
-					currentDialog = new AlertDialog.Builder(CommsPanel.this)
+					currentDialog = new AlertDialog.Builder(CommsActivity.this)
 							.setIcon(R.drawable.ic_launcher)
 							.setTitle(getString(R.string.warning))
 							.setMessage(
@@ -564,7 +561,7 @@ public class CommsPanel extends Activity implements OnClickListener {
 					txt = txt + getString(R.string.run_fgfs_using) + " --telnet=" + telnetPort;
 
 					// show the dialog on screen
-					currentDialog = new AlertDialog.Builder(CommsPanel.this)
+					currentDialog = new AlertDialog.Builder(CommsActivity.this)
 							.setIcon(R.drawable.ic_launcher)
 							.setTitle(getString(R.string.warning))
 							.setMessage(txt)

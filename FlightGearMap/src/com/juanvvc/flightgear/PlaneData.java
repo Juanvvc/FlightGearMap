@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
 
-/** Models the data that FlilghtGear sent.
+/** Models the data that FlightGear sends.
  * @author juanvi
  *
  */
