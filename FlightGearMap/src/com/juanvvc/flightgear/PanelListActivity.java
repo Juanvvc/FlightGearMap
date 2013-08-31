@@ -30,13 +30,13 @@ import com.juanvvc.flightgear.panels.PanelView;
   
   1.- Create the normal version:
   - List the changes and date in res/raw/changelog.txt
-  - Check the version number in the manifiest: it should be higher than the one in Google Play
+  - Check the version number in the manifest: it should be higher than the one in Google Play
   - Commit the version to git and set a new flag:
       git commit -a -m blahblahblah
       git tag v2.0
       git push --tags github
       git push --tags linsertel
-  - Set DEBUG to false in MyLog.java
+  - Set DEBUG_VERSION to false in this file
   - Export the project to FligthGear.apk
   - Signature: ~/.android/myjuanvvc.keystore
   
@@ -65,6 +65,8 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	 * If you change this option, remember changing the icon as well and Android Tools->Rename application package
 	 */
 	private static final boolean DONATE_VERSION = false;
+	/** If on, it is the debug version */
+	private static final boolean DEBUG_VERSION = true;
 	
 	// List of thumbnails of the distributions
 	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
@@ -77,6 +79,8 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.panellist);
+		
+		MyLog.setDebug(DEBUG_VERSION);
 		
 		GridView gridview = (GridView) this.findViewById(R.id.gridview);
 		if (gridview != null) {
