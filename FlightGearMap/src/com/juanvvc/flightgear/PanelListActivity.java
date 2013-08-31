@@ -67,9 +67,9 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	private static final boolean DONATE_VERSION = false;
 	
 	// List of thumbnails of the distributions
-	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single};
+	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
 	// List of labels
-	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms, R.string.single_instrument};
+	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms, R.string.single_instrument, R.string.basic_instruments};
 
 	
 	@Override
@@ -141,17 +141,20 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 			break;
 		case 1: // only map
 			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			bundle.putBoolean("showmap", true);
 			bundle.putBoolean("onlymap", true);
 			intent.putExtras(bundle);
 			break;
 		case 2: // Cessna 172
 			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
+			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
 			break;
 		case 3: // Cessna 337
 			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C337_INSTRUMENTS);
+			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
 			break;
 // TODO: the SenecaII can not be chosen because currently is very similar to the Cessna337.
@@ -175,6 +178,11 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 			intent = new Intent(this.getApplicationContext(), SingleInstrumentActivity.class);
 			intent.putExtras(bundle);
 			break;
+		case 6: // basic instruments
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			bundle.putInt("distribution", PanelView.Distribution.BASIC_HORIZONTAL_PANEL);
+			bundle.putBoolean("showmap", false);
+			intent.putExtras(bundle);
 		default:
 		}
 		

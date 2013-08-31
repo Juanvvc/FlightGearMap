@@ -20,10 +20,12 @@
   </head>
   <body>
 $ 2.1
+!IMPORTANT! Read <a href="http://wiki.flightgear.org/FlightGearMap">http://wiki.flightgear.org/FlightGearMap</a> for installation instructions.
   % Version 2.1
-  _ 2013-08-22
+  _ 2013-08-31
     * The heading bug in the C337 panel is movable
-    * New panel: single instrument
+    * New panel: single instrument panel
+    * Old panel: recovering basic panel, after users' requests
     * Bug fixing: The oil pressure in the single engine panel is now correct
     * Bug fixing: the manifold pressure in the single engine panel is now correct
     * Bug fixing: screens with a 4/3 aspect ratio are now correct.

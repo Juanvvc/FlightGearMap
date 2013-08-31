@@ -38,12 +38,12 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/** Specifies the distribution type. */
 	// Note: this cannot be an enum since the XML needs an integer to refer to a distribution type.
 	public static class Distribution {
-		/** A 2x3 panel with simple instruments. */
-		public static final int SIMPLE_VERTICAL_PANEL = 0;
-		/** 6x1 panel with simple instruments. */
+		/** A 2x3 panel with basic instruments. */
+		public static final int BASIC_VERTICAL_PANEL = 0;
+		/** 6x1 panel with basic instruments. */
 		public static final int HORIZONTAL_PANEL = 1;
-		/** A 3x2 panel with simple instruments. */
-		public static final int SIMPLE_HORIZONTAL_PANEL = 2;
+		/** A 3x2 panel with basic instruments. */
+		public static final int BASIC_HORIZONTAL_PANEL = 2;
 		/** Show only the map. PanelView is not used. */
 		public static final int ONLY_MAP = 3;
 		/** Show a complete Cessna-172 instrument panel. */
@@ -142,7 +142,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	
 			Context context = getContext();
 			switch (distribution) {
-			case Distribution.SIMPLE_VERTICAL_PANEL:
+			case Distribution.BASIC_VERTICAL_PANEL:
 				cols = 2;
 				rows = 3;
 				instruments.add(Cessna172.createInstrument(InstrumentType.ATTITUDE, context, 0, 0));
@@ -153,7 +153,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				instruments.add(Cessna172.createInstrument(InstrumentType.CLIMB_RATE, context, 1, 2));
 	
 				break;
-			case Distribution.SIMPLE_HORIZONTAL_PANEL:
+			case Distribution.BASIC_HORIZONTAL_PANEL:
 				cols = 3;
 				rows = 2;
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));

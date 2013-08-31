@@ -32,6 +32,7 @@
     <string name="prev_instrument">Prev. instrument</string>
     <string name="next_instrument">Next instrument</string>
     <string name="single_instrument">Single instrument</string>
-	<string name="consider_donating">If you find this app useful, .<a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">consider buying the donate version</a></string>
+    <string name="basic_instruments">Basic instruments</string>
+	<string name="consider_donating">If you find this app useful, <a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">consider buying the donate version</a></string>
 
 </resources>
