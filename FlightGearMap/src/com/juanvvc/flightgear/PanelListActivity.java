@@ -39,13 +39,17 @@ import com.juanvvc.flightgear.panels.PanelView;
   - Set DEBUG_VERSION to false in this file
   - Export the project to FligthGear.apk
   - Signature: ~/.android/myjuanvvc.keystore
+  - Send to Google Play. Remember listing the last changes and updating the description, if necessary
   
   2.- Create the donate version:
   - Set DONATE_VERSION to true in this file
   - Change the icon in the manifest to ic_launcherplus
+  - RMB on each package Refactor->Rename to com.juanvvc.flightgeardonate
   - RMB on the project name->Android tools->rename application package to com.juanvvc.flightgeardonate
+  - Run the project to check if it is working!
   - Export the project to FlightGearDonate.apk
   - Signature: ~/.android/myjuanvvc.keystore
+  - Send to Google Play. Remember listing the last changes and updating the description, if necessary
   
   3.- Back to development version:
   - Undo all changes. Easy way:
@@ -178,6 +182,7 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 			//intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 			intent = new Intent(this.getApplicationContext(), CommsActivity.class);
 			intent.putExtras(bundle);
+			break;
 		case 5: // single instrument panel
 			intent = new Intent(this.getApplicationContext(), SingleInstrumentActivity.class);
 			intent.putExtras(bundle);
