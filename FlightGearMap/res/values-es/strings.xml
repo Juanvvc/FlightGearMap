@@ -3,16 +3,16 @@
 
     <string name="app_name">FlightGearMap</string>
     <string name="network_not_detected">Sin conexión wifi.</string>
-    <string name="critical_error">FlighGearMap no puede continuar. Por favor, vuelva a intentarlo.</string>
-    <string name="run_fgfs_using">Ejecute fgfs usando</string>
+    <string name="critical_error">FlighGearMap no puede continuar. Por favor, vuelve a intentarlo.</string>
+    <string name="run_fgfs_using">Ejecuta fgfs usando</string>
     <string name="warning">Atención</string>
     <string name="conn_established">Comunicación establecida.</string>
     <string name="conn_timeout">Tiempo de espera sobrepasado.</string>
     <string name="settings">Opciones&#8230;</string>
     <string name="quit">Salir</string>
-    <string name="wait">Por favor, espere 10 segundos y vuelva a intentarlo.</string>
-    <string name="update_andatlas">¿Actualizó andatlas.xml en su PC?</string>
-    <string name="waiting_connection">Conectando con FlightGear (10 segundos)</string>
+    <string name="wait">Por favor, espera 10 segundos y vuelve a intentarlo.</string>
+    <string name="update_andatlas">¿Actualizaste andatlas.xml en su PC?</string>
+    <string name="waiting_connection">Conectando con FlightGear (máximo, 10 segundos)</string>
     <string name="dist_simplemap">Mapa e instrumentos</string>
     <string name="dist_onlymap">Solo mapa</string>
     <string name="dist_senecaii">Seneca II</string>
@@ -25,6 +25,16 @@
     <string name="changelog_ok_button">OK</string>
     <string name="changelog_show_full">Muestra historia</string>
     <string name="cancel">Cancelar</string>
-    <string name="sel_freq">Introduzca una frecuencia</string>
+    <string name="radial">Radial</string>
+    <string name="inuse">En uso</string>
+    <string name="standby">En espera</string>
+    <string name="swap">Intercambiar</string>
+    <string name="prev_instrument">Anterior</string>
+    <string name="next_instrument">Siguiente</string>
+    <string name="single_instrument">Instrumento único</string>
+    <string name="basic_instruments">Panel básico</string>
+	<string name="consider_donating">Si consideras esta aplicación útil, <a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">compra la versión de donación</a>.</string>
+	<string name="myip">Mi dirección IP addres: %. La necesitarás para configurar fgfs. Consulta <a href="http://wiki.flightgear.org/FlightGearMap">la ayuda</a>.</string>
+    
 
 </resources>

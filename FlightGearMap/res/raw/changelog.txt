@@ -21,6 +21,11 @@
   <body>
 $ 2.1
 !IMPORTANT! Read <a href="http://wiki.flightgear.org/FlightGearMap">http://wiki.flightgear.org/FlightGearMap</a> for installation instructions.
+  % Version 2.1b
+  _ 2013-10-01
+    * Shows the IP address in the main activity
+    * Removes last references to Google Maps
+    * Bug fixing: the comm panel couldn't be selected
   % Version 2.1
   _ 2013-08-31
     * The heading bug in the C337 panel is movable

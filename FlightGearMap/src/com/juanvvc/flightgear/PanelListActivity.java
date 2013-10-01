@@ -2,6 +2,8 @@ package com.juanvvc.flightgear;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -132,6 +134,12 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
         	MyLog.setDebug(false);
         }
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		this.showMyIP();
+	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -218,6 +226,35 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
         default:
         	return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	/** Shows the IP of the device in the main panel */
+	private void showMyIP() {
+        // Tries to read the IP address. Not always working!
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        int ipAddress = wifiInfo.getIpAddress();
+        
+        StringBuffer txt = new StringBuffer("");
+        
+        if (ipAddress == 0) {
+        	txt.append(getString(R.string.network_not_detected));
+        } else {
+        	// convert Ip to a readable IP
+	        String readableIP = String.format("%d.%d.%d.%d",
+	        		(ipAddress & 0xff),
+	        		(ipAddress >> 8 & 0xff),
+	        		(ipAddress >> 16 & 0xff),
+	        		(ipAddress >> 24 & 0xff));
+	        
+	        // add information about my IP
+	        txt.append(getString(R.string.myip).replaceFirst("%", readableIP));
+        }
+        
+        TextView tv = (TextView) this.findViewById(R.id.ipinfo);
+        tv.setText(txt);
+        // clickable links
+    	tv.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 	
 	/** The Adapter of the available distributions */

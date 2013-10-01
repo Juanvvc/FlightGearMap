@@ -6,6 +6,13 @@
     android:orientation="vertical"
     android:paddingLeft="8dp"
     android:paddingRight="8dp" >
+    
+    <TextView
+        android:id="@+id/ipinfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        />
 
     <ListView
     android:id="@+id/listview"
