@@ -31,10 +31,6 @@ import com.juanvvc.flightgear.instruments.Surface;
  * 
  */
 public class PanelView extends SurfaceView implements OnTouchListener {
-	
-	/** If set, instruments are centered */
-	private static final boolean CENTER_INSTRUMENTS = true;
-
 	/** Specifies the distribution type. */
 	// Note: this cannot be an enum since the XML needs an integer to refer to a distribution type.
 	public static class Distribution {
@@ -71,6 +67,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/** identifier of the current distribution. */
 	private int distribution;
 	
+	/** If set, instruments are centered */
+	private boolean center_instruments = true;
+	
 	private SurfaceHolder surfaceHolder;
 	
 	/** The surface that the user is currently moving, if any */
@@ -106,10 +105,17 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			default:
 			}
 		}
+		
+		this.center_instruments = true; // default value
 
 		setDistribution(distribution);
 		this.setOnTouchListener(this);
 		this.surfaceHolder = this.getHolder();
+	}
+	
+	public void setCenterInstruments(boolean b) {
+		this.center_instruments = b;
+		this.rescaleInstruments();
 	}
 	
 	/**
@@ -208,6 +214,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 1;
 				rows = 1;
 				instruments.add(Cessna172.createInstrument(InstrumentType.SPEED, context, 0, 0));
+				break;
 			default:
 				MyLog.w(this, "No distribution configured for panel");
 			}
@@ -284,7 +291,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			}
 			
 			// create the buffer
-			if (CENTER_INSTRUMENTS) {
+			if (center_instruments) {
 				if (buffer != null) {
 					buffer.recycle();
 				}
@@ -365,7 +372,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			// prepare the canvas. If CENTER_INSTRUMENTS is set, use the buffer.
 			// if not set, draw directly on the screen
 			Canvas c = null;
-			if (CENTER_INSTRUMENTS) {
+			if (center_instruments) {
 				if (buffer == null) {
 					return;
 				}
@@ -402,7 +409,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			
 			// If CENTER_INSTRUMENTS is set, draw the buffer on the canvas
 			// if not set, assume that we were drawing directly on the screen
-			if (CENTER_INSTRUMENTS) {
+			if (center_instruments) {
 				if (buffer != null) {
 					c = surfaceHolder.lockCanvas();
 					c.drawBitmap(buffer, bufferX, bufferY, null);

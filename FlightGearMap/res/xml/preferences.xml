@@ -23,6 +23,19 @@
             android:entryValues="@array/planeValues"
         />
         
+		<CheckBoxPreference
+            android:key="center_instruments"
+            android:title="Center the instruments"
+            android:summary="On some devices, surfaces cannot be centered correctly. If your instruments are not correctly drawn, try to switch this option off."
+            android:defaultValue="true"
+        />
+		
+		<CheckBoxPreference
+            android:key="fullscreen"
+            android:title="Full screen"
+            android:defaultValue="true"
+        />
+        
     </PreferenceCategory>
     
     <PreferenceCategory

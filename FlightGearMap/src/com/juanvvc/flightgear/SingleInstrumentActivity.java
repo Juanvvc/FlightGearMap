@@ -3,6 +3,7 @@ package com.juanvvc.flightgear;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -24,8 +25,11 @@ public class SingleInstrumentActivity extends InstrumentActivity implements OnCl
     	planeOverlay = new PlaneOverlay(this);
         super.onCreate(savedInstanceState);
         
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    	if (sp.getBoolean("fullscreen", true)) {
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    	}
         
     	this.setContentView(R.layout.singleinstrument);
     	this.panelView = (PanelView)this.findViewById(R.id.panel);
@@ -34,7 +38,13 @@ public class SingleInstrumentActivity extends InstrumentActivity implements OnCl
     	Button b = (Button) this.findViewById(R.id.prev_instrument);
     	b.setOnClickListener(this);
     	b = (Button) this.findViewById(R.id.next_instrument);
-    	b.setOnClickListener(this);    	
+    	b.setOnClickListener(this);
+    	
+  		// set instruments centered or not
+  		boolean centered = sp.getBoolean("center_instruments", true);
+  		if ( this.panelView != null ) {
+  			this.panelView.setCenterInstruments(centered);
+  		}
     }
     
    
@@ -65,15 +75,16 @@ public class SingleInstrumentActivity extends InstrumentActivity implements OnCl
     // change the current instrument
 	public void onClick(View v) {
     	if (v.getId() == R.id.prev_instrument) {
-    		if (currentInstrument == 0) {
+    		if (currentInstrument <= 0) {
     			currentInstrument = MAX_INSTRUMENT;
     		}
     		currentInstrument = currentInstrument - 1;
     	} else if (v.getId() == R.id.next_instrument) {
     		currentInstrument = currentInstrument + 1;
+    		if (currentInstrument >= MAX_INSTRUMENT) {
+    			currentInstrument = 0;
+    		}
     	}
-    	// check limits
-    	currentInstrument = Math.abs((currentInstrument)%MAX_INSTRUMENT);
     	
     	setInstrument(currentInstrument);
     }

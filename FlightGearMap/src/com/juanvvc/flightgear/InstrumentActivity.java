@@ -75,8 +75,11 @@ public class InstrumentActivity extends Activity {
         }
         
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+    	if (sp.getBoolean("fullscreen", true)) {
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    	}
 		
         planeOverlay = new PlaneOverlay(this);
         
@@ -199,7 +202,13 @@ public class InstrumentActivity extends Activity {
   		} catch (Exception e) {
   			telnetPort = 9000;
   		}
-
+  		
+  		// set instruments centered or not
+  		boolean centered = sp.getBoolean("center_instruments", true);
+  		PanelView pv = (PanelView) this.findViewById(R.id.panel);
+  		if ( pv!= null ) {
+  			pv.setCenterInstruments(centered);
+  		}
     }
     
     @Override
