@@ -168,8 +168,8 @@ public class Cessna172 {
 		case DME:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("dme.png", 0, 0, 512, 216), 0, 0),
-					new DMENumber(null, 18, 120, PlaneData.DME, face),
-					new DMENumber(null, 218, 120, PlaneData.DME_SPEED, face)
+					new DMENumber(null, 10, 120, PlaneData.DME, face),
+					new DMENumber(null, 228, 120, PlaneData.DME_SPEED, face)
 			});
 		case MAGNETS_STARTER:
 			return new Instrument(col, row, context, new Surface[] {
@@ -200,7 +200,7 @@ public class Cessna172 {
 		case CLOCK:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("clock.png", -1, -1, -1, -1), 0, 20),
-					new ClockNumber(null, 40, 120, face)
+					new ClockNumber(null, PlaneData.SECONDS, 40, 120, face)
 			});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
@@ -584,11 +584,13 @@ class ClockNumber extends StaticSurface {
 	private Typeface face;
 	private Paint font;
 	private StringBuffer sb = null;
+	private int idx;
 	
 	// Bitmap is not currently used
-	public ClockNumber(MyBitmap bitmap, float x, float y, Typeface face) {
+	public ClockNumber(MyBitmap bitmap, int idx, float x, float y, Typeface face) {
 		super(bitmap, x, y);
 		this.face = face;
+		this.idx = idx;
 	}
 	
 	@Override
@@ -608,11 +610,11 @@ class ClockNumber extends StaticSurface {
 		
 		// draw always first decimal and units
 		if (sb != null) {
-			Calendar now = Calendar.getInstance();
+			int seconds = planeData.getInt(this.idx);
 			
-			int hours = now.get(Calendar.HOUR_OF_DAY);
-			int minutes =  now.get(Calendar.MINUTE);
-			int seconds = now.get(Calendar.SECOND);
+			int hours = seconds / (60 * 60);
+			int minutes = seconds / 60 - hours * 60;
+			seconds = seconds % 60;
 			
 			final float realscale = parent.getScale() * parent.getGridSize();
 			final int left = (int) ((this.getParent().getCol() + relx) * realscale);

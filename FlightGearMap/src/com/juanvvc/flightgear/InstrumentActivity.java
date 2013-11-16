@@ -323,13 +323,19 @@ public class InstrumentActivity extends Activity {
 			String msg = null;
 			firstMessage = true;
 			
+			PlaneData pd = new PlaneData();
+			// TODO: make this configurable
+			pd.setMovingAverage(PlaneData.NAV1_DEFLECTION, true);
+			pd.setMovingAverage(PlaneData.GS1_DEFLECTION, true);
+			pd.setMovingAverage(PlaneData.NAV2_DEFLECTION, true);
+			pd.setMovingAverage(PlaneData.CLIMB_RATE, true);
+			
 			while(!canceled) {
 				DatagramPacket p = new DatagramPacket(buf, buf.length);
 				
 				try {
 					socket.receive(p);
 
-					PlaneData pd = new PlaneData(null);
 					pd.parse(new String(p.getData()));
 					this.publishProgress(pd);
 					if (panelView != null && panelView.getVisibility() == View.VISIBLE) {

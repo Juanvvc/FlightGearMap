@@ -9,15 +9,14 @@ import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
  *
  */
 public class PlaneData {
-	private CalibratableSurfaceManager cs;
-	
 	String[] data;
 	String[] outData;
 	private Date date = new Date();
+	private MovingAverage[] averages;
 	
-	public PlaneData(CalibratableSurfaceManager cs) {
-		this.cs = cs;
+	public PlaneData() {
 		data = null;
+		this.averages = new MovingAverage[ALTITUDE_AGL+1];
 	}
 	
 	public void parse(final String input) {
@@ -35,7 +34,7 @@ public class PlaneData {
 	
 	public static final int SPEED = 0; // speed, in knots
 	public static final int RPM = 1; // RPM
-	public static final int HEADING_MOV = 2; // REAL heading, in degrees
+	public static final int HEADING_MOV = 2; // Magnetic heading, in degrees
 	public static final int ALTITUDE = 3; // altitude, in feet, according to the instruments
 	public static final int CLIMB_RATE = 4; // rate of climb, in feet per second
 	public static final int PITCH = 5; // pitch, in degrees
@@ -81,12 +80,17 @@ public class PlaneData {
 	// These are used in the B1900D, a turboprop. Notice that indexes are repeated!
 	public static final int FUEL_FLOW1 = CHT1_TEMP;
 	public static final int FUEL_FLOW2 = CHT2_TEMP;
-	public static final int N1_ENGINE1 = MANIFOLD;
-	public static final int N1_ENGINE2 = MANIFOLD2;
+	public static final int PROP_ENGINE1 = MANIFOLD;
+	public static final int PROP_ENGINE2 = MANIFOLD2;
+	public static final int TORQUE1 = RPM;
+	public static final int TORQUE2 = RPM2;
 	public static final int TURBINE1 = AMP;
 	public static final int TURBINE2 = VOLT;
 	public static final int VNE_SPEED = ALTITUDE_AGL;
 	public static final int NAV2_HEADING = NAV1_HEADING;
+	// since oil press doesn't seem to be right on the b1900d, use the slot of ITT
+	public static final int ITT1 = OIL_PRESS;
+	public static final int ITT2 = OIL2_PRESS;
 	
 
 	
@@ -94,14 +98,19 @@ public class PlaneData {
 		if (data == null) {
 			return 0;
 		}
-		return new Integer(data[i]).intValue();
+		return Integer.valueOf(data[i]);
 	}
 	
 	public float getFloat(int i) {
 		if (data == null) {
 			return 0;
 		}
-		return new Float(data[i]).floatValue();
+		MovingAverage ma = this.averages[i];
+		if (ma==null) {
+			return Float.valueOf(data[i]);
+		} else {
+			return ma.getData(Float.valueOf(data[i]));
+		}
 	}
 	
 	public String getString(int i) {
@@ -126,7 +135,36 @@ public class PlaneData {
 		return data != null;
 	}
 	
-	public CalibratableSurfaceManager getCalibratableSurfaceManager() {
-		return cs;
+	/**
+	 * Sets or removes a MovingAverage filter for a specific index
+	 * @param index The index of data to set the filter
+	 * @param set set or remove the filter.
+	 */
+	public void setMovingAverage(int index, boolean set) {
+		if (set) {
+			this.averages[index] = new MovingAverage();
+		} else {
+			this.averages[index] = null;
+		}
+	}
+	
+	/** This filter smoothes the data to prevent very fast changes */
+	private class MovingAverage {
+		private static final int SIZE=5;
+		private float[] buffer = null;
+		private int current = 0;
+		
+		public float getData(float v) {
+			if ( buffer == null) {
+				buffer = new float[SIZE];
+				for(int i=0; i<SIZE; i++) buffer[i]=v;
+				return v;
+			}
+			float res = 0;
+			buffer[current] = v;
+			for(int i=0; i<SIZE; i++) res+=buffer[i];
+			current = (current + 1) % SIZE;
+			return res/SIZE;
+		}
 	}
 }

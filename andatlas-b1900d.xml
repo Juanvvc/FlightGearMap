@@ -16,9 +16,9 @@
    </chunk>
 
    <chunk>
-    <name>Engine 0 N1</name>
+    <name>Engine 0 Torque</name>
     <format>%d</format>
-    <node>/engines/engine[0]/n1</node>
+    <node>/instrumentation/eng-gauge/torque</node>
    </chunk>
 
    <chunk>
@@ -93,7 +93,7 @@
 	   <name>Heading indicator</name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/instrumentation/heading-indicator/indicated-heading-deg</node>
+	   <node>/orientation/heading-magnetic-deg</node>
    </chunk>
 
    <chunk>
@@ -111,10 +111,10 @@
    </chunk>
 
    <chunk>
-	   <name>Oil Press</name>
+	   <name>ITT1</name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/engines/engine/oil-pressure-psi</node>
+	   <node>/instrumentation/eng-gauge/itt</node>
    </chunk>
 
    <chunk>
@@ -125,17 +125,17 @@
    </chunk>
 
    <chunk>
-	   <name>Amp</name>
+	   <name>Engine 0 turbine</name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/systems/electrical/amps</node>
+	   <node>/instrumentation/eng-gauge/turbine</node>
    </chunk>
 
    <chunk>
-	   <name>Volts</name>
+	   <name>Engine 1 turbine</name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/systems/electrical/volts</node>
+	   <node>/instrumentation/eng-gauge/turbine[1]</node>
    </chunk>
 
    <chunk>
@@ -238,44 +238,44 @@
    </chunk>
 
    <chunk>
-	    <name>Engine 1 N1</name>
+	    <name>Engine 1 torque</name>
 	    <format>%d</format>
-	    <node>/engines/engine[1]/n1</node>
+	    <node>/instrumentation/eng-gauge/torque[1]</node>
    </chunk>
 
    <chunk>
-	    <name>Engine 0 manifold pressure</name>
+	    <name>Engine 0 prop</name>
 	   <type>float</type>
 	    <format>%f</format>
-	    <node>/engines/engine[0]/mp-inhg</node>
+	    <node>/instrumentation/eng-gauge/prop</node>
    </chunk>
 
    <chunk>
-	    <name>Engine 1 manifold pressure</name>
+	    <name>Engine 1 prop</name>
 	   <type>float</type>
 	    <format>%f</format>
-	    <node>/engines/engine[1]/mp-inhg</node>
+	    <node>/instrumentation/eng-gauge/prop[1]</node>
    </chunk>
 
    <chunk>
-	    <name>Engine 0 cht temp</name>
+	    <name>Engine 0 fuel flow pph</name>
 	   <type>float</type>
 	    <format>%f</format>
-	    <node>/engines/engine[0]/cht-degf</node>
+	    <node>/instrumentation/eng-gauge/fuel-pph</node>
    </chunk>
 
    <chunk>
-	    <name>Engine 1 cht temp</name>
+	    <name>Engine 1 fuel flow pph</name>
 	   <type>float</type>
 	    <format>%f</format>
-	    <node>/engines/engine[1]/cht-degf</node>
+	    <node>/instrumentation/eng-gauge/fuel-pph[1]</node>
    </chunk>
 
    <chunk>
-	   <name>Oil Press</name>
+	   <name>ITT2</name>
 	   <type>float</type>
 	   <format>%f</format>
-	   <node>/engines/engine[1]/oil-pressure-psi</node>
+	   <node>/instrumentation/eng-gauge/itt[1]</node>
    </chunk>
 
    <chunk>

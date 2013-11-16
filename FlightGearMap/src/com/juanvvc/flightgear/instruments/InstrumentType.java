@@ -33,7 +33,7 @@ public enum InstrumentType {
 	CLOCK,
 	ITT,
 	TORQUE,
-	PROPELLER,
+	PROP,
 	TURBINE,
 	FUELFLOW
 }
