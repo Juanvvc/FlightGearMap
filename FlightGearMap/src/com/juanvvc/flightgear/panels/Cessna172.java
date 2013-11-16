@@ -1,6 +1,8 @@
 package com.juanvvc.flightgear.panels;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,7 +28,7 @@ import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 import com.juanvvc.flightgear.instruments.SwitchSurface;
 
-/** Distributed instruments as in a Cessna 172 */
+/** Distribute instruments as in a Cessna 172 */
 public class Cessna172 {
 	
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
@@ -39,6 +41,8 @@ public class Cessna172 {
 		MyBitmap switches1 = new MyBitmap("switches.png", 0, 0, 128, 368);
 		MyBitmap switches2 = new MyBitmap("switches.png", 128, 0, 128, 368);
 		MyBitmap switches3 = new MyBitmap("switches.png", 258, 0, 122, 306);
+		Typeface face = Typeface.createFromAsset(context.getAssets(), "7-Segment.ttf");//"14_LED1.ttf");
+
 		
 		switch (type) {
 
@@ -162,11 +166,10 @@ public class Cessna172 {
 					new SwitchSurface(switches3, 512+384, 0, "/controls/lighting/landing-lights", "LNG"),
 				});
 		case DME:
-			Typeface face = Typeface.createFromAsset(context.getAssets(), "14_LED1.ttf");
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("dme.png", 0, 0, 512, 216), 0, 0),
-					new DMENumber(null, 58, 120, PlaneData.DME, face),
-					new DMENumber(null, 258, 120, PlaneData.DME_SPEED, face)
+					new DMENumber(null, 18, 120, PlaneData.DME, face),
+					new DMENumber(null, 218, 120, PlaneData.DME_SPEED, face)
 			});
 		case MAGNETS_STARTER:
 			return new Instrument(col, row, context, new Surface[] {
@@ -185,8 +188,8 @@ public class Cessna172 {
 					new RotateSurface(new MyBitmap("hsi3.png", 0, 0, 328, 328), 256-164, 274-164, PlaneData.HEADING, 1, 256, 274, 0, 0, 360, -360),
 					new C172HIBug(null, 256-22, 100, "/instrumentation/nav/radials/selected-deg", true, -1, 256, 274, 0, 0, 360, 360), // I'm using this to select the radial. Notice the null bitmap
 					new StaticSurface(new MyBitmap("hsi2.png", 0, 0, 408, 416), 256-204, 256-208),
-					new SlippingSurface(new MyBitmap("hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
-					new SlippingSurface(new MyBitmap("hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
+					new C172GS1(new MyBitmap("hsi2.png", 412, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 50, 256+85, 1, 50, 256-85),
+					new C172GS1(new MyBitmap("hsi2.png", 452, 124, 32, 32), 0, PlaneData.GS1_DEFLECTION, -1, 430, 256+85, 1, 430, 256-85),
 					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 444, 164, 32, 64), 256-16, 340, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 180), // CDI, head
 					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 484, 172, 20, 68), 256-10, 130, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 180), // CDI, tail
 					new RelativeToHeadingRotateSurface(new MyBitmap("hsi2.png", 178, 456, 184, 52), 256-92, 274-26, PlaneData.NAV1_SEL_RADIAL, 1, 256, 274, 0, 0, 360, 360, 0), // CDI, scale
@@ -194,6 +197,11 @@ public class Cessna172 {
 					new HSIInRange(new MyBitmap("hsi2.png", 408, 64, 100, 52), 100, 128, PlaneData.NAV1_FROM, PlaneData.NAV1_TO),
 					new StaticSurface(new MyBitmap("hsi1.png", -1, -1, -1, -1), 0, 0)
 				});
+		case CLOCK:
+			return new Instrument(col, row, context, new Surface[] {
+					new StaticSurface(new MyBitmap("clock.png", -1, -1, -1, -1), 0, 20),
+					new ClockNumber(null, 40, 120, face)
+			});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
 			return null;
@@ -517,10 +525,9 @@ class C172FromToGSSurface extends Surface {
 
 class DMENumber extends StaticSurface {
 	private int idxDME;
-//	private Rect[] numbers;
-//	private Rect[] positions;
 	private Typeface face;
 	private Paint font;
+	private StringBuffer sb = null;
 	
 	// Bitmap is not currently used
 	public DMENumber(MyBitmap bitmap, float x, float y, int idxDME, Typeface face) {
@@ -531,31 +538,12 @@ class DMENumber extends StaticSurface {
 	
 	@Override
 	public void onBitmapChanged() {
-		
-//		// calculate source Rect inside the Bitmap for each number. Order is 0, 1, 2...9
-//		final Bitmap b = this.bitmap.getScaledBitmap();
-//		numbers = new Rect[10];
-//		for (int i=0; i<10; i++) {
-//			numbers[i] = new Rect(i * b.getWidth() / 10, 0, i * b.getWidth() / 10 + b.getWidth() / 10, b.getHeight());
-//		}
-//		
-//		final float col = parent.getCol();
-//		final float row = parent.getRow();
-//		final float realscale = parent.getScale() * parent.getGridSize();
-//		final int left = (int) ((col + relx) * realscale);
-//		final int top = (int) ((row + rely) * realscale);
-//		
-//		// calculate destination Rect of numbers. order is hundreds, tens, units and first decimal
-//		positions = new Rect[4];
-//		positions[0] = new Rect((int)(left + 208 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
-//		positions[1] = new Rect((int)(left + 256 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
-//		positions[2] = new Rect((int)(left + 304 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
-//		positions[3] = new Rect((int)(left + 368 * realscale), (int)(top + 60 * realscale), (int)(left + 208 * realscale) + b.getWidth() / 10, (int)(top + 60 * realscale) + b.getHeight());
-		
 		font = new Paint();
 		font.setColor(Color.RED);
 		font.setTypeface(this.face);
-		font.setTextSize((parent.getScale() * parent.getGridSize()) / 8); //bitmap.getScaledBitmap().getHeight());
+		font.setTextSize((parent.getScale() * parent.getGridSize()) / 16); // 8); //bitmap.getScaledBitmap().getHeight());
+		
+		sb = new StringBuffer();
 	}
 	
 	public void onDraw(Canvas c) {
@@ -575,30 +563,87 @@ class DMENumber extends StaticSurface {
 		int units = (int)(distance % 10);
 		int firstdecimal = (int)((distance * 10) % 10);
 		
-//		Bitmap b = this.getBitmap().getScaledBitmap();
-//		
-//		// draw always first decimal and units
-//		c.drawBitmap(b, numbers[firstdecimal], positions[3], null);
-//		c.drawBitmap(b, numbers[units], positions[2], null);
-//		// draw tens and hundreds only if they are not zero
-//		if (tens > 0) {
-//			c.drawBitmap(b, numbers[tens], positions[1], null);
-//			if (hundreds > 0) {
-//				c.drawBitmap(b, numbers[tens], positions[0], null);
-//			}
-//		}
 		
 		final float realscale = parent.getScale() * parent.getGridSize();
 		final int left = (int) ((this.getParent().getCol() + relx) * realscale);
 		final int top = (int) ((this.getParent().getRow() + rely) * realscale);
 		
 		// draw always first decimal and units
-		StringBuffer sb = new StringBuffer();
-		if (hundreds > 0) sb.append(hundreds); else sb.append(" ");
-		if (tens > 0) sb.append(tens); else sb.append(" ");
-		sb.append(units).append(".").append(firstdecimal);
-		c.drawText(sb.toString(), left, top, font);
+		if (sb != null) {
+			sb.setLength(0); // clear the stringbuffer
+			if (hundreds > 0) sb.append(hundreds); else sb.append(" ");
+			if (tens > 0) sb.append(tens); else sb.append(" ");
+			sb.append(units).append(".").append(firstdecimal);
+			c.drawText(sb.toString(), left, top, font);
+		}
 		
+	}
+}
+
+class ClockNumber extends StaticSurface {
+	private Typeface face;
+	private Paint font;
+	private StringBuffer sb = null;
+	
+	// Bitmap is not currently used
+	public ClockNumber(MyBitmap bitmap, float x, float y, Typeface face) {
+		super(bitmap, x, y);
+		this.face = face;
+	}
+	
+	@Override
+	public void onBitmapChanged() {
+		font = new Paint();
+		font.setColor(Color.RED);
+		font.setTypeface(this.face);
+		font.setTextSize((parent.getScale() * parent.getGridSize()) / 16); // 8); //bitmap.getScaledBitmap().getHeight());
+		
+		sb = new StringBuffer();
+	}
+	
+	public void onDraw(Canvas c) {
+		if (planeData == null) { // || bitmap == null || bitmap.getScaledBitmap() == null) {
+			return;
+		}
+		
+		// draw always first decimal and units
+		if (sb != null) {
+			Calendar now = Calendar.getInstance();
+			
+			int hours = now.get(Calendar.HOUR_OF_DAY);
+			int minutes =  now.get(Calendar.MINUTE);
+			int seconds = now.get(Calendar.SECOND);
+			
+			final float realscale = parent.getScale() * parent.getGridSize();
+			final int left = (int) ((this.getParent().getCol() + relx) * realscale);
+			final int top = (int) ((this.getParent().getRow() + rely) * realscale);
+
+			
+			sb.setLength(0); // clear the stringbuffer
+			sb.append(hours).append(".").append(minutes).append(".").append(seconds);
+			c.drawText(sb.toString(), left, top, font);
+		}
+		
+	}
+}
+
+class C172GS1 extends SlippingSurface {
+
+	public C172GS1(MyBitmap bitmap, float rotation, int prop, float min,
+			int xmin, int ymin, float max, int xmax, int ymax) {
+		super(bitmap, rotation, prop, min, xmin, ymin, max, xmax, ymax);
+	}
+	
+	@Override
+	public void onDraw(Canvas c) {
+		if (planeData == null || bitmap == null || bitmap.getScaledBitmap() == null) {
+			return;
+		}
+		
+		// draw only if the GS1 is in range
+		if (planeData.getBool(planeData.GS1_INRANGE)) {
+			super.onDraw(c);
+		}
 	}
 }
 

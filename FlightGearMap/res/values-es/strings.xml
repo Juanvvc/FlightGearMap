@@ -11,13 +11,11 @@
     <string name="settings">Opciones&#8230;</string>
     <string name="quit">Salir</string>
     <string name="wait">Por favor, espera 10 segundos y vuelve a intentarlo.</string>
-    <string name="update_andatlas">¿Actualizaste andatlas.xml en su PC?</string>
+    <string name="update_andatlas">¿Actualizaste andatlas.xml en tu PC?</string>
     <string name="waiting_connection">Conectando con FlightGear (máximo, 10 segundos)</string>
     <string name="dist_simplemap">Mapa e instrumentos</string>
     <string name="dist_onlymap">Solo mapa</string>
-    <string name="dist_senecaii">Seneca II</string>
     <string name="dist_c172">Un solo motor (configurable)</string>
-    <string name="dist_c337">Cessna 337 Skymaster</string>
     <string name="dist_liquid">Pantalla avanzada</string>
     <string name="dist_comms">Panel comms</string>
     <string name="changelog_title">Cambios recientes</string>

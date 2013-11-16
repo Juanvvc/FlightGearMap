@@ -75,9 +75,9 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	private static final boolean DEBUG_VERSION = true;
 	
 	// List of thumbnails of the distributions
-	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
+	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
 	// List of labels
-	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_comms, R.string.single_instrument, R.string.basic_instruments};
+	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_b1900d, R.string.dist_comms, R.string.single_instrument, R.string.basic_instruments};
 
 	
 	@Override
@@ -173,6 +173,12 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
 			break;
+		case 4: // B1900D
+			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			bundle.putInt("distribution", PanelView.Distribution.B1900D_INSTRUMENTS);
+			bundle.putBoolean("showmap", false);
+			intent.putExtras(bundle);
+			break;
 // TODO: the SenecaII can not be chosen because currently is very similar to the Cessna337.
 //		case 4: // Seneca II
 //			intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
@@ -186,16 +192,16 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 //			bundle.putBoolean("liquid", true);
 //			intent.putExtras(bundle);
 //			break;
-		case 4: // comms panel
+		case 5: // comms panel
 			//intent = new Intent(this.getApplicationContext(), InstrumentPanel.class);
 			intent = new Intent(this.getApplicationContext(), CommsActivity.class);
 			intent.putExtras(bundle);
 			break;
-		case 5: // single instrument panel
+		case 6: // single instrument panel
 			intent = new Intent(this.getApplicationContext(), SingleInstrumentActivity.class);
 			intent.putExtras(bundle);
 			break;
-		case 6: // basic instruments
+		case 7: // basic instruments
 			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.BASIC_HORIZONTAL_PANEL);
 			bundle.putBoolean("showmap", false);
@@ -285,7 +291,7 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	        if (convertView == null) {  // if it's not recycled, initialize some attributes
 				viewGroup = (ViewGroup) LayoutInflater.from(PanelListActivity.this).inflate(R.layout.distthumb, null);
 				imageView = (ImageView) viewGroup.findViewById(R.id.thumb);
-	            imageView.setLayoutParams(new LinearLayout.LayoutParams(320, 240));
+	            imageView.setLayoutParams(new LinearLayout.LayoutParams(180, 135)); //note: snapshots are 320x240
 	            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 	            imageView.setPadding(8, 8, 8, 1);
 	            label = (TextView) viewGroup.findViewById(R.id.label);

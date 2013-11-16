@@ -20,7 +20,7 @@ import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 import com.juanvvc.flightgear.instruments.SwitchSurface;
 
-/** Distributed instruments as in a Cessna 337 Skymaster */
+/** Distribute instruments as in a Cessna 337 Skymaster */
 public class Cessna337 {
 	
 	public static Instrument createInstrument(InstrumentType type, Context context, float col, float row) {
@@ -111,7 +111,7 @@ public class Cessna337 {
 				});
 
 		default:
-			MyLog.w(SenecaII.class.getSimpleName(), "Instrument not available: " + type);
+			MyLog.w(Cessna337.class.getSimpleName(), "Instrument not available: " + type);
 			return null;
 		}
 	}

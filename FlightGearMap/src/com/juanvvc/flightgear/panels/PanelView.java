@@ -54,6 +54,9 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 		public static final int C337_INSTRUMENTS = 8;
 		/** A single instrument */
 		public static final int SINGLE_INSTRUMENT = 9;
+		/** Show a B1900D panel */
+		public static final int B1900D_INSTRUMENTS = 10;
+
 	};
 
 	/** Scaled to be applied to all sizes on screen. */
@@ -189,6 +192,11 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 				cols = 5;
 				rows = 3.5f;
 				instruments = SenecaII.getInstrumentPanel(context);
+				break;
+			case Distribution.B1900D_INSTRUMENTS:
+				cols = 5;
+				rows = 3;
+				instruments = B1900D.getInstrumentPanel(context);
 				break;
 			case Distribution.C337_INSTRUMENTS:
 				cols = 5;
@@ -412,8 +420,12 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			if (center_instruments) {
 				if (buffer != null) {
 					c = surfaceHolder.lockCanvas();
-					c.drawBitmap(buffer, bufferX, bufferY, null);
-					surfaceHolder.unlockCanvasAndPost(c);
+					if (c != null) {
+						c.drawBitmap(buffer, bufferX, bufferY, null);
+						surfaceHolder.unlockCanvasAndPost(c);
+					} else {
+						MyLog.w(this, "The surface holder is null");
+					}
 				}
 			} else {
 				surfaceHolder.unlockCanvasAndPost(c);

@@ -1,0 +1,313 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+ <generic>
+
+  <output>
+   <line_separator>newline</line_separator>
+   <var_separator>:</var_separator>
+
+   <chunk>
+    <name>speed</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/airspeed-indicator/indicated-speed-kt</node>
+   </chunk>
+
+   <chunk>
+    <name>Engine 0 N1</name>
+    <format>%d</format>
+    <node>/engines/engine[0]/n1</node>
+   </chunk>
+
+   <chunk>
+    <name>heading</name>
+    <format>%03d</format>
+    <node>/orientation/heading-magnetic-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>altitude</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/altimeter/indicated-altitude-ft</node>
+   </chunk>
+
+   <chunk>
+    <name>rate of climb</name>
+    <format>%f</format>
+    <type>float</type>
+    <node>/instrumentation/inst-vertical-speed-indicator/indicated-speed-fpm</node>
+   </chunk>
+
+   <chunk>
+    <name>pitch angle</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/attitude-indicator/indicated-pitch-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>Roll angle</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/attitude-indicator/indicated-roll-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>latitude</name>
+    <type>float</type>
+    <format>%.10f</format>
+    <node>/position/latitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>longitude</name>
+    <type>float</type>
+    <format>%.10f</format>
+    <node>/position/longitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>time (seconds from midnight, GMT)</name>
+    <format>%d</format>
+    <node>/instrumentation/clock/indicated-sec</node>
+   </chunk>
+
+   <chunk>
+    <name>Turn rate</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/turn-indicator/indicated-turn-rate</node>
+   </chunk>
+
+   <chunk>
+    <name>Slip skid</name>
+    <type>float</type>
+    <format>%f</format>
+    <node>/instrumentation/slip-skid-ball/indicated-slip-skid</node>
+   </chunk>
+
+   <chunk>
+	   <name>Heading indicator</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/heading-indicator/indicated-heading-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Fuel 1</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/consumables/fuel/tank/level-lbs</node>
+   </chunk>
+
+   <chunk>
+	   <name>Fuel 2</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/consumables/fuel/tank[1]/level-lbs</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Press</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine/oil-pressure-psi</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Temp F</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine/oil-temperature-degf</node>
+   </chunk>
+
+   <chunk>
+	   <name>Amp</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/systems/electrical/amps</node>
+   </chunk>
+
+   <chunk>
+	   <name>Volts</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/systems/electrical/volts</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 to flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/to-flag</node>
+   </chunk>
+ 
+   <chunk>
+	   <name>Nav1 from flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/from-flag</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 heading deflection </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/heading-needle-deflection</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav1 selected radial </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/radials/selected-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 to flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav[1]/to-flag</node>
+   </chunk>
+ 
+   <chunk>
+	   <name>Nav2 from flag </name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav[1]/from-flag</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 heading deflection </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav[1]/heading-needle-deflection</node>
+   </chunk>
+
+   <chunk>
+	   <name>Nav2 selected radial </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav[1]/radials/selected-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>ADF bearing </name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/adf/indicated-bearing-deg</node>
+   </chunk>
+
+   <chunk>
+	   <name>Elev trim</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/controls/flight/elevator-trim</node>
+   </chunk>
+
+   <chunk>
+	   <name>Flaps</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/controls/flight/flaps</node>
+   </chunk>
+
+   <chunk>
+	   <name>GS deflection in NAV1</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/nav/gs-needle-deflection-norm</node>
+   </chunk>
+
+   <chunk>
+	   <name>GS in range for NAV1</name>
+	   <type>bool</type>
+	   <node>/instrumentation/nav/gs-in-range</node>
+   </chunk>
+
+   <chunk>
+	   <name>DME</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/dme/indicated-distance-nm</node>
+   </chunk>
+   <chunk>
+	   <name>DME Speed</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/instrumentation/dme/indicated-ground-speed-kt</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 N1</name>
+	    <format>%d</format>
+	    <node>/engines/engine[1]/n1</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 0 manifold pressure</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[0]/mp-inhg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 manifold pressure</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[1]/mp-inhg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 0 cht temp</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[0]/cht-degf</node>
+   </chunk>
+
+   <chunk>
+	    <name>Engine 1 cht temp</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/engines/engine[1]/cht-degf</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Press</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine[1]/oil-pressure-psi</node>
+   </chunk>
+
+   <chunk>
+	   <name>Oil Temp F</name>
+	   <type>float</type>
+	   <format>%f</format>
+	   <node>/engines/engine[1]/oil-temperature-degf</node>
+   </chunk>
+
+   <chunk>
+	    <name>heading bug</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/instrumentation/heading-indicator/heading-bug-error-deg</node>
+   </chunk>
+
+   <chunk>
+	    <name>Position of the nav station</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/instrumentation/nav[1]/heading-deg</node>
+   </chunk>
+
+   <chunk>
+	    <name>VNE</name>
+	   <type>float</type>
+	    <format>%f</format>
+	    <node>/instrumentation/airspeed-indicator/airspeed-limit-kt</node>
+   </chunk>
+
+ </output>
+
+ </generic>
+
+</PropertyList>

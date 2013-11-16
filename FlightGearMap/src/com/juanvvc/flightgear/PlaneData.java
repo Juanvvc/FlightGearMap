@@ -78,6 +78,16 @@ public class PlaneData {
 	public static final int NAV1_HEADING = 42; // heading to the NAV station
 	public static final int ALTITUDE_AGL = 43;
 	
+	// These are used in the B1900D, a turboprop. Notice that indexes are repeated!
+	public static final int FUEL_FLOW1 = CHT1_TEMP;
+	public static final int FUEL_FLOW2 = CHT2_TEMP;
+	public static final int N1_ENGINE1 = MANIFOLD;
+	public static final int N1_ENGINE2 = MANIFOLD2;
+	public static final int TURBINE1 = AMP;
+	public static final int TURBINE2 = VOLT;
+	public static final int VNE_SPEED = ALTITUDE_AGL;
+	public static final int NAV2_HEADING = NAV1_HEADING;
+	
 
 	
 	public int getInt(int i) {

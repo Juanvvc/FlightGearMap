@@ -22,7 +22,10 @@
 $ 2.1
 !IMPORTANT! Read <a href="http://wiki.flightgear.org/FlightGearMap">http://wiki.flightgear.org/FlightGearMap</a> for installation instructions.
   % Version 2.1b
-  _ 2013-10-01
+  ! <b>The new panel for the B1900D uses a different andatlas.xml</b>
+  _ 2013-11-20
+    * New panel: B1900D
+    * HSI: the glideslope mark is not shown if GS not in range
     * New option to switch full screen off
     * New option to center (or not) surfaces on screen
     * Shows the IP address in the main activity
