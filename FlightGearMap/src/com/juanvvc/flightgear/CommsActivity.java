@@ -546,7 +546,7 @@ public class CommsActivity extends Activity implements OnClickListener {
 									}).show();
 				} else {
 					// add information about fgfs+++
-					txt = txt + getString(R.string.run_fgfs_using) + " --telnet=" + telnetPort;
+					txt = txt + getString(R.string.run_fgfs_using) + " --telnet=socket,in,20,," + telnetPort + ",tcp";
 
 					// show the dialog on screen
 					currentDialog = new AlertDialog.Builder(CommsActivity.this)

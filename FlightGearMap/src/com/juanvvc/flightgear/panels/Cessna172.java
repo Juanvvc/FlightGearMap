@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
@@ -167,7 +168,7 @@ public class Cessna172 {
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("dme.png", 0, 0, 512, 216), 0, 0),
 					new DMENumber(null, 10, 120, PlaneData.DME, face),
-					new DMENumber(null, 228, 120, PlaneData.DME_SPEED, face)
+					new DMENumber(null, 240, 120, PlaneData.DME_SPEED, face)
 			});
 		case MAGNETS_STARTER:
 			return new Instrument(col, row, context, new Surface[] {
@@ -198,7 +199,7 @@ public class Cessna172 {
 		case CLOCK:
 			return new Instrument(col, row, context, new Surface[] {
 					new StaticSurface(new MyBitmap("clock.png", -1, -1, -1, -1), 0, 20),
-					new ClockNumber(null, PlaneData.SECONDS, 40, 120, face)
+					new ClockNumber(null, PlaneData.SECONDS, 256, 120, face)
 			});
 		default:
 			MyLog.w(Cessna172.class.getSimpleName(), "Instrument not available: " + type);
@@ -597,6 +598,7 @@ class ClockNumber extends StaticSurface {
 		font.setColor(Color.RED);
 		font.setTypeface(this.face);
 		font.setTextSize((parent.getScale() * parent.getGridSize()) / 16); // 8); //bitmap.getScaledBitmap().getHeight());
+		font.setTextAlign(Align.CENTER);
 		
 		sb = new StringBuffer();
 	}

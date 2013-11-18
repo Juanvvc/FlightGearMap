@@ -35,6 +35,5 @@
     <string name="single_instrument">Single instrument</string>
     <string name="basic_instruments">Basic instruments</string>
 	<string name="consider_donating">If you find this app useful, <a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">consider buying the donate version</a></string>
-	<string name="myip">My IP addres: %. You will need this to configure fgfs. Check <a href="http://wiki.flightgear.org/FlightGearMap">the online manual</a>.</string>
-
+	<string name="myip">My IP address: %. You will need this to configure fgfs. Check http://wiki.flightgear.org/FlightGearMap</string>
 </resources>

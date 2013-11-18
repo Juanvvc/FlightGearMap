@@ -35,6 +35,7 @@ import com.juanvvc.flightgear.maps.DatabaseHelper;
 import com.juanvvc.flightgear.maps.MapOverlay;
 import com.juanvvc.flightgear.maps.SolidTileSource;
 import com.juanvvc.flightgear.panels.PanelView;
+import com.juanvvc.flightgear.panels.PanelView.Distribution;
 
 /** Shows a panel with only instruments.
  * @author juanvi
@@ -72,6 +73,8 @@ public class PanelActivity extends Activity {
 	private boolean show_airports = true;
 	/** If set, show the navaids on the map */
 	private boolean show_navaids = true;
+	/** The configuration file in the remote fgfs */
+	private String andatlas = "andatlas";
 	
     /** Called when the activity is first created. */
     @Override
@@ -309,6 +312,13 @@ public class PanelActivity extends Activity {
     	panelView.setVisibility(View.VISIBLE);
     	panelView.setDistribution(this.distribution);
     	panelView.invalidate();
+    	
+    	// Select the configuration file
+    	if (this.distribution == Distribution.B1900D_INSTRUMENTS) {
+    		andatlas = "andatlas-b1900d";
+    	} else {
+    		andatlas = "andatlas";
+    	}
 
     	if (this.calibratableManager != null) {
     		this.calibratableManager.empty();
@@ -569,7 +579,7 @@ public class PanelActivity extends Activity {
 			        		(ipAddress >> 24 & 0xff));
 			        
 			        // add information about fgfs+++
-			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=" + telnetPort;
+			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp," + andatlas + " --telnet=socket,in,20,," + telnetPort + ",tcp";
 			        
 			        // show the dialog on screen
 					currentDialog = new AlertDialog.Builder(PanelActivity.this).setIcon(R.drawable.ic_launcher)

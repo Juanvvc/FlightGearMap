@@ -127,6 +127,9 @@ public class B1900D {
 		instruments.add(B1900D.createInstrument(InstrumentType.FUELFLOW, context, 4, 2));
 		instruments.add(B1900D.createInstrument(InstrumentType.OIL_PRESS, context, 4, 2.5f));
 		
+		instruments.add(Cessna172.createInstrument(InstrumentType.TURN_RATE, context, 1, 2));
+		instruments.add(Cessna172.createInstrument(InstrumentType.TRIMFLAPS, context, 3, 2.5f));
+
 		return instruments;
 	}
 }

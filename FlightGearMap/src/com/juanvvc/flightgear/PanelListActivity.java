@@ -75,7 +75,7 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	private static final boolean DEBUG_VERSION = true;
 	
 	// List of thumbnails of the distributions
-	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_c337, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
+	private static final int[] THUMBS = {R.drawable.dist_simplemap, R.drawable.dist_onlymap, R.drawable.dist_c172, R.drawable.dist_c337, R.drawable.dist_b1900d, R.drawable.dist_comms, R.drawable.dist_single, R.drawable.dist_basic};
 	// List of labels
 	private static final int[] THUMBS_LABELS = {R.string.dist_simplemap, R.string.dist_onlymap, R.string.dist_c172, R.string.dist_c337, R.string.dist_b1900d, R.string.dist_comms, R.string.single_instrument, R.string.basic_instruments};
 
@@ -242,10 +242,10 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         int ipAddress = wifiInfo.getIpAddress();
         
-        StringBuffer txt = new StringBuffer("");
+        String txt = null;
         
         if (ipAddress == 0) {
-        	txt.append(getString(R.string.network_not_detected));
+        	txt = getString(R.string.network_not_detected);
         } else {
         	// convert Ip to a readable IP
 	        String readableIP = String.format("%d.%d.%d.%d",
@@ -255,13 +255,14 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 	        		(ipAddress >> 24 & 0xff));
 	        
 	        // add information about my IP
-	        txt.append(getString(R.string.myip).replaceFirst("%", readableIP));
+	        txt = getString(R.string.myip).replaceFirst("%", readableIP);
         }
         
         TextView tv = (TextView) this.findViewById(R.id.ipinfo);
-        tv.setText(txt);
         // clickable links
     	tv.setMovementMethod(LinkMovementMethod.getInstance());
+        tv.setText(txt);
+        MyLog.i(this, txt);
 	}
 	
 	/** The Adapter of the available distributions */

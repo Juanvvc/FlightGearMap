@@ -32,7 +32,7 @@
     <string name="single_instrument">Instrumento único</string>
     <string name="basic_instruments">Panel básico</string>
 	<string name="consider_donating">Si consideras esta aplicación útil, <a href="https://play.google.com/store/apps/details?id=com.juanvvc.flightgeardonate">compra la versión de donación</a>.</string>
-	<string name="myip">Mi dirección IP addres: %. La necesitarás para configurar fgfs. Consulta <a href="http://wiki.flightgear.org/FlightGearMap">la ayuda</a>.</string>
+	<string name="myip">Mi dirección IP addres: %. La necesitarás para configurar fgfs. Consulta: http://wiki.flightgear.org/FlightGearMap</string>
     
 
 </resources>
