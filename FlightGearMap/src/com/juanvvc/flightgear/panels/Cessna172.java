@@ -1,8 +1,6 @@
 package com.juanvvc.flightgear.panels;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -643,7 +641,7 @@ class C172GS1 extends SlippingSurface {
 		}
 		
 		// draw only if the GS1 is in range
-		if (planeData.getBool(planeData.GS1_INRANGE)) {
+		if (planeData.getBool(PlaneData.GS1_INRANGE)) {
 			super.onDraw(c);
 		}
 	}

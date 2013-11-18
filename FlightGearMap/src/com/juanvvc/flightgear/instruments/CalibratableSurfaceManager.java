@@ -31,7 +31,6 @@ public class CalibratableSurfaceManager extends Thread {
 	}
 	
 	public void run() {
-
 		FGFSConnection conn = null;
 		boolean cancelled = false;
 		int waitPeriod = 5000;
@@ -40,7 +39,7 @@ public class CalibratableSurfaceManager extends Thread {
 		
 		// read preferences
     	try {
-    		waitPeriod = new Integer(sp.getString("update_period", "500")).intValue();
+    		waitPeriod = Integer.valueOf(sp.getString("update_period", "500"));
     		// check limits
     		waitPeriod = Math.max(waitPeriod, 500);
     	} catch (NumberFormatException e) {
@@ -48,7 +47,7 @@ public class CalibratableSurfaceManager extends Thread {
     		waitPeriod = 5000;
     	}
     	try {
-    		port = new Integer(sp.getString("telnet_port", "9000")).intValue();
+    		port = Integer.valueOf(sp.getString("telnet_port", "9000"));
     		// check limits
     		port = Math.max(port, 1);
     	} catch (ClassCastException e) {

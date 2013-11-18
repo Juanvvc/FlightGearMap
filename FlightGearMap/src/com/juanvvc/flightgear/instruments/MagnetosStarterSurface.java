@@ -2,11 +2,9 @@ package com.juanvvc.flightgear.instruments;
 
 import java.io.IOException;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 
 import com.juanvvc.flightgear.FGFSConnection;
 import com.juanvvc.flightgear.MyBitmap;

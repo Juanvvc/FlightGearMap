@@ -60,9 +60,7 @@ public class PanelActivity extends Activity {
 	private PowerManager.WakeLock wakeLock = null;
 	/** The identifier of the distribution. Must be an integer from PanelView.Distribution. */
 	private int distribution;
-	/** If set, use the wakeLock.
-	 * TODO: the wakeLock was not always working. Use this option for debugging
-	 */
+	/** If set, use the wakeLock. */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
 	public static final int SOCKET_TIMEOUT = 10000;
@@ -141,7 +139,6 @@ public class PanelActivity extends Activity {
             // get the distribution from the intent
             try{
             	this.distribution = getIntent().getExtras().getInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
-            	// TODO: check savedInstanceState?
             } catch(Exception e) {
             	this.distribution = PanelView.Distribution.C172_INSTRUMENTS;
             }        
@@ -259,7 +256,7 @@ public class PanelActivity extends Activity {
     protected void onPause() {
     	MyLog.i(this, "Pausing threads");
     	if (udpReceiver != null) {
-    		udpReceiver.cancel(true); // TODO: actually, the thread only stops after a timeout
+    		udpReceiver.cancel(true); // actually, the thread only stops after a timeout
     		udpReceiver = null;
     	}
         if (calibratableManager != null) {
@@ -431,6 +428,7 @@ public class PanelActivity extends Activity {
 										case 3: //VOR and VOR-DME
 										case 4: // ILS
 										case 5: // LOC
+										case 13: // DME
 											a.loadIcon(PanelActivity.this, R.drawable.vor);
 											a.setText(cursor.getString(1)+" "+cursor.getString(6));
 											//a.setDescription(cursor.getString(7));

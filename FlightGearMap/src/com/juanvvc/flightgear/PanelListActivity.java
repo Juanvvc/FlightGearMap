@@ -115,6 +115,7 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
         	LinearLayout layout = (LinearLayout)findViewById(R.id.panelviewLayout);
 	        
         	TextView tv = new TextView(this);
+        	// Note: we still use FILL_PARENT to support old devices
         	tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         	tv.setText(R.string.consider_donating);
         	tv.setMovementMethod(LinkMovementMethod.getInstance());

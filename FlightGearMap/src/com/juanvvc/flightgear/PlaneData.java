@@ -2,8 +2,6 @@ package com.juanvvc.flightgear;
 
 import java.util.Date;
 
-import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
-
 /** Models the data that FlightGear sends.
  * @author juanvi
  *

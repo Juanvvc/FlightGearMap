@@ -4,21 +4,13 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.MapView.Projection;
 
-import com.juanvvc.flightgear.MyLog;
-import com.juanvvc.flightgear.R;
-import com.juanvvc.flightgear.R.drawable;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Point;
-import android.view.MotionEvent;
-import android.widget.Toast;
 
 /** An overlay over a map to draw a compass. */
 public class CompassOverlay extends org.osmdroid.views.overlay.Overlay {

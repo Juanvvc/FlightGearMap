@@ -13,13 +13,14 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static String DB_PATH = "/data/data/com.juanvvc.flightgear/databases/";
+    private static String db_path = null;
     private static String DB_NAME = "map.db";
     private SQLiteDatabase db = null;
     private Context context;
 
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, 1);
+		db_path = context.getDatabasePath("map.db").getAbsolutePath();
 		this.context = context;
 	}
 	
@@ -35,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private boolean checkDatabase() {
 		SQLiteDatabase checkDB = null;
 		try {
-			checkDB = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+			checkDB = SQLiteDatabase.openDatabase(db_path, null, SQLiteDatabase.OPEN_READONLY);
 		} catch(SQLiteException e) {
 			// database doesn't exist yet
 		}
@@ -49,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private void copyDatabase() throws IOException {
 		InputStream in = context.getAssets().open(DB_NAME);
-		OutputStream out = new FileOutputStream(DB_PATH + DB_NAME);
+		OutputStream out = new FileOutputStream(db_path);
 		
 		
 		 //transfer bytes from the inputfile to the outputfile
@@ -65,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	public void openDatabase() throws SQLException {
-		this.db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+		this.db = SQLiteDatabase.openDatabase(db_path, null, SQLiteDatabase.OPEN_READONLY);
 	}
 	
 	@Override
@@ -78,14 +79,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
-
+		// does nothing, as the database will be copied and not created.
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
-
+		// does nothing, as the database will be copied and not created.
 	}
 	
 	public Cursor getAirports(float lat, float lng) {

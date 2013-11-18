@@ -3,25 +3,19 @@ package com.juanvvc.flightgear.panels;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
-import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
-import com.juanvvc.flightgear.instruments.SwitchSurface;
 
 /** Distributed instruments as in a B1900D */
 public class B1900D {

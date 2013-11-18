@@ -4,9 +4,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.MapView.Projection;
 
-import com.juanvvc.flightgear.R;
-import com.juanvvc.flightgear.R.drawable;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +15,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Point;
 import android.view.MotionEvent;
 import android.widget.Toast;
+
+import com.juanvvc.flightgear.R;
 
 /** An overlay over a map to draw a plane. */
 public class MapOverlay extends org.osmdroid.views.overlay.Overlay {

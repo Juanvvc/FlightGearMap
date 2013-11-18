@@ -16,11 +16,9 @@ import android.graphics.Typeface;
 import com.juanvvc.flightgear.MyBitmap;
 import com.juanvvc.flightgear.MyLog;
 import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
 import com.juanvvc.flightgear.instruments.RotateSurface;
-import com.juanvvc.flightgear.instruments.SlippingSurface;
 import com.juanvvc.flightgear.instruments.StaticSurface;
 import com.juanvvc.flightgear.instruments.Surface;
 
@@ -71,10 +69,14 @@ public class LiquidDisplay {
 
 class LiquidAtiSurface extends Surface {
 	private Matrix matrix;
+	private Paint paintGrad = null;
+	private Paint shader = null;
 
 	public LiquidAtiSurface(MyBitmap bitmap, float x, float y) {
 		super(bitmap, x, y);
 		matrix = new Matrix();
+		paintGrad = new Paint();
+		shader = new Paint();
 	}
 	@Override
 	public void onDraw(Canvas c) {
@@ -105,7 +107,6 @@ class LiquidAtiSurface extends Surface {
 		// draw background
 		float[] p = {0, 0, 0, b.getHeight()};
 		matrix.mapPoints(p);
-		Paint paintGrad = new Paint();
 		paintGrad.setShader(new LinearGradient(
 				p[0], p[1], p[2], p[3],
 				new int[]{0xff0000aa, 0xff0000ff, 0xff0000ff, 0xffffffff, 0xffffffff, 0xffA36008, 0xffA36008},
@@ -114,7 +115,6 @@ class LiquidAtiSurface extends Surface {
 		c.drawPaint(paintGrad);
 		
 		// draw scale
-		Paint shader = new Paint();
 		shader.setShader(new LinearGradient(
 			((col + 0.5f) * gridSize) * scale, (row * gridSize) * scale,
 			((col + 0.5f) * gridSize) * scale, ((1f + row) * gridSize) * scale,

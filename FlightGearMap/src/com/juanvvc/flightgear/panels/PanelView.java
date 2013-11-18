@@ -108,6 +108,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 			default:
 			}
 		}
+		a.recycle();
 		
 		this.center_instruments = true; // default value
 
@@ -248,7 +249,7 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	/** Sets the calibratable surface manager, and register any available calibratable surface. */
 	public void postCalibratableSurfaceManager(CalibratableSurfaceManager cs) {
 		for(Instrument i: instruments) {
-			 // TODO: an instrument should never be null. Use only during development
+			// An instrument should never be null. Use only during development
 			if ( i == null ) {
 				MyLog.w(PanelView.class, "Instrument is null");
 				continue;
@@ -271,8 +272,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	 */
 	private void rescaleInstruments() {
 		if (getWidth() > 0 && instruments != null && instruments.size() > 0) {
-			// scale to match the available size. All instrumewnts should be visible.
-			// TODO: this assumes that the first instrument is not null
+			// scale to match the available size. All instruments should be visible.
+			// This assumes that the first instrument is not null
 			scale = Math.min(
 					1.0f * getWidth() / (cols * instruments.get(0).getGridSize()),
 					1.0f * getHeight()/ (rows * instruments.get(0).getGridSize()));
@@ -322,8 +323,8 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 	
 	/** Reload and re-scale images inside the instruments.
 	 * Call this method when the view is created or its size changes.
-	 * TODO: This method could be run on a different thread, but
-	 * on my devices loading does not takes long and can be
+	 * This method could use a different thread, but
+	 * on my devices loading images does not takes long and can be
 	 * in the main thread.
 	 */
 	private void reloadImages() {
@@ -401,18 +402,19 @@ public class PanelView extends SurfaceView implements OnTouchListener {
 					}
 				}
 			} catch(IndexOutOfBoundsException e) {
-				// TODO: this exception is thrown if redrawing() while the
-				// instruments are not ready. Prevent this.
-				MyLog.w(this, MyLog.stackToString(e));
+				// This exception is thrown if redrawing() while the
+				// instruments are not yet ready. TODO: Prevent this.
+				MyLog.e(this, MyLog.stackToString(e));
 			} catch(NullPointerException e) {
 				// This usually means that an image is not found
 				MyLog.w(this, MyLog.stackToString(e));
 			} catch(NumberFormatException e) {
-				// Most probable cause: wrong XML in FlightGear
+				// Most probable cause: wrong XML protocol in remote fgfs
 				MyLog.w(this, MyLog.stackToString(e));
 			} catch(RuntimeException e) {
 				// this exception is thrown when using a recycled bitmap on Canvas, for example
 				// TODO: I'm ignoring this exception, but I'm sure that it means an error in the program
+				MyLog.e(this, MyLog.stackToString(e));
 			}
 			
 			// If CENTER_INSTRUMENTS is set, draw the buffer on the canvas

@@ -16,6 +16,9 @@ import com.juanvvc.flightgear.PlaneData;
  *
  */
 public abstract class Surface {
+	/** This is the default surface size, width and height. All positions must be expressed
+	 * relative to this size!
+	 */
 	public static final float DEFAULT_SURFACE_SIZE = 512f;
 	/** Horizontal position inside the instrument. 1.0=DEFAULT_SURFACE_FACE pixels */
 	protected float relx;
@@ -43,22 +46,28 @@ public abstract class Surface {
 		this.parent = ins;
 	}
 	
+	/** Returns the parent instrument of this surface */
 	public Instrument getParent() {
 		return parent;
 	}
 	
+	/** Returns the bitmap of this surface */
 	public MyBitmap getBitmap() {
 		return this.bitmap;
 	}
 	
 	/** The bitmap that the surface uses has changed.
-	 * The default behavior does nothing, but some surfaces may update their reference points.
+	 * This usually means that the screen size has changed, or the surface has been loaded.
+	 * The default behavior does nothing, but some surfaces may calculate or update their
+	 * internal reference points, font sizes or transform matrices.
 	 */
 	public void onBitmapChanged() {
 		// Does nothing
 	}
 	
-	/** @param pd The last PlaneData object */
+	/** Receives a new planeData.
+	 * Most surfaces don't need to change this method.
+	 * @param pd The last PlaneData object */
 	public void postPlaneData(final PlaneData pd) {
 		this.planeData = pd;
 	}
@@ -96,15 +105,24 @@ public abstract class Surface {
 	 * @param pd The current PlaneData object. */
 	public abstract void onDraw(final Canvas c);
 	
+	/** The CalibratableSurfaceManager changed.
+	 * A CalibratableSurfaceManager is used to control surfaces that have some data to send
+	 * to the remote fgfs: selected radials, switches... A surface that needs send these data,
+	 * will register in the CalibratableSurfaceManager. Then, periodically the manager asks
+	 * if the surface is dirty and, it it is, calls the update method.
+	 * @param cs
+	 */
 	public void postCalibratableSurfaceManager(final CalibratableSurfaceManager cs) {
 		// Does nothing
 	}
 	
+	/** Returns true if the surface has some value to send to the remote fgfs */
 	public boolean isDirty() {
 		return false;
 	}
 	
+	/** Is it is dirty, this method will be called to send the value to the remote fgfs */
 	public void update(final FGFSConnection conn) throws IOException {
-		
+		// Does nothing
 	}
 }

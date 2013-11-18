@@ -3,18 +3,9 @@ package com.juanvvc.flightgear.panels;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Canvas;
 
-import com.juanvvc.flightgear.MyBitmap;
-import com.juanvvc.flightgear.MyLog;
-import com.juanvvc.flightgear.PlaneData;
-import com.juanvvc.flightgear.instruments.CalibratableRotateSurface;
 import com.juanvvc.flightgear.instruments.Instrument;
 import com.juanvvc.flightgear.instruments.InstrumentType;
-import com.juanvvc.flightgear.instruments.RotateSurface;
-import com.juanvvc.flightgear.instruments.SlippingSurface;
-import com.juanvvc.flightgear.instruments.StaticSurface;
-import com.juanvvc.flightgear.instruments.Surface;
 
 public class SenecaII {
 

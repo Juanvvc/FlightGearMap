@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -27,8 +26,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.juanvvc.flightgear.R;
-
 public class CommsActivity extends Activity implements OnClickListener {
 	private ConnTask connTask;
 	private int selectedEditText = -1;
@@ -42,9 +39,7 @@ public class CommsActivity extends Activity implements OnClickListener {
 	private AlertDialog currentDialog;
 	/** The wakelock to lock the screen and prevent sleeping. */
 	private PowerManager.WakeLock wakeLock = null;
-	/** If set, use the wakeLock.
-	 * TODO: the wakeLock was not always working. Use this option for debugging
-	 */
+	/** If set, use the wakeLock. */
 	private static final boolean USE_WAKELOCK = true;
 	/** Timeout milliseconds for the UDP socket. */
 	private static final int SOCKET_TIMEOUT = 10000;
@@ -148,7 +143,7 @@ public class CommsActivity extends Activity implements OnClickListener {
 	protected void onPause() {
 		MyLog.i(this, "Pausing threads");
 		if (connTask != null) {
-			connTask.cancel(true); // TODO: actually, the thread only stops after a timeout
+			connTask.cancel(true); // Actually, the thread only stops after a timeout
 			connTask = null;
 		}
 		MyLog.i(this, "Stopping dialogs");
@@ -283,7 +278,6 @@ public class CommsActivity extends Activity implements OnClickListener {
 	 * connections. When new data is received, frequencies are updated.
 	 */
 	private class ConnTask extends AsyncTask<Object, PlaneData, String> {
-		private String udpport;
 		private int telnetPort;
 		private boolean firstMessage;
 		FGFSConnection conn = null;
@@ -319,7 +313,6 @@ public class CommsActivity extends Activity implements OnClickListener {
 				telnetPort = 9000;
 			}
 			fgfsIP = sp.getString("fgfs_ip", "192.168.1.2");
-			udpport = sp.getString("udp_port", "5501");
 
 			MyLog.i(this, "Telnet: " + fgfsIP + ":" + telnetPort + " " + waitPeriod + "ms");
 
@@ -552,11 +545,6 @@ public class CommsActivity extends Activity implements OnClickListener {
 										}
 									}).show();
 				} else {
-					// convert Ip to a readable IP
-					String readableIP = String.format("%d.%d.%d.%d",
-							(ipAddress & 0xff), (ipAddress >> 8 & 0xff),
-							(ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-
 					// add information about fgfs+++
 					txt = txt + getString(R.string.run_fgfs_using) + " --telnet=" + telnetPort;
 
