@@ -15,14 +15,14 @@ import com.juanvvc.flightgear.panels.Cessna172;
 import com.juanvvc.flightgear.panels.PanelView;
 
 /** A simplification of InstrumentActivity to show only one instrument, and allow chaging the instrument */
-public class SingleInstrumentActivity extends InstrumentActivity implements OnClickListener{
+public class SingleInstrumentActivity extends PanelActivity implements OnClickListener{
 	
 	private int currentInstrument = 0;
 	private static int MAX_INSTRUMENT = 8;
 
     public void onCreate(Bundle savedInstanceState) {
     	// Initialize planaOverlay to bypass some initializations in our parent's constructor
-    	planeOverlay = new PlaneOverlay(this);
+    	planeOverlay = new MapOverlay(this);
         super.onCreate(savedInstanceState);
         
     	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);

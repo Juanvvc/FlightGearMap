@@ -150,31 +150,31 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 		// We will start a MapInstrumentPanel or a InstrumentPanel depending on the choose
 		switch(position) {
 		case 0: // map and simple controls
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putBoolean("showmap", true);
 			bundle.putBoolean("onlymap", false);
 			intent.putExtras(bundle);
 			break;
 		case 1: // only map
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putBoolean("showmap", true);
 			bundle.putBoolean("onlymap", true);
 			intent.putExtras(bundle);
 			break;
 		case 2: // Cessna 172
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C172_INSTRUMENTS);
 			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
 			break;
 		case 3: // Cessna 337
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.C337_INSTRUMENTS);
 			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
 			break;
 		case 4: // B1900D
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.B1900D_INSTRUMENTS);
 			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);
@@ -202,7 +202,7 @@ public class PanelListActivity extends Activity implements OnItemClickListener{
 			intent.putExtras(bundle);
 			break;
 		case 7: // basic instruments
-			intent = new Intent(this.getApplicationContext(), InstrumentActivity.class);
+			intent = new Intent(this.getApplicationContext(), PanelActivity.class);
 			bundle.putInt("distribution", PanelView.Distribution.BASIC_HORIZONTAL_PANEL);
 			bundle.putBoolean("showmap", false);
 			intent.putExtras(bundle);

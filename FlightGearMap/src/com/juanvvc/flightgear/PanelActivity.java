@@ -1,9 +1,11 @@
 package com.juanvvc.flightgear;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Vector;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -15,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -32,13 +35,13 @@ import com.juanvvc.flightgear.panels.PanelView;
 /** Shows a panel with only instruments.
  * @author juanvi
  */
-public class InstrumentActivity extends Activity {
+public class PanelActivity extends Activity {
 	/** Reference to the map view. */
 	MapView mapView = null;
 	/** Reference to the panel view. */
 	PanelView panelView = null;
 	/** Reference to the available overlays. */
-	PlaneOverlay planeOverlay;
+	MapOverlay planeOverlay;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
 	/** The port for Telnet communications. */
@@ -81,7 +84,7 @@ public class InstrumentActivity extends Activity {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	}
 		
-        planeOverlay = new PlaneOverlay(this);
+        planeOverlay = new MapOverlay(this);
         
         boolean onlymap = false;
         boolean showmap = false;
@@ -147,18 +150,18 @@ public class InstrumentActivity extends Activity {
   		// select the plane
   		try {
   			if (planeType.equals("plane2")) {
-  				this.planeOverlay.loadPlane(this, R.drawable.plane2);
+  				this.planeOverlay.loadIcon(this, R.drawable.plane2);
   			} else if (planeType.equals("plane3")) {
-  				this.planeOverlay.loadPlane(this, R.drawable.plane3);
+  				this.planeOverlay.loadIcon(this, R.drawable.plane3);
   			} else if (planeType.equals("plane4")) {
-  				this.planeOverlay.loadPlane(this, R.drawable.plane4);
+  				this.planeOverlay.loadIcon(this, R.drawable.plane4);
   			} else if (planeType.equals("plane5")) {
-  				this.planeOverlay.loadPlane(this, R.drawable.plane5);
+  				this.planeOverlay.loadIcon(this, R.drawable.plane5);
   			} else {
-  				this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  				this.planeOverlay.loadIcon(this, R.drawable.plane1);
   			}
   		} catch (Exception e) {
-  			this.planeOverlay.loadPlane(this, R.drawable.plane1);
+  			this.planeOverlay.loadIcon(this, R.drawable.plane1);
   		}
   		
   		// select the map type
@@ -300,9 +303,12 @@ public class InstrumentActivity extends Activity {
 	
 	/** An AsyncTask to receive data from a remote UDP server.
 	 * When new data is received, the panelView is updated.
+	 * Hence, a frame is drawn each time a new messages arrives.
 	 * THIS IS THE THREAD THAT UPDATES THE PANELVIEW */
 	private class UDPReceiver extends AsyncTask<Integer, PlaneData, String> {
 		private boolean firstMessage = true;
+		private DatabaseHelper db = null;
+		private Vector<MapOverlay> overlays = null;
 
 		@Override
 		protected String doInBackground(Integer... params) {
@@ -330,6 +336,22 @@ public class InstrumentActivity extends Activity {
 			pd.setMovingAverage(PlaneData.NAV2_DEFLECTION, true);
 			pd.setMovingAverage(PlaneData.CLIMB_RATE, true);
 			
+			// if there is a mapview, start the database checker
+			if (mapView != null) {
+				MyLog.d(this, "Starting database");
+				db = new DatabaseHelper(PanelActivity.this);
+				try {
+					db.createDatabase();
+					db.openDatabase();
+					overlays = new Vector<MapOverlay>();
+				} catch (IOException e) {
+					MyLog.e(this, "Database cannot be created: " + e.toString());
+					db = null;
+				}
+			}
+			int UPDATE_OVERLAYS=100;
+			int update_db = UPDATE_OVERLAYS;
+			
 			while(!canceled) {
 				DatagramPacket p = new DatagramPacket(buf, buf.length);
 				
@@ -337,6 +359,71 @@ public class InstrumentActivity extends Activity {
 					socket.receive(p);
 
 					pd.parse(new String(p.getData()));
+					
+					if (db != null) {
+						update_db++;
+						if (update_db > UPDATE_OVERLAYS) {
+							update_db = 0;
+							MyLog.d(this, "Checking database");
+							
+							// check the airports 
+							Cursor cursor = db.getAirports(
+									pd.getFloat(PlaneData.LATITUDE),
+									pd.getFloat(PlaneData.LONGITUDE));
+							if (cursor!=null) {
+								cursor.moveToFirst();
+								overlays.removeAllElements();
+								while (!cursor.isAfterLast()) {
+									float lat = cursor.getFloat(2);
+									float lng = cursor.getFloat(3);
+									MapOverlay a = new MapOverlay(PanelActivity.this);
+									a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
+									a.setText(cursor.getString(1));
+									a.loadIcon(PanelActivity.this, R.drawable.airport);
+									overlays.add(a);
+									cursor.moveToNext();
+								}
+								cursor.close();
+							}
+							
+							// check the navaids
+							cursor = db.getNavaids(
+									pd.getFloat(PlaneData.LATITUDE),
+									pd.getFloat(PlaneData.LONGITUDE));
+							if (cursor!=null) {
+								cursor.moveToFirst();
+								while (!cursor.isAfterLast()) {
+									float lat = cursor.getFloat(3);
+									float lng = cursor.getFloat(4);
+									int type = cursor.getInt(2);
+									MapOverlay a = new MapOverlay(PanelActivity.this);
+									a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
+
+									switch(type) {
+									case 2: // NDB
+										a.loadIcon(PanelActivity.this, R.drawable.ndb);
+										a.setText(cursor.getString(1)+" "+cursor.getString(6));
+										//a.setDescription(cursor.getString(7));
+										overlays.add(a);
+										break;
+									case 3: //VOR and VOR-DME
+									case 4: // ILS
+									case 5: // LOC
+									case 6: // GS
+										a.loadIcon(PanelActivity.this, R.drawable.vor);
+										a.setText(cursor.getString(1)+" "+cursor.getString(6));
+										//a.setDescription(cursor.getString(7));
+										overlays.add(a);
+										break;
+									default:
+									}
+									cursor.moveToNext();
+								}
+								cursor.close();
+							}
+						}
+					}
+					
 					this.publishProgress(pd);
 					if (panelView != null && panelView.getVisibility() == View.VISIBLE) {
 						panelView.redraw();
@@ -356,6 +443,10 @@ public class InstrumentActivity extends Activity {
 			
 			socket.close();
 			
+			if (db!=null) {
+				db.close();
+			}
+			
 			MyLog.d(this, "UDP Thread finished");
 			
 			return msg;
@@ -374,15 +465,23 @@ public class InstrumentActivity extends Activity {
 							(int)(values[0].getFloat(PlaneData.LONGITUDE) * 1E6));
 					mapView.getController().setCenter(p);
 					
-					// update the panel and overlay
-					planeOverlay.setPlaneData(values[0], p);
+					// if there are pending overlays, remove all current overlays and add them
+					if (overlays!=null && overlays.size() > 0) {
+						mapView.getOverlays().clear();
+						mapView.getOverlays().addAll(overlays);
+						mapView.getOverlays().add(planeOverlay);
+						overlays.removeAllElements();
+					}
+					
+					// update the panel and plane overlay
+					planeOverlay.setPosition(p, values[0].getFloat(PlaneData.HEADING_MOV));
 			}
 			
 			if (panelView != null) {
 				panelView.postPlaneData(values[0]);
 				// check if the calibratable manager is still running
 				if (calibratableManager == null || !calibratableManager.isAlive()) {
-			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(InstrumentActivity.this));
+			        calibratableManager = new CalibratableSurfaceManager(PreferenceManager.getDefaultSharedPreferences(PanelActivity.this));
 			        calibratableManager.start();
 			        if (panelView != null) {
 			        	panelView.postCalibratableSurfaceManager(calibratableManager);
@@ -402,7 +501,7 @@ public class InstrumentActivity extends Activity {
 	    		currentDialog.dismiss();
 	    	}
 	    	
-	    	if(InstrumentActivity.this.isFinishing()) {
+	    	if(PanelActivity.this.isFinishing()) {
 	    		return;
 	    	}
 	        
@@ -424,7 +523,7 @@ public class InstrumentActivity extends Activity {
 		        
 		        if (ipAddress == 0) {
 		        	// if no IP in the wifi network.
-		        	currentDialog = new AlertDialog.Builder(InstrumentActivity.this).setIcon(R.drawable.ic_launcher)
+		        	currentDialog = new AlertDialog.Builder(PanelActivity.this).setIcon(R.drawable.ic_launcher)
 		        		.setTitle(getString(R.string.warning))
 						.setMessage(getString(R.string.network_not_detected) + " " + getString(R.string.critical_error))
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -446,7 +545,7 @@ public class InstrumentActivity extends Activity {
 			        txt = txt + getString(R.string.run_fgfs_using) + " --generic=socket,out,10," + readableIP + "," + udpPort + ",udp,andatlas --telnet=" + telnetPort;
 			        
 			        // show the dialog on screen
-					currentDialog = new AlertDialog.Builder(InstrumentActivity.this).setIcon(R.drawable.ic_launcher)
+					currentDialog = new AlertDialog.Builder(PanelActivity.this).setIcon(R.drawable.ic_launcher)
 						.setTitle(getString(R.string.warning))
 						.setMessage(txt)
 						.setPositiveButton(android.R.string.ok, new OnClickListener() {

@@ -34,7 +34,7 @@
         <!-- Manages panels with a map and (optionally) some instruments
         <activity android:name=".panels.MapInstrumentPanel" ></activity -->
         <!--  Shows the instruments and the maps -->
-        <activity android:name=".InstrumentActivity" ></activity>
+        <activity android:name=".PanelActivity" ></activity>
         <!--  Shows the comm panel -->
         <activity android:name=".CommsActivity"></activity>
         <!--  Shows a single instrument panel -->
