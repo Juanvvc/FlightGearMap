@@ -30,6 +30,10 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.juanvvc.flightgear.instruments.CalibratableSurfaceManager;
+import com.juanvvc.flightgear.maps.CompassOverlay;
+import com.juanvvc.flightgear.maps.DatabaseHelper;
+import com.juanvvc.flightgear.maps.MapOverlay;
+import com.juanvvc.flightgear.maps.SolidTileSource;
 import com.juanvvc.flightgear.panels.PanelView;
 
 /** Shows a panel with only instruments.
@@ -42,6 +46,8 @@ public class PanelActivity extends Activity {
 	PanelView panelView = null;
 	/** Reference to the available overlays. */
 	MapOverlay planeOverlay;
+	/** Reference to the distances overlay */
+	CompassOverlay compassOverlay;
 	/** The port for UDP communications. */
 	private int udpPort = 5501;
 	/** The port for Telnet communications. */
@@ -64,6 +70,10 @@ public class PanelActivity extends Activity {
 	private AlertDialog currentDialog = null;
 	/** A reference to the currently displayed toast */
 	private Toast currentToast = null;
+	/** If set, show the airports on the map */
+	private boolean show_airports = true;
+	/** If set, show the navaids on the map */
+	private boolean show_navaids = true;
 	
     /** Called when the activity is first created. */
     @Override
@@ -85,6 +95,7 @@ public class PanelActivity extends Activity {
     	}
 		
         planeOverlay = new MapOverlay(this);
+        compassOverlay = new CompassOverlay(this);
         
         boolean onlymap = false;
         boolean showmap = false;
@@ -171,12 +182,12 @@ public class PanelActivity extends Activity {
 	  				mapView.setTileSource(TileSourceFactory.CYCLEMAP);
 	//  			} else if (mapType.equals("hills")) {
 	//  				mapView.setTileSource(TileSourceFactory.HILLS);
-	//  			} else if (mapType.equals("topo")) {
-	//  				mapView.setTileSource(TileSourceFactory.TOPO);
-	  			} else if (mapType.equals("public_transport")) {
-	  				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
+	//			} else if (mapType.equals("public_transport")) {
+	//				mapView.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT);
 	  			} else if (mapType.equals("mapquest")) {
 	  				mapView.setTileSource(TileSourceFactory.MAPQUESTAERIAL);
+	  			} else if (mapType.equals("solid")) {
+	  				mapView.setTileSource(new SolidTileSource(this));
 	  			} else {
 	  				mapView.setTileSource(TileSourceFactory.MAPNIK);
 	  			}
@@ -211,6 +222,14 @@ public class PanelActivity extends Activity {
   		PanelView pv = (PanelView) this.findViewById(R.id.panel);
   		if ( pv!= null ) {
   			pv.setCenterInstruments(centered);
+  		}
+  		
+  		// show different elements on the map
+  		show_airports = sp.getBoolean("show_airports", true);
+  		show_navaids = sp.getBoolean("show_navaids", true);
+  		boolean show_distances = sp.getBoolean("show_distances", true);
+  		if (!show_distances) {
+  			this.compassOverlay = null;
   		}
     }
     
@@ -366,60 +385,64 @@ public class PanelActivity extends Activity {
 							update_db = 0;
 							MyLog.d(this, "Checking database");
 							
-							// check the airports 
-							Cursor cursor = db.getAirports(
-									pd.getFloat(PlaneData.LATITUDE),
-									pd.getFloat(PlaneData.LONGITUDE));
-							if (cursor!=null) {
-								cursor.moveToFirst();
-								overlays.removeAllElements();
-								while (!cursor.isAfterLast()) {
-									float lat = cursor.getFloat(2);
-									float lng = cursor.getFloat(3);
-									MapOverlay a = new MapOverlay(PanelActivity.this);
-									a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
-									a.setText(cursor.getString(1));
-									a.loadIcon(PanelActivity.this, R.drawable.airport);
-									overlays.add(a);
-									cursor.moveToNext();
+							if (show_airports) {
+								// check the airports 
+								Cursor cursor = db.getAirports(
+										pd.getFloat(PlaneData.LATITUDE),
+										pd.getFloat(PlaneData.LONGITUDE));
+								if (cursor!=null) {
+									cursor.moveToFirst();
+									overlays.removeAllElements();
+									while (!cursor.isAfterLast()) {
+										float lat = cursor.getFloat(2);
+										float lng = cursor.getFloat(3);
+										MapOverlay a = new MapOverlay(PanelActivity.this);
+										a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
+										a.setText(cursor.getString(1));
+										a.loadIcon(PanelActivity.this, R.drawable.airport);
+										overlays.add(a);
+										cursor.moveToNext();
+									}
+									cursor.close();
 								}
-								cursor.close();
 							}
 							
-							// check the navaids
-							cursor = db.getNavaids(
-									pd.getFloat(PlaneData.LATITUDE),
-									pd.getFloat(PlaneData.LONGITUDE));
-							if (cursor!=null) {
-								cursor.moveToFirst();
-								while (!cursor.isAfterLast()) {
-									float lat = cursor.getFloat(3);
-									float lng = cursor.getFloat(4);
-									int type = cursor.getInt(2);
-									MapOverlay a = new MapOverlay(PanelActivity.this);
-									a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
-
-									switch(type) {
-									case 2: // NDB
-										a.loadIcon(PanelActivity.this, R.drawable.ndb);
-										a.setText(cursor.getString(1)+" "+cursor.getString(6));
-										//a.setDescription(cursor.getString(7));
-										overlays.add(a);
-										break;
-									case 3: //VOR and VOR-DME
-									case 4: // ILS
-									case 5: // LOC
-									case 6: // GS
-										a.loadIcon(PanelActivity.this, R.drawable.vor);
-										a.setText(cursor.getString(1)+" "+cursor.getString(6));
-										//a.setDescription(cursor.getString(7));
-										overlays.add(a);
-										break;
-									default:
+							if (show_navaids) {
+								// check the navaids
+								Cursor cursor = db.getNavaids(
+										pd.getFloat(PlaneData.LATITUDE),
+										pd.getFloat(PlaneData.LONGITUDE));
+								if (cursor!=null) {
+									cursor.moveToFirst();
+									while (!cursor.isAfterLast()) {
+										float lat = cursor.getFloat(3);
+										float lng = cursor.getFloat(4);
+										int type = cursor.getInt(2);
+										MapOverlay a = new MapOverlay(PanelActivity.this);
+										a.setPosition(new GeoPoint((int)(lat * 1E6), (int)(lng * 1E6)), 0);
+	
+										switch(type) {
+										case 2: // NDB
+											a.loadIcon(PanelActivity.this, R.drawable.ndb);
+											a.setText(cursor.getString(1)+" "+cursor.getString(6));
+											//a.setDescription(cursor.getString(7));
+											overlays.add(a);
+											break;
+										case 3: //VOR and VOR-DME
+										case 4: // ILS
+										case 5: // LOC
+											a.loadIcon(PanelActivity.this, R.drawable.vor);
+											a.setText(cursor.getString(1)+" "+cursor.getString(6));
+											//a.setDescription(cursor.getString(7));
+											overlays.add(a);
+											break;
+										case 6: // GS
+										default:
+										}
+										cursor.moveToNext();
 									}
-									cursor.moveToNext();
+									cursor.close();
 								}
-								cursor.close();
 							}
 						}
 					}
@@ -469,12 +492,18 @@ public class PanelActivity extends Activity {
 					if (overlays!=null && overlays.size() > 0) {
 						mapView.getOverlays().clear();
 						mapView.getOverlays().addAll(overlays);
+						if (compassOverlay != null) {
+							mapView.getOverlays().add(compassOverlay);
+						}
 						mapView.getOverlays().add(planeOverlay);
 						overlays.removeAllElements();
 					}
 					
 					// update the panel and plane overlay
 					planeOverlay.setPosition(p, values[0].getFloat(PlaneData.HEADING_MOV));
+					if (compassOverlay != null) {
+						compassOverlay.setPosition(p, values[0].getFloat(PlaneData.HEADING_MOV), values[0].getFloat(PlaneData.SPEED));
+					}
 			}
 			
 			if (panelView != null) {

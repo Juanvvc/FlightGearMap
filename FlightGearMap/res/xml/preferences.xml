@@ -23,6 +23,24 @@
             android:entryValues="@array/planeValues"
         />
         
+        <CheckBoxPreference
+            android:key="show_airports"
+            android:title="Shows airports on the map"
+            android:defaultValue="true"
+        />
+        
+        <CheckBoxPreference
+            android:key="show_navaids"
+            android:title="Shows navaids on the map"
+            android:defaultValue="true"
+        />
+        
+        <CheckBoxPreference
+            android:key="show_distances"
+            android:title="Shows distances on the map"
+            android:defaultValue="true"
+        />
+        
 		<CheckBoxPreference
             android:key="center_instruments"
             android:title="Center the instruments"

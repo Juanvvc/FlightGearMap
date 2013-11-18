@@ -2,18 +2,19 @@
 
 <resources>
 
+    <!-- Note: HILLS, TOPO and PUBLIC_TRANSPORT are no longer working -->
     <string-array name="osmTypes">
         <item name="mapnik">Mapnik</item>
         <item name="cycle">Cycle</item>
-        <item name="public_transport">Public transport</item>
         <item name="mapquest">Mapquest Aerial</item>
+        <item name="solid">Solid color</item>
     </string-array>
     
     <string-array name="osmValues">
         <item name="mapnik">mapnik</item>
         <item name="cycle">cycle</item>
-        <item name="public_transport">public_transport</item>
         <item name="mapquest">mapquest</item>
+        <item name="solid">solid</item>
     </string-array>
     
     <string-array name="planeTypes">

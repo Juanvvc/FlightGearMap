@@ -1,4 +1,4 @@
-package com.juanvvc.flightgear;
+package com.juanvvc.flightgear.maps;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

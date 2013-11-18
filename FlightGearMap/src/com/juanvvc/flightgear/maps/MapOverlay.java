@@ -1,8 +1,11 @@
-package com.juanvvc.flightgear;
+package com.juanvvc.flightgear.maps;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.MapView.Projection;
+
+import com.juanvvc.flightgear.R;
+import com.juanvvc.flightgear.R.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -45,9 +48,10 @@ public class MapOverlay extends org.osmdroid.views.overlay.Overlay {
     
     public void setText(String t) {
     	txtPaint = new Paint();
-    	txtPaint.setColor(Color.BLACK);
+    	txtPaint.setColor(Color.WHITE);
     	txtPaint.setTextAlign(Align.CENTER);
     	txtPaint.setTextSize(16);
+    	txtPaint.setShadowLayer(5, 0, 0, Color.BLACK);
     	text = t;
     }
     
@@ -71,6 +75,12 @@ public class MapOverlay extends org.osmdroid.views.overlay.Overlay {
 		}
 		return false;
 	}
+	
+	public static int nmToRadius(float nm, MapView map, double latitude) {
+		Projection proj = map.getProjection();
+		float meters = (float) (nm * Projection.METERS_PER_NAUTICAL_MILE);
+		return (int) (proj.metersToEquatorPixels(meters) * (1 / Math.cos(Math.toRadians(latitude))));
+	}
 
     @Override
     protected void draw(Canvas pC, MapView mapV, boolean shadow) {
@@ -85,7 +95,7 @@ public class MapOverlay extends org.osmdroid.views.overlay.Overlay {
         m.setTranslate(locPoint.x - bitmap.getWidth() / 2, locPoint.y - bitmap.getHeight() / 2);
         m.postRotate(heading, locPoint.x, locPoint.y);
         
-        pC.drawBitmap(bitmap, m, null);
+        pC.drawBitmap(bitmap, m, txtPaint);
         if (text != null) {
         	pC.drawText(text, locPoint.x, locPoint.y, txtPaint);
         }

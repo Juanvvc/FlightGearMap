@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.juanvvc.flightgear.instruments.InstrumentType;
+import com.juanvvc.flightgear.maps.MapOverlay;
 import com.juanvvc.flightgear.panels.Cessna172;
 import com.juanvvc.flightgear.panels.PanelView;
 

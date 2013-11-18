@@ -24,6 +24,7 @@ $ 2.1
   % Version 2.1b
   ! <b>The new panel for the B1900D uses a different andatlas.xml</b>
   _ 2013-11-20
+    * Shows airports and navaids on maps.
     * New panel: B1900D
     * HSI: the glideslope mark is not shown if GS not in range
     * New option to switch full screen off
